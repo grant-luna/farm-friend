@@ -91,17 +91,19 @@ app.post('/sign-up', [
   validateEmail(),
   validatePassword(),
 ], (request, response, next) => {
+  const firstName = request.body.firstName;
+  const lastName = request.body.lastName;
+  const email = request.body.email;
+
   const errors = validationResult(request);
+  
   if (!errors.isEmpty()) {
-    errors.array().forEach((error) => {
-      console.log(error);
-      request.flash('error', error.msg);
-    });
+    errors.array().forEach((error) => request.flash('error', error.msg));
 
     response.render('sign-up', {
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      email: request.body.email,
+      firstName,
+      lastName,
+      email,
       errorMessages: request.flash().error,
     });
   } else {
