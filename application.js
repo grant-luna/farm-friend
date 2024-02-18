@@ -64,7 +64,7 @@ const catchError = require('./lib/catch-error');
 
 // Route Handling Methods
 app.get('/', (request, response, next) => {
-  response.send('Hello there');
+  response.render('sign-up');
 });
 
 // Custom Error Handler
