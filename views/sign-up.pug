@@ -6,7 +6,7 @@ block append headJavaScripts
   script(src='/javascripts/sign-up.js')
 block main-content
   h3 Sign Up
-  form
+  form(method='POST' action='/sign-up')
     fieldset
       label(for='firstName') First Name
       input(type='text' name='firstName' required)
