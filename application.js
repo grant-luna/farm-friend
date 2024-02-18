@@ -39,8 +39,8 @@ app.use(session({
   },
   store: new pgSession({
     pool: pgPool,
-    tableName: 'session',
     createTableIfMissing: true,
+    tableName: 'session',
   }),
   name: 'ffps-session',
   saveUninitialized: false,
