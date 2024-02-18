@@ -65,7 +65,15 @@ const catchError = require('./lib/catch-error');
 
 // Route Handling Methods
 app.get('/', (request, response, next) => {
-  response.render('sign-up');
+  response.redirect('/sign-up');
+});
+
+app.get('/sign-up', (request, response, next) => {
+  response.render('sign-up')
+});
+
+app.post('/sign-up', [], (request, response, next) => {
+
 });
 
 // Custom Error Handler
@@ -78,7 +86,6 @@ app.use((error, request, response, next) => {
     response.status(500).send('An unexpected error occurred');
   }
 });
-
 
 // Configure App Listening
 app.listen(process.env.PORT, process.env.HOST, () => {
