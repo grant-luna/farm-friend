@@ -5,7 +5,20 @@ block append headStylesheets
 block append headJavaScripts
   script(src='/javascripts/sign-up.js')
 block main-content
-  h3 Sign In Up
+  h3 Sign Up
   form
-    label(for='firstName') First Name
-    input(type='text')
+    fieldset
+      label(for='firstName') First Name
+      input(type='text' name='firstName' required)
+    fieldset
+      label(for='lastName') Last Name
+      input(type='text' name='lastName' required)
+    fieldset
+      label(for='email') Email Address
+      input(type='email' name='email' required)
+    fieldset
+      label(for='password') Password
+      input(type='password' name='password' required)
+    button.submit Sign-Up
+  p Already have an account? 
+    a(href='sign-in') Sign In

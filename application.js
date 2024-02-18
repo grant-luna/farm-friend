@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 
@@ -44,7 +45,7 @@ app.use(session({
   name: 'ffps-session',
   saveUninitialized: false,
   resave: false,
-  secret: 'This is not very secret',
+  secret: process.env.SESSIONSECRET,
 }));
 
 // Initialize Persistence
@@ -80,7 +81,7 @@ app.use((error, request, response, next) => {
 
 
 // Configure App Listening
-app.listen(3000, 'localhost', () => {
+app.listen(process.env.PORT, process.env.HOST, () => {
   console.log('Listening on Port 3000');
 });
 
