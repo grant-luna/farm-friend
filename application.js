@@ -68,13 +68,43 @@ app.get('/', (request, response, next) => {
   response.redirect('/sign-up');
 });
 
+app.get('/searches', (request, response, next) => {
+  response.render('searches');
+});
+
 app.get('/sign-up', (request, response, next) => {
   response.render('sign-up')
 });
 
-app.post('/sign-up', [], (request, response, next) => {
+// Initialize Form Submission Validators
+const {
+  validateFirstName,
+  validateLastName,
+  validateEmail,
+  validatePassword,
+} = require('./lib/validation-chains');
 
-});
+// Form Submition Request
+app.post('/sign-up', [
+  validateFirstName(),
+  validateLastName(),
+  validateEmail(),
+  validatePassword()
+], catchError((request, response, next) => {
+  const errors = validationResult(request);
+  if (!errors.isEmpty()) {
+    errors.array().forEach((error) => request.flash('error', error.msg));
+
+    response.render('sign-up', {
+      firstName: request.body.firstName,
+      lastname: request.body.lastName,
+      email: request.body.email,
+      flash: request.flash(),
+    });
+  } else {
+    response.redirect('searches')
+  }
+}));
 
 // Custom Error Handler
 app.use((error, request, response, next) => {

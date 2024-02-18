@@ -2,9 +2,14 @@ extends layout
 
 block append headStylesheets
   link(rel='stylesheet' href='/stylesheets/sign-up.css')
-block append headJavaScripts
+block append headJavascripts
   script(src='/javascripts/sign-up.js')
 block main-content
+  if flashMessages && flashMessages.length > 0
+    ul
+    each flashMessage in flashMessages
+      li= flashMessage.message
+    
   h3 Sign Up
   form(method='POST' action='/sign-up')
     fieldset
