@@ -94,6 +94,7 @@ app.post('/sign-up', [
   const firstName = request.body.firstName;
   const lastName = request.body.lastName;
   const email = request.body.email;
+  const password = request.body.password
 
   const errors = validationResult(request);
   
@@ -104,6 +105,7 @@ app.post('/sign-up', [
       firstName,
       lastName,
       email,
+      password,
       errorMessages: request.flash().error,
     });
   } else {
