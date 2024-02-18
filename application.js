@@ -67,9 +67,17 @@ app.get('/', (request, response, next) => {
   response.send('Hello there');
 });
 
+// Custom Error Handler
 app.use((error, request, response, next) => {
-  console.log(error.message);
+  if (error instanceof Error) {
+    console.log(error.message);
+    response.status(500).send(error.message);
+  } else {
+    console.log('An error occurred in the application');
+    response.status(500).send('An unexpected error occurred');
+  }
 });
+
 
 // Configure App Listening
 app.listen(3000, 'localhost', () => {
