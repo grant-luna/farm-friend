@@ -89,22 +89,25 @@ app.post('/sign-up', [
   validateFirstName(),
   validateLastName(),
   validateEmail(),
-  validatePassword()
-], catchError((request, response, next) => {
+  validatePassword(),
+], (request, response, next) => {
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
-    errors.array().forEach((error) => request.flash('error', error.msg));
+    errors.array().forEach((error) => {
+      console.log(error);
+      request.flash('error', error.msg);
+    });
 
     response.render('sign-up', {
       firstName: request.body.firstName,
-      lastname: request.body.lastName,
+      lastName: request.body.lastName,
       email: request.body.email,
-      flash: request.flash(),
+      errorMessages: request.flash().error,
     });
   } else {
-    response.redirect('searches')
+    response.redirect('/searches')
   }
-}));
+});
 
 // Custom Error Handler
 app.use((error, request, response, next) => {
