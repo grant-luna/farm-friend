@@ -57,8 +57,8 @@ app.use((request, response, next) => {
 });
 
 // Request Body Parsing Configuration
-app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Error Handling
 const catchError = require('./lib/catch-error');
@@ -67,6 +67,17 @@ const catchError = require('./lib/catch-error');
 app.get('/', (request, response, next) => {
   response.redirect('/sign-up');
 });
+
+app.get('/search', (request, response, next) => {
+  response.render('search');
+});
+
+app.post('/search', catchError(async (request, response, next) => {
+  const search = await response.locals.store.saveSearchToDatabase(request.session.email, request.body);
+  if (!search) throw new Error('Unable to generate your requested search');
+
+  response.redirect('/search');
+}));
 
 app.get('/searches', (request, response, next) => {
   response.render('searches');

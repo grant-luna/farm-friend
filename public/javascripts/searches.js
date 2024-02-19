@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   const clientWorker = new ClientWorker();
 
+  const fileInput = document.querySelector('input[type="file"]');
+  fileInput.addEventListener('change', clientWorker.verifyFileFormat);
+
   const uploadButton = document.querySelector('button.submit');
   uploadButton.addEventListener('click', clientWorker.handleFileUpload);
   
@@ -9,8 +12,39 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 class ClientWorker {
-  async handleFileUpload(event) {
-    
+  handleFileUpload(event) {
+    event.preventDefault();
+
+    const fileInput = document.querySelector('input[type="file"]').files[0];
+    const fileReader = new FileReader();
+
+    fileReader.addEventListener('load', async (event) => {
+      const csvString = event.target.result;
+
+      const parsedCsvString = Papa.parse(csvString, { header: true }).data;
+
+      try {
+        const postRequestConfiguration = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(parsedCsvString),
+        }
+        const response = await fetch('/search', postRequestConfiguration);
+        if (!response.ok) throw new Error('Error with creating your search');
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    fileReader.addEventListener('error', (event) => {
+      console.error('Error reading file:', event.target.error);
+    });
+
+    if (fileInput) {
+      fileReader.readAsText(fileInput);
+    }
   }
 
   async signUserOut(event) {
@@ -24,5 +58,9 @@ class ClientWorker {
     } catch (error) {
       console.error('Error signing out:', error);
     }
+  }
+
+  verifyFileFormat(event) {
+
   }
 }
