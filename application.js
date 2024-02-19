@@ -143,6 +143,8 @@ app.post('/sign-up', [
     const newUser = await response.locals.store.createNewUser(userInputs);
     if (!newUser) throw new Error('Error creating a new user');
 
+    request.session.email = email;
+    request.session.signedIn = true;
     response.redirect('/searches')
   }
 }));
