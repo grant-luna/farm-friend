@@ -84,13 +84,16 @@ const {
   validatePassword,
 } = require('./lib/validation-chains');
 
+//
+const hashPassword = require('./lib/hash-password');
+
 // Form Submition Request
 app.post('/sign-up', [
   validateFirstName(),
   validateLastName(),
   validateEmail(),
   validatePassword(),
-], (request, response, next) => {
+], catchError(async (request, response, next) => {
   const firstName = request.body.firstName;
   const lastName = request.body.lastName;
   const email = request.body.email;
@@ -109,9 +112,14 @@ app.post('/sign-up', [
       errorMessages: request.flash().error,
     });
   } else {
+    const hashedPassword = await hashPassword(password);
+    const userInputs = { firstName, lastName, email, password: hashedPassword };
+    const newUser = await response.locals.store.createNewUser(userInputs);
+    if (!newUser) throw new Error('Error creating a new user');
+
     response.redirect('/searches')
   }
-});
+}));
 
 // Custom Error Handler
 app.use((error, request, response, next) => {
