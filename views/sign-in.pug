@@ -5,6 +5,11 @@ block append headStylesheets
 block append headJavascripts
   script(src='/javascripts/sign-in.js')
 block main-content
+  if errorMessages
+    ul
+    each errorMessage in errorMessages
+      li= errorMessage
+
   h3 Sign In
   form(method='POST' action='/sign-in')
     fieldset

@@ -76,6 +76,28 @@ app.get('/sign-in', (request, response, next) => {
   response.render('sign-in')
 });
 
+app.post('/sign-in', catchError(async (request, response, next) => {
+  const email = request.body.email;
+  const password = request.body.password;
+
+  const authenticated = await response.locals.store.authenticate(email, password);
+  
+  if (!authenticated) {
+    request.flash('error', 'Incorrect Email + Password combination');
+
+    response.render('sign-in', {
+      email,
+      password,
+      errorMessages: request.flash('error'),
+    });
+  } else {
+    request.session.email = email;
+    request.session.signedIn = true;
+
+    response.redirect('/searches')
+  }
+}));
+
 app.get('/sign-up', (request, response, next) => {
   response.render('sign-up')
 });
@@ -88,7 +110,7 @@ const {
   validatePassword,
 } = require('./lib/validation-chains');
 
-//
+// Create Password Hashing Functionality
 const hashPassword = require('./lib/hash-password');
 
 // Form Submition Request
