@@ -72,6 +72,10 @@ app.get('/searches', (request, response, next) => {
   response.render('searches');
 });
 
+app.get('/sign-in', (request, response, next) => {
+  response.render('sign-in')
+});
+
 app.get('/sign-up', (request, response, next) => {
   response.render('sign-up')
 });

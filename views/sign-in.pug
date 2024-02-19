@@ -1,0 +1,18 @@
+extends layout
+
+block append headStylesheets
+  link(rel='stylesheet' href='/stylesheets/sign-in.css')
+block append headJavascripts
+  script(src='/javascripts/sign-in.js')
+block main-content
+  h3 Sign In
+  form(method='POST' action='/sign-in')
+    fieldset
+      label(for='email') Email Address:
+      input(type='email' name='email' required)
+    fieldset
+      label(for='password') Password:
+      input(type='password' name='password' required)
+    button.submit Sign In
+  p Don't have an account? 
+    a(href='/sign-up') Sign Up
