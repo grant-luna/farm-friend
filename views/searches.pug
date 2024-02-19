@@ -13,4 +13,8 @@ block main-content
       input(type='file' accept='.csv' required)
     button.submit Upload File
   h3 Past Searches
+  ul
+    each search in userSearches
+      li= search.file_name
+  
   button.sign-out Sign Out

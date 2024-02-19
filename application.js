@@ -79,12 +79,14 @@ app.post('/search', catchError(async (request, response, next) => {
   response.redirect('/search');
 }));
 
-app.get('/searches', (request, response, next) => {
-  response.render('searches');
-});
+app.get('/searches', catchError(async (request, response, next) => {
+  const userSearches = await response.locals.store.findUserSearches(request.session.email);
+  if (!userSearches) throw new Error('Unable to locate user searches');
+
+  response.render('searches', { userSearches });
+}));
 
 app.get('/sign-in', (request, response, next) => {
-  console.log('hello');
   response.render('sign-in')
 });
 
