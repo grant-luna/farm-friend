@@ -1,3 +1,5 @@
+import { FileValidator } from './file-validator.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const clientWorker = new ClientWorker();
 
@@ -5,14 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
   fileInput.addEventListener('change', clientWorker.verifyFileFormat);
 
   const uploadButton = document.querySelector('button.submit');
-  uploadButton.addEventListener('click', clientWorker.handleFileUpload);
+  uploadButton.addEventListener('click', clientWorker.handleUploadFile);
   
   const signOutButton = document.querySelector('button.sign-out');
   signOutButton.addEventListener('click', clientWorker.signUserOut);
 });
 
 class ClientWorker {
-  handleFileUpload(event) {
+  handleUploadFile(event) {
     event.preventDefault();
 
     const fileInput = document.querySelector('input[type="file"]').files[0];
@@ -20,7 +22,6 @@ class ClientWorker {
 
     fileReader.addEventListener('load', async (event) => {
       const csvString = event.target.result;
-
       const parsedCsvString = Papa.parse(csvString, { header: true }).data;
 
       try {
@@ -31,6 +32,7 @@ class ClientWorker {
           },
           body: JSON.stringify(parsedCsvString),
         }
+
         const response = await fetch('/search', postRequestConfiguration);
         if (!response.ok) throw new Error('Error with creating your search');
       } catch (error) {
@@ -60,7 +62,22 @@ class ClientWorker {
     }
   }
 
-  verifyFileFormat(event) {
+  async verifyFileFormat(event) {
+    const fileInput = event.target.files[0];
+    const fileReader = new FileReader();
 
+    fileReader.addEventListener('load', async (event) => {
+      const csvString = event.target.result;
+      const parsedCsvString = await Papa.parse(csvString, { header: true }).data;
+      const csvHeaders = Object.keys(parsedCsvString[0]);
+      
+      if (!FileValidator.isValidHeading(csvHeaders)) {
+        console.log('Unsupported File Format');
+      }
+    });
+
+    if (fileInput) {
+      fileReader.readAsText(fileInput);
+    }
   }
 }
