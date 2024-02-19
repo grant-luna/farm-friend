@@ -73,6 +73,7 @@ app.get('/searches', (request, response, next) => {
 });
 
 app.get('/sign-in', (request, response, next) => {
+  console.log('hello');
   response.render('sign-in')
 });
 
@@ -97,6 +98,13 @@ app.post('/sign-in', catchError(async (request, response, next) => {
     response.redirect('/searches')
   }
 }));
+
+app.post('/sign-out', (request, response, next) => {
+  delete request.session.email
+  delete request.session.signedIn
+
+  response.redirect('/sign-in');
+});
 
 app.get('/sign-up', (request, response, next) => {
   response.render('sign-up')
