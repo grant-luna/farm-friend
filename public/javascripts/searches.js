@@ -35,6 +35,7 @@ class ClientWorker {
 
         const response = await fetch('/search', postRequestConfiguration);
         if (!response.ok) throw new Error('Error with creating your search');
+        window.location.href = response.url;
       } catch (error) {
         console.log(error);
       }
