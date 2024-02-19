@@ -6,4 +6,12 @@ block append headJavascripts
   script(src='/javascripts/searches.js')
 block main-content
   h3 Start a Search
+  form.file-upload
+    fieldset
+      label(for='fileName') File Name:
+      input(type='text')
+    fieldset
+      label(for='file') Upload Your Fidelity Total Farm File
+      input(type='file' accept='.csv' required)
+    button.submit Upload File
   button.sign-out Sign Out
