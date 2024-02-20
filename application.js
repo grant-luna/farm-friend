@@ -68,17 +68,27 @@ app.get('/', (request, response, next) => {
   response.redirect('/sign-up');
 });
 
-app.get('/search', (request, response, next) => {
+// Displaying a Single Search
+app.get('/search/:searchId', catchError(async (request, response, next) => {
+  const searchId = request.params.searchId;
+  const search = await response.locals.store.findSearchBySearchId(searchId);
+  if (!search) throw new Error('Unable to locate a search for the given ID');
+  console.log(search[0]);
+
   response.render('search');
-});
-
-app.post('/search', catchError(async (request, response, next) => {
-  const search = await response.locals.store.saveSearchToDatabase(request.session.email, request.body);
-  if (!search) throw new Error('Unable to generate your requested search');
-
-  response.redirect('/search');
 }));
 
+// Creating a New Search
+const { v4: uuidv4 } = require('uuid');
+app.post('/search', catchError(async (request, response, next) => {
+  const searchId = uuidv4();
+  const search = await response.locals.store.saveSearchToDatabase(searchId, request.session.email, request.body);
+  if (!search) throw new Error('Unable to generate your requested search');
+
+  response.redirect(`/search/${searchId}`);
+}));
+
+// Displaying a List of a User's Searches
 app.get('/searches', catchError(async (request, response, next) => {
   const userSearches = await response.locals.store.findUserSearches(request.session.email);
   if (!userSearches) throw new Error('Unable to locate user searches');
@@ -86,10 +96,12 @@ app.get('/searches', catchError(async (request, response, next) => {
   response.render('searches', { userSearches });
 }));
 
+// Display the Sign-In Page
 app.get('/sign-in', (request, response, next) => {
   response.render('sign-in')
 });
 
+// Sign-in an Existing User
 app.post('/sign-in', catchError(async (request, response, next) => {
   const email = request.body.email;
   const password = request.body.password;
@@ -112,6 +124,7 @@ app.post('/sign-in', catchError(async (request, response, next) => {
   }
 }));
 
+// Sign-Out an Existing User
 app.post('/sign-out', (request, response, next) => {
   delete request.session.email
   delete request.session.signedIn
@@ -119,6 +132,7 @@ app.post('/sign-out', (request, response, next) => {
   response.redirect('/sign-in');
 });
 
+// Display the Sign-Up Page
 app.get('/sign-up', (request, response, next) => {
   response.render('sign-up')
 });

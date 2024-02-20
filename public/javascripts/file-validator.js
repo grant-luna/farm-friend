@@ -1,18 +1,4 @@
-export class FileValidator {
-  static isValidHeading(userHeaders) {
-    const sortedUserHeaders = userHeaders.sort((a, b) => {
-      if (a < b) {
-        return -1;
-      } else if (a > b) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-    
-    return JSON.stringify(sortedUserHeaders) === JSON.stringify(this.validHeaders["Fidelity Total Farm CSV"]);
-  }
-
+class FileWorker {
   static validHeaders = {
     "Fidelity Total Farm CSV": [
       "AVM",
@@ -118,6 +104,34 @@ export class FileValidator {
       "Year Built",
       "Years In Proper",
       "Zoning"
-    ],
+    ]
+  }
+}
+
+export class FileValidator extends FileWorker {
+  static isValidHeading(userHeaders) {
+    const sortedUserHeaders = userHeaders.sort((a, b) => {
+      if (a < b) {
+        return -1;
+      } else if (a > b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    
+    return JSON.stringify(sortedUserHeaders) === JSON.stringify(this.validHeaders["Fidelity Total Farm CSV"]);
+  }
+}
+
+export class FileReformatter extends FileWorker {
+  static prepareForDisplay(search)  {
+    const reformatMethod = this.findReformatMethod(search);
+
+    return search.map(reformatMethod);
+  }
+
+  static reformatMethods = {
+    "Fidelity Total Farm CSV": this.reformatFidelityTotalFarmCsv,
   }
 }
