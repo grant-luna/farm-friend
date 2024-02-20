@@ -70,12 +70,13 @@ app.get('/', (request, response, next) => {
 
 // Displaying a Single Search
 app.get('/search/:searchId', catchError(async (request, response, next) => {
+  const FileReformatter = require('./lib/file-reformatter');
   const searchId = request.params.searchId;
   const search = await response.locals.store.findSearchBySearchId(searchId);
   if (!search) throw new Error('Unable to locate a search for the given ID');
-  console.log(search[0]);
+  const reformattedSearch = FileReformatter.prepareForDisplay(search);
 
-  response.render('search');
+  response.render('search', { reformattedSearch });
 }));
 
 // Creating a New Search
