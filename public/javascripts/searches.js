@@ -56,10 +56,14 @@ class ClientWorker {
     }
   }
 
-  handleUserSearchSelection(event) {
+  async handleUserSearchSelection(event) {
     event.stopPropagation();
     
-    
+    const searchId = event.target.dataset.id;
+    const response = await fetch(`/search/${searchId}`);
+    if (response.ok) {
+      window.location.href = response.url;
+    }
   }
 
   async signUserOut(event) {

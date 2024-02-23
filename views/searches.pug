@@ -18,6 +18,6 @@ block main-content
   h3 Past Searches
   ul.user-searches-container
     each search in userSearches
-      li.user-search-container= search.file_name
+      li.user-search-container(data-id=search.id)= search.file_name
   
   button.sign-out Sign Out
