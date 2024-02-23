@@ -22,11 +22,12 @@ class ClientWorker {
 
     try {
       if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')
-
+      
       const fileReader = new FileReader();
       fileReader.addEventListener('load', async (event) => {
         const csvString = event.target.result;
         const parsedCsvString = Papa.parse(csvString, { header: true }).data;
+        
         const postRequestConfiguration = {
           method: 'POST',
           headers: {

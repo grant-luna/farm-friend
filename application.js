@@ -92,6 +92,7 @@ app.get('/search/:searchId', authenticateUser, catchError(async (request, respon
 const { v4: uuidv4 } = require('uuid');
 app.post('/search', catchError(async (request, response, next) => {
   const searchId = uuidv4();
+  
   const search = await response.locals.store.saveSearchToDatabase(searchId, request.session.email, request.body);
   if (!search) throw new Error('Unable to generate your requested search');
 
