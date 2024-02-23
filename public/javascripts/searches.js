@@ -19,14 +19,14 @@ class ClientWorker {
 
     const fileInput = document.querySelector('input[type="file"]').files[0];
     const fileNameInput = document.querySelector('input[type="text"]').value;
-    
-    const fileReader = new FileReader();
 
-    fileReader.addEventListener('load', async (event) => {
-      const csvString = event.target.result;
-      const parsedCsvString = Papa.parse(csvString, { header: true }).data;
+    try {
+      if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')
 
-      try {
+      const fileReader = new FileReader();
+      fileReader.addEventListener('load', async (event) => {
+        const csvString = event.target.result;
+        const parsedCsvString = Papa.parse(csvString, { header: true }).data;
         const postRequestConfiguration = {
           method: 'POST',
           headers: {
@@ -38,17 +38,17 @@ class ClientWorker {
         const response = await fetch('/search', postRequestConfiguration);
         if (!response.ok) throw new Error('Error with creating your search');
         window.location.href = response.url;
-      } catch (error) {
-        console.log(error);
+      });
+  
+      fileReader.addEventListener('error', (event) => {
+        console.error('Error reading file:', event.target.error);
+      });
+  
+      if (fileInput) {
+        fileReader.readAsText(fileInput);
       }
-    });
-
-    fileReader.addEventListener('error', (event) => {
-      console.error('Error reading file:', event.target.error);
-    });
-
-    if (fileInput) {
-      fileReader.readAsText(fileInput);
+    } catch (error) {
+      console.log(error);
     }
   }
 
