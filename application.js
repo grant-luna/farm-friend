@@ -63,13 +63,22 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // Error Handling
 const catchError = require('./lib/catch-error');
 
+// Authenticate Users
+const authenticateUser = (request, response, next) => {
+  if (request.session.signedIn === true) {
+    next();
+  } else {
+    response.redirect(302, '/sign-in');
+  }
+};
+
 // Route Handling Methods
-app.get('/', (request, response, next) => {
-  response.redirect('/sign-up');
+app.get('/', authenticateUser, (request, response, next) => {
+  response.redirect('/searches');
 });
 
 // Displaying a Single Search
-app.get('/search/:searchId', catchError(async (request, response, next) => {
+app.get('/search/:searchId', authenticateUser, catchError(async (request, response, next) => {
   const FileReformatter = require('./lib/file-reformatter');
   const searchId = request.params.searchId;
   const search = await response.locals.store.findSearchBySearchId(searchId);
@@ -90,7 +99,7 @@ app.post('/search', catchError(async (request, response, next) => {
 }));
 
 // Displaying a List of a User's Searches
-app.get('/searches', catchError(async (request, response, next) => {
+app.get('/searches', authenticateUser, catchError(async (request, response, next) => {
   const userSearches = await response.locals.store.findUserSearches(request.session.email);
   if (!userSearches) throw new Error('Unable to locate user searches');
 
@@ -127,8 +136,8 @@ app.post('/sign-in', catchError(async (request, response, next) => {
 
 // Sign-Out an Existing User
 app.post('/sign-out', (request, response, next) => {
-  delete request.session.email
-  delete request.session.signedIn
+  delete request.session.email;
+  delete request.session.signedIn;
 
   response.redirect('/sign-in');
 });
