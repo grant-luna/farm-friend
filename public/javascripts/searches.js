@@ -18,6 +18,8 @@ class ClientWorker {
     event.preventDefault();
 
     const fileInput = document.querySelector('input[type="file"]').files[0];
+    const fileNameInput = document.querySelector('input[type="text"]').value;
+    
     const fileReader = new FileReader();
 
     fileReader.addEventListener('load', async (event) => {
