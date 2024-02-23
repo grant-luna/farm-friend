@@ -1,1 +1,8 @@
-h3 Search Results
+extends layout
+
+block main-content
+  h3 Search Results
+  
+  ul
+    each propertyRecord in reformattedSearch
+      li= propertyRecord['siteAddressFpsLink']
