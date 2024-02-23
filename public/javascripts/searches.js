@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const signOutButton = document.querySelector('button.sign-out');
   signOutButton.addEventListener('click', clientWorker.signUserOut);
+
+  const userSearchesContainer = document.querySelector('ul.user-searches-container');
+  userSearchesContainer.addEventListener('click', clientWorker.handleUserSearchSelection);
 });
 
 class ClientWorker {
@@ -51,6 +54,12 @@ class ClientWorker {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  handleUserSearchSelection(event) {
+    event.stopPropagation();
+    
+    
   }
 
   async signUserOut(event) {

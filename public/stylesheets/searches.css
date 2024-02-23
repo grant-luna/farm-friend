@@ -1,0 +1,12 @@
+.user-search-container {
+  padding: .25rem;
+  border: 1px solid black;
+  width: max-content;
+  border-radius: .25rem;
+  margin-bottom: .25rem;
+}
+
+.user-search-container:hover {
+  cursor: pointer;
+  opacity: 70%;
+}
