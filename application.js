@@ -80,7 +80,7 @@ app.use((request, response, next) => {
 
 // Route Handling Methods
 app.get('/', authenticateUser, (request, response, next) => {
-  response.redirect('/searches');
+  response.render('home');
 });
 
 // Displaying a Single Search

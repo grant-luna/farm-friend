@@ -8,8 +8,8 @@ block append headJavascripts
 
 block main-content
   h1 Welcome Back
-  h3  Looking for Something?
-  input.past-searches-search-bar(type='text')
+  h3  Search Dashboard
+  input.search-dashboard-search-bar(type='text')
   ul.user-searches-container
     each search in userSearches
       li.user-search-container(data-id=search.id)= search.file_name

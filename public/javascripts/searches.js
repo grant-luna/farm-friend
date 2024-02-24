@@ -3,12 +3,12 @@ import { FileValidator } from './file-validator.js';
 document.addEventListener('DOMContentLoaded', () => {
   const clientWorker = new ClientWorker();
 
-  const fileInput = document.querySelector('input[type="file"]');
-  fileInput.addEventListener('change', clientWorker.verifyFileFormat);
+  // const fileInput = document.querySelector('input[type="file"]');
+  // fileInput.addEventListener('change', clientWorker.verifyFileFormat);
 
-  const uploadButton = document.querySelector('button.submit');
-  uploadButton.addEventListener('click', clientWorker.handleUploadFile);
-
+  // const uploadButton = document.querySelector('button.submit');
+  // uploadButton.addEventListener('click', clientWorker.handleUploadFile);
+  
   const userSearchesContainer = document.querySelector('ul.user-searches-container');
   userSearchesContainer.addEventListener('click', clientWorker.handleUserSearchSelection);
 });
