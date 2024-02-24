@@ -7,11 +7,20 @@ block append headJavascripts
   script(src='/javascripts/search.js')
 
 block main-content
-  h3
-    a(href='/searches') Searches
-  h3 Search Results
+  h3  Search Results
+  input.search-dashboard-search-bar(type='text')
   ul.search-results
     each propertyRecord in reformattedSearch
       li.search-result
-        div
+        dl.property-details
+          div.owner-names
+            small Owner Names
+            p= propertyRecord['firstOwner']
+            p= propertyRecord['secondOwner']
+        div.site-address-fps-link
+          small Property Address
           h3= propertyRecord['siteAddress']
+        div.mail-address-fps-link
+          if propertyRecord['ownerOccupied'] === 'Y'
+            small Mailing Address
+            h3= propertyRecord['mailAddress']
