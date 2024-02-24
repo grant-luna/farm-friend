@@ -8,9 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const uploadButton = document.querySelector('button.submit');
   uploadButton.addEventListener('click', clientWorker.handleUploadFile);
-  
-  const signOutButton = document.querySelector('button.sign-out');
-  signOutButton.addEventListener('click', clientWorker.signUserOut);
 
   const userSearchesContainer = document.querySelector('ul.user-searches-container');
   userSearchesContainer.addEventListener('click', clientWorker.handleUserSearchSelection);

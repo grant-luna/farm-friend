@@ -9,8 +9,23 @@ html(lang='en')
   body
     if session.signedIn
       header
-        h1 Header
+        block header-content
+          span X
+          h1 Farm Friend
+          div.account-menu
+            span v
+            span O
       nav
-        h3 Nav
+        div.nav-menu
+          h3 Faster FastPeopleSearch
+        div.title-rep-menu
+          span O
+          span= "Ronna & Grant Luna"
+          span Title Representative | Fidelity National Title
+          span
+          div.title-rep-menu-message
+            span O
+            input(type='text')
+          
     main
       block main-content

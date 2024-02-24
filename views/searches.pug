@@ -7,18 +7,8 @@ block append headJavascripts
   script(src='/javascripts/searches.js' type='module')
 
 block main-content
-  h3 Start a Search
-  form.file-upload
-    fieldset
-      label(for='fileName') Name Your Search (for your records)
-      input(type='text' required)
-    fieldset
-      label(for='file') Upload Your Fidelity Total Farm File
-      input(type='file' accept='.csv' required)
-    button.submit Upload File
   h3 Past Searches
+  input.past-searches-search-bar(type='text')
   ul.user-searches-container
     each search in userSearches
       li.user-search-container(data-id=search.id)= search.file_name
-  
-  button.sign-out Sign Out
