@@ -72,6 +72,12 @@ const authenticateUser = (request, response, next) => {
   }
 };
 
+// Make the session available to all views
+app.use((request, response, next) => {
+  response.locals.session = request.session;
+  next();
+})
+
 // Route Handling Methods
 app.get('/', authenticateUser, (request, response, next) => {
   response.redirect('/searches');
@@ -84,7 +90,7 @@ app.get('/search/:searchId', authenticateUser, catchError(async (request, respon
   const search = await response.locals.store.findSearchBySearchId(searchId);
   if (!search) throw new Error('Unable to locate a search for the given ID');
   const reformattedSearch = FileReformatter.prepareForDisplay(search);
-
+  console.log(reformattedSearch.slice(0, 2));
   response.render('search', { reformattedSearch });
 }));
 
@@ -103,7 +109,7 @@ app.post('/search', catchError(async (request, response, next) => {
 app.get('/searches', authenticateUser, catchError(async (request, response, next) => {
   const userSearches = await response.locals.store.findUserSearches(request.session.email);
   if (!userSearches) throw new Error('Unable to locate user searches');
-  console.log(userSearches);
+  
   response.render('searches', { userSearches });
 }));
 

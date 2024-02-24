@@ -1,10 +1,17 @@
 extends layout
 
+block append headStylesheets
+  link(rel='stylesheet' href='/stylesheets/search.css')
+
+block append headJavascripts
+  script(src='/javascripts/search.js')
+
 block main-content
   h3
     a(href='/searches') Searches
   h3 Search Results
-  
-  ul
+  ul.search-results
     each propertyRecord in reformattedSearch
-      li= propertyRecord['siteAddressFpsLink']
+      li.search-result
+        div
+          h3= propertyRecord['siteAddress']

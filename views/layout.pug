@@ -7,4 +7,10 @@ html(lang='en')
       link(rel='stylesheet' href='/stylesheets/layout.css')
     block headJavascripts
   body
-    block main-content
+    if session.signedIn
+      header
+        h1 Header
+      nav
+        h3 Nav
+    main
+      block main-content
