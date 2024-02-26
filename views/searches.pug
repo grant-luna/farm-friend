@@ -10,5 +10,10 @@ block main-content
   h3  Search Dashboard
   input.search-dashboard-search-bar(type='text')
   ul.user-searches-container
+    li.new-search-container
+      div
+        h3 Start a Search
+        img(src='/images/icons/black-add-icon.png')
     each search in userSearches
-      li.user-search-container(data-id=search.id)= search.file_name
+      li.user-search-container(data-id=search.id)
+        h3= search.file_name

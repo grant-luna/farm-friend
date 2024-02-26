@@ -13,16 +13,35 @@ main {
   gap: 10px;
   justify-content: start;
   width: 90%;
+  overflow-y: auto;
 }
 
-.user-search-container {
+.user-searches-container > * {
   padding: .25rem;
   border: 1px solid black;
-  border-radius: .25rem;
+  border-radius: .5rem;
   margin-bottom: .25rem;
 }
 
-.user-search-container:hover {
+.user-searches-container > *:hover {
   cursor: pointer;
   opacity: 70%;
 }
+
+.user-searches-container h3 {
+  left: .75rem;
+  font-size: 1rem;
+}
+
+.new-search-container div {
+  display: flex;
+  align-items: center;
+}
+
+.new-search-container img {
+  width: 2rem;
+  height: 2rem;
+}
+
+
+
