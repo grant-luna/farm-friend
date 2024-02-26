@@ -89,7 +89,7 @@ export class ClientWorker {
         const dataProperty = {
           notes: {},
           callLogs: {},
-          tag: '',
+          status: 'Not Contacted',
         }
         parsedCsvString.forEach((row) => {
           row.data = { ...dataProperty };
