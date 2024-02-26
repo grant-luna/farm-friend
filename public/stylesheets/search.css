@@ -40,9 +40,12 @@ main {
 
 .search-result {
   display: grid;
-  grid-template-areas: "owner-names site-address mail-address";
+  grid-template-areas: "owner-names site-address mail-address"
+                        "search-result-footer search-result-footer search-result-footer";
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 85% 1fr;
   padding: 1rem;
+  gap: .5rem;
   border: 1px solid;
   background-color: var(--white);
   border: none;
@@ -96,5 +99,35 @@ main {
 .mail-address-fps-link {
   grid-area: mail-address;
   justify-content: space-between;
+}
+
+.search-result-footer {
+  grid-area: search-result-footer;
+  border-top: 1px solid black;
+  width: 100%;
+  padding-top: .15rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.search-result-footer-icon {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  border: 1px solid var(--dark-font);
+  border-radius: .5rem;
+  padding: .25rem;
+}
+
+.search-result-footer-icon:hover {
+  cursor: pointer;
+  opacity: 70%;
+}
+
+.search-result-footer-icon img {
+  width: 1rem;
+  height: 1rem;
 }
 
