@@ -11,9 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const userSearchesContainer = document.querySelector('ul.user-searches-container');
   userSearchesContainer.addEventListener('click', clientWorker.handleUserSearchSelection);
+
+  const newSearchContainer = document.querySelector('.new-search-container')
+  newSearchContainer.addEventListener('click', clientWorker.handleNewSearchClick)
 });
 
 class ClientWorker {
+  handleNewSearchClick(event) {
+    
+    event.stopPropagation();
+  }
+  
   handleUploadFile(event) {
     event.preventDefault();
 
@@ -56,7 +64,7 @@ class ClientWorker {
   async handleUserSearchSelection(event) {
     event.stopPropagation();
     
-    const searchId = event.target.dataset.id;
+    const searchId = event.target.closest('li').dataset.id;
     const response = await fetch(`/search/${searchId}`);
     if (response.ok) {
       window.location.href = response.url;
