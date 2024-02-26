@@ -8,9 +8,9 @@ main {
 
 .user-searches-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-template-rows: repeat(auto-fill, 100px);
-  grid-auto-rows: 100px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-rows: repeat(auto-fill, 125px);
+  grid-auto-rows: 125px;
   gap: 10px;
   justify-content: start;
   width: 90%;
@@ -54,13 +54,15 @@ main {
   width: 50%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  gap: .5rem;
   box-shadow: 10px 10px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .new-search-menu img {
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   position: absolute;
   top: .5rem;
   right: .5rem;
@@ -69,6 +71,23 @@ main {
 .new-search-menu img:hover {
   cursor: pointer;
   opacity: 70%;
+}
+
+form.file-upload {
+  border: 1px solid black;
+  border-radius: .5rem;
+  padding: .5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+form.file-upload > * {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .5rem;
 }
 
 
