@@ -11,9 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 class ClientWorker {
+  attachNewSearchWindowEventListeners(newSearchMenu) {
+    const closeButton = newSearchMenu.querySelector('img');
+    closeButton.addEventListener('click', ClientWorker.prototype.handleCloseNewSearchMenu)
+    
+    const fileInput = newSearchMenu.querySelector('input[type="file"]');
+    fileInput.addEventListener('change', ClientWorker.prototype.verifyFileFormat);
+    
+    const uploadButton = newSearchMenu.querySelector('button.submit');
+    uploadButton.addEventListener('click', ClientWorker.prototype.handleUploadFile);
+  }
+
   handleCloseNewSearchMenu(event) {
     const newSearchMenu = document.querySelector('.new-search-menu');
-    
+
     if (newSearchMenu) {
       newSearchMenu.remove();
     }
@@ -34,16 +45,9 @@ class ClientWorker {
         const newSearchMenu = document.createElement('div');
         newSearchMenu.classList.add('new-search-menu');
         newSearchMenu.innerHTML = newSearchHtml;
-        
-        const closeButton = newSearchMenu.querySelector('img');
-        closeButton.addEventListener('click', ClientWorker.prototype.handleCloseNewSearchMenu);
 
-        const fileInput = newSearchMenu.querySelector('input[type="file"]');
-        fileInput.addEventListener('change', ClientWorker.prototype.verifyFileFormat);
+        ClientWorker.prototype.attachNewSearchWindowEventListeners(newSearchMenu);
         
-        const uploadButton = newSearchMenu.querySelector('button.submit');
-        uploadButton.addEventListener('click', ClientWorker.prototype.handleUploadFile);
-
         document.querySelector('main').appendChild(newSearchMenu);
       } catch (error) {
         console.log(error);
