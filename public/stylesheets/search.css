@@ -15,14 +15,50 @@ main {
 }
 
 .search-result {
-  display: flex;
+  display: grid;
+  grid-template-areas: "owner-names site-address mail-address";
+  grid-template-columns: repeat(3, 1fr);
   padding: .5rem;
   border: 1px solid;
   background-color: var(--white);
   border: none;
   border-radius: .25rem;
-  gap: .5rem;
   box-shadow: 0 0 .15rem rgba(0, 0, 0, 0.5); /* Horizontal offset, vertical offset, blur radius, color */
 }
 
+.owner-names {
+  grid-area: owner-names;
+}
+
+.site-address-fps-link,
+.mail-address-fps-link {
+  display: flex;
+  flex-direction: column;
+}
+
+.site-address-fps-link a,
+.mail-address-fps-link a {
+  background-color: var(--green);
+  color: var(--white);
+  padding: .5rem;
+  border-radius: .25rem;
+  border: none;
+  text-decoration: none;
+  display: block;
+  width: max-content;
+}
+
+.site-address-fps-link a:hover,
+.mail-address-fps-link a:hover {
+  cursor: pointer;
+}
+
+.site-address-fps-link {
+  grid-area: site-address;
+  justify-content: space-between;
+}
+
+.mail-address-fps-link {
+  grid-area: mail-address;
+}
 

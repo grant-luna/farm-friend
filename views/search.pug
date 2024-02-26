@@ -17,10 +17,18 @@ block main-content
             small Owner Names
             p= propertyRecord['firstOwner']
             p= propertyRecord['secondOwner']
+          div.property-information
         div.site-address-fps-link
-          small Property Address
-          h3= propertyRecord['siteAddress']
+          div.property-address
+            small Property Address
+            h3= propertyRecord['siteAddress']
+          div.property-links
+            a(href=propertyRecord['siteAddressFpsLink'] target='_blank') Contact Information
         div.mail-address-fps-link
           if propertyRecord['ownerOccupied'] === 'Y'
-            small Mailing Address
-            h3= propertyRecord['mailAddress']
+            div.property-address
+              small Mailing Address
+              h3= propertyRecord['mailAddress']
+            div.property-links
+              p The property is absentee-owned.  The owner likely lives at this address!
+              a(href=propertyRecord['mailAddressFpsLink']) Contact Information

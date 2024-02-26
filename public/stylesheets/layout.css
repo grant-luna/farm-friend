@@ -4,6 +4,7 @@ html {
   --dark-blue: #051D40;
   --white: #FFFFFF;
   --grey: #F9F8F8;
+  --green: #45BD62;
   --light-font: #F5F4F3;
   --dark-font: #1E2021;
   --asana-header-grey: #2E2E30;
@@ -18,6 +19,7 @@ body {
                        "nav main main main";
   grid-template-columns: 240px repeat(3, 1fr);                     
   grid-template-rows: minmax(50px, 7.5%) repeat(2, 1fr);
+  overflow: hidden;
 }
 
 header, nav {
