@@ -43,7 +43,7 @@ main {
   grid-template-areas: "owner-names site-address mail-address"
                         "search-result-footer search-result-footer search-result-footer";
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 85% 1fr;
+  grid-template-rows: 80% 1fr;
   padding: 1rem;
   gap: .5rem;
   border: 1px solid;
@@ -105,11 +105,11 @@ main {
   grid-area: search-result-footer;
   border-top: 1px solid black;
   width: 100%;
-  padding-top: .15rem;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
+  padding-top: .25rem;
 }
 
 .search-result-footer-icon {
