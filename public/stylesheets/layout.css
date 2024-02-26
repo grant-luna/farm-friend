@@ -63,17 +63,37 @@ header {
 
 .account-dropdown-menu {
   position: absolute;
-  bottom: -55%;
+  top: -.1rem;
   right: 0;
   background-color: var(--dark-blue);
   z-index: 2;
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  border-radius: .15rem;
+  width: 20%;
 }
 
-.account-dropdown-menu > * {
+.account-dropdown-menu-header {
+  padding: .5rem;
+  border-bottom: 1px solid var(--grey);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+}
+
+.account-dropdown-menu-header img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+}
+
+.account-dropdown-menu-items > * {
   padding: .5rem 1rem;
 }
 
-.account-dropdown-menu > *:hover {
+.account-dropdown-menu-items > *:hover {
   cursor: pointer;
   background-color: var(--nav-hover-grey);
 }
@@ -132,4 +152,5 @@ nav {
 main  {
   grid-area: main;
   background-color: var(--grey);
+  position: relative;
 }

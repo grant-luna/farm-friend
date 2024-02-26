@@ -29,7 +29,7 @@ class ClientWorker {
     if (existingDropdownMenu) {
       existingDropdownMenu.remove();
     } else {
-      document.querySelector('header').appendChild(accountDropdownMenu);
+      document.querySelector('main').appendChild(accountDropdownMenu);
     }
   }
 
@@ -43,7 +43,7 @@ class ClientWorker {
   
   static async generateAccountDropdownMenu() {
     try {
-      const accountDropdownMenu = document.createElement('ul');
+      const accountDropdownMenu = document.createElement('div');
       accountDropdownMenu.classList.add('account-dropdown-menu');
       
       const response = await fetch('/account-dropdown-menu-items');
