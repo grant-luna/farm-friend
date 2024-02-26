@@ -1,0 +1,23 @@
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+main {
+  padding: 0 .5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+  gap: 1rem;
+}
+
+img {
+  width: 20rem;
+  align-self: center;
+}
+
+main h3 {
+  font-size: 3rem;
+}
