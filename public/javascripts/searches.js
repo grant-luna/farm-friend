@@ -37,7 +37,13 @@ class ClientWorker {
         
         const closeButton = newSearchMenu.querySelector('img');
         closeButton.addEventListener('click', ClientWorker.prototype.handleCloseNewSearchMenu);
+
+        const fileInput = newSearchMenu.querySelector('input[type="file"]');
+        fileInput.addEventListener('change', ClientWorker.prototype.verifyFileFormat);
         
+        const uploadButton = newSearchMenu.querySelector('button.submit');
+        uploadButton.addEventListener('click', ClientWorker.prototype.handleUploadFile);
+
         document.querySelector('main').appendChild(newSearchMenu);
       } catch (error) {
         console.log(error);
@@ -49,7 +55,7 @@ class ClientWorker {
     event.preventDefault();
 
     const fileInput = document.querySelector('input[type="file"]').files[0];
-    const fileNameInput = document.querySelector('input[type="text"]').value;
+    const fileNameInput = document.querySelector('form.file-upload input[type="text"]').value;
     
     try {
       if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')
