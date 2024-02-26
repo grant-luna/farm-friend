@@ -8,6 +8,8 @@ block append headJavascripts
 
 block main-content
   div.search-results-header
+    p
+      a(href='/searches')= '<  Back to Searches'
     h3  Search Results
   ul.search-results
     each propertyRecord in reformattedSearch
