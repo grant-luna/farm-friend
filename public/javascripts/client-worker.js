@@ -47,10 +47,6 @@ export class ClientWorker {
       console.log(error);
     }
   }
-
-  static handleAccountDropdownMenuClick(event) {
-    
-  }
   
   static async handleNewSearchClick(event) {
     event.stopPropagation();
@@ -90,6 +86,14 @@ export class ClientWorker {
       fileReader.addEventListener('load', async (event) => {
         const csvString = event.target.result;
         const parsedCsvString = Papa.parse(csvString, { header: true }).data;
+        const dataProperty = {
+          notes: {},
+          callLogs: {},
+          tag: '',
+        }
+        parsedCsvString.forEach((row) => {
+          row.data = { ...dataProperty };
+        })
         
         const postRequestConfiguration = {
           method: 'POST',
@@ -118,9 +122,10 @@ export class ClientWorker {
 
   static async handleUserSearchSelection(event) {
     event.stopPropagation();
-    
+
     const searchId = event.target.closest('li').dataset.id;
     const response = await fetch(`/search/${searchId}`);
+    
     if (response.ok) {
       window.location.href = response.url;
     }
