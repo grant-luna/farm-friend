@@ -2,7 +2,7 @@ doctype html
 html(lang='en')
   head
     meta(charset='utf-8')
-    title Faster FastPeopleSearch
+    title Farm Friend
     block headStylesheets
       link(rel='stylesheet' href='/stylesheets/layout.css')
     block headJavascripts
@@ -10,11 +10,10 @@ html(lang='en')
     if session.signedIn
       header
         block header-content
-          span X
           h1 Farm Friend
           div.account-menu
-            span v
-            span O
+            img.account-menu-headshot(src='/images/headshots/grant-luna.png')
+            img.dropdown-icon(src='/images/icons/dropdown-icon.png')
       nav
         ul.nav-menu
           li
@@ -26,7 +25,6 @@ html(lang='en')
           h4= "Ronna & Grant Luna"
           p Title Representative | Fidelity National Title
           div.title-rep-menu-message
-            span O
             input(type='text')
           
     main
