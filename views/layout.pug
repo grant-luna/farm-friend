@@ -7,10 +7,10 @@ html(lang='en')
       link(rel='stylesheet' href='/stylesheets/layout.css')
     block headJavascripts
   body
-    if session.signedIn
-      header
-        block header-content
-          h1 Farm Friend
+    block header-content
+      if session.signedIn
+        header
+          img.farm-friend-icon(src='/images/icons/farm-friend-white-text-icon.png')
           div.account-dropdown-icon
             img.account-menu-headshot(src='/images/headshots/grant-luna.png')
             img.dropdown-icon(src='/images/icons/dropdown-icon.png')

@@ -39,6 +39,10 @@ header {
   position: relative;
 }
 
+header img.farm-friend-icon {
+  width: 7rem;
+}
+
 .account-dropdown-icon {
   display: flex;
   align-items: center;

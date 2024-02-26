@@ -85,6 +85,7 @@ main {
 .site-address-fps-link a:hover,
 .mail-address-fps-link a:hover {
   cursor: pointer;
+  box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
 .site-address-fps-link {
