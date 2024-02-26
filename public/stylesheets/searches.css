@@ -65,7 +65,7 @@ main {
   height: 1.5rem;
   position: absolute;
   top: .5rem;
-  right: .5rem;
+  left: .5rem;
 }
 
 .new-search-menu img:hover {
