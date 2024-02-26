@@ -83,6 +83,10 @@ app.get('/', authenticateUser, (request, response, next) => {
   response.render('home');
 });
 
+app.get('/newSearchWindow', authenticateUser, (request, response, next) => {
+  response.render('create-search-menu');
+});
+
 // Displaying a Single Search
 app.get('/search/:searchId', authenticateUser, catchError(async (request, response, next) => {
   const FileReformatter = require('./lib/file-reformatter');

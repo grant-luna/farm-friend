@@ -3,6 +3,7 @@ main {
   flex-direction: column;
   align-items: center;
   gap: .75rem;
+  position: relative;
 }
 
 .user-searches-container {
@@ -21,6 +22,7 @@ main {
   border: 1px solid black;
   border-radius: .5rem;
   margin-bottom: .25rem;
+  box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
 .user-searches-container > *:hover {
@@ -39,8 +41,34 @@ main {
 }
 
 .new-search-container img {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.new-search-menu {
+  position: absolute;
+  background-color: var(--white);
+  padding: 1rem;
+  border-radius: .5rem;
+  top: 25%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 10px 10px 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.new-search-menu img {
   width: 2rem;
   height: 2rem;
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+}
+
+.new-search-menu img:hover {
+  cursor: pointer;
+  opacity: 70%;
 }
 
 

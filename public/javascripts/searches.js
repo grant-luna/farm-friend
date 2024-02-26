@@ -3,12 +3,6 @@ import { FileValidator } from './file-validator.js';
 document.addEventListener('DOMContentLoaded', () => {
   const clientWorker = new ClientWorker();
 
-  // const fileInput = document.querySelector('input[type="file"]');
-  // fileInput.addEventListener('change', clientWorker.verifyFileFormat);
-
-  // const uploadButton = document.querySelector('button.submit');
-  // uploadButton.addEventListener('click', clientWorker.handleUploadFile);
-  
   const userSearchesContainer = document.querySelector('ul.user-searches-container');
   userSearchesContainer.addEventListener('click', clientWorker.handleUserSearchSelection);
 
@@ -17,9 +11,38 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 class ClientWorker {
-  handleNewSearchClick(event) {
+  handleCloseNewSearchMenu(event) {
+    const newSearchMenu = document.querySelector('.new-search-menu');
     
+    if (newSearchMenu) {
+      newSearchMenu.remove();
+    }
+  }
+  
+  async handleNewSearchClick(event) {
     event.stopPropagation();
+
+    let newSearchMenu = document.querySelector('.new-search-menu');
+
+    if (!newSearchMenu) {
+      try {
+        const response = await fetch('/newSearchWindow')
+        if (!response.ok) throw new Error('Unable to fetch the New Search window');
+        const newSearchHtml = await response.text();
+        if (!newSearchHtml) throw new Error('Unable to create the New Search menu');
+        
+        const newSearchMenu = document.createElement('div');
+        newSearchMenu.classList.add('new-search-menu');
+        newSearchMenu.innerHTML = newSearchHtml;
+        
+        const closeButton = newSearchMenu.querySelector('img');
+        closeButton.addEventListener('click', ClientWorker.prototype.handleCloseNewSearchMenu);
+        
+        document.querySelector('main').appendChild(newSearchMenu);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
   
   handleUploadFile(event) {
@@ -27,7 +50,7 @@ class ClientWorker {
 
     const fileInput = document.querySelector('input[type="file"]').files[0];
     const fileNameInput = document.querySelector('input[type="text"]').value;
-
+    
     try {
       if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')
       
