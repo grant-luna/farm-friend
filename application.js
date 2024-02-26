@@ -83,6 +83,10 @@ app.get('/', authenticateUser, (request, response, next) => {
   response.render('home');
 });
 
+app.get('/account-dropdown-menu-items', authenticateUser, (request, response, next) => {
+  response.render('account-dropdown-menu');
+});
+
 app.get('/newSearchWindow', authenticateUser, (request, response, next) => {
   response.render('create-search-menu');
 });

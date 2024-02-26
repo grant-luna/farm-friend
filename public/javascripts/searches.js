@@ -1,6 +1,7 @@
 import { FileValidator } from './file-validator.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const accountDropdownMenu = await ClientWorker.generateAccountDropdownMenu();  
   const userSearchesContainer = document.querySelector('ul.user-searches-container');
   userSearchesContainer.addEventListener('click', ClientWorker.handleUserSearchSelection);
 
@@ -26,6 +27,27 @@ class ClientWorker {
     if (newSearchMenu) {
       newSearchMenu.remove();
     }
+  }
+  
+  static async generateAccountDropdownMenu() {
+    try {
+      const accountDropdownMenu = document.createElement('ul');
+      accountDropdownMenu.classList.add('account-dropdown-menu');
+      
+      const response = await fetch('/account-dropdown-menu-items');
+      if (!response.ok) throw new Error('Unable to fetch account dropdown menu items');
+      const accountDropdownItems = await response.text();
+      if (!accountDropdownItems) throw new Error('Unable to generate account dropdown menu items');
+
+      accountDropdownMenu.innerHTML = accountDropdownItems;
+      return accountDropdownMenu;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  static handleAccountDropdownMenuClick(event) {
+    
   }
   
   static async handleNewSearchClick(event) {
