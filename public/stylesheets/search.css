@@ -18,7 +18,7 @@ main {
   display: grid;
   grid-template-areas: "owner-names site-address mail-address";
   grid-template-columns: repeat(3, 1fr);
-  padding: .5rem;
+  padding: 1rem;
   border: 1px solid;
   background-color: var(--white);
   border: none;
@@ -28,6 +28,11 @@ main {
 
 .owner-names {
   grid-area: owner-names;
+  margin-bottom: .5rem;
+}
+
+.property-information li {
+  font-size: .75rem;
 }
 
 .site-address-fps-link,
@@ -60,5 +65,6 @@ main {
 
 .mail-address-fps-link {
   grid-area: mail-address;
+  justify-content: space-between;
 }
 

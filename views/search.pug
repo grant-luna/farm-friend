@@ -18,6 +18,12 @@ block main-content
             p= propertyRecord['firstOwner']
             p= propertyRecord['secondOwner']
           div.property-information
+            ul
+              li Bedrooms: #{propertyRecord['bedrooms']}
+              li Bathrooms: #{propertyRecord['bathrooms']}
+              li Square Feet: #{propertyRecord['buildingSquareFeet']}
+              li Former Sale Date: #{propertyRecord['formerSaleDate']}
+              li Former Sale Price: #{propertyRecord['formerSalePrice']}
         div.site-address-fps-link
           div.property-address
             small Property Address
@@ -25,10 +31,10 @@ block main-content
           div.property-links
             a(href=propertyRecord['siteAddressFpsLink'] target='_blank') Contact Information
         div.mail-address-fps-link
-          if propertyRecord['ownerOccupied'] === 'Y'
+          if propertyRecord['ownerOccupied'] === 'N'
             div.property-address
               small Mailing Address
               h3= propertyRecord['mailAddress']
+            p The property is absentee-owned.  The owner likely lives at this address!
             div.property-links
-              p The property is absentee-owned.  The owner likely lives at this address!
-              a(href=propertyRecord['mailAddressFpsLink']) Contact Information
+              a(href=propertyRecord['mailAddressFpsLink'] target='_blank') Contact Information
