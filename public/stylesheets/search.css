@@ -19,7 +19,6 @@ main {
 .search-results {
   display: grid;
   grid-template-rows: repeat(auto-fill, max-content);
-  grid-auto-rows: 1fr;
   gap: .5rem;
   width: 90%;
   overflow-y: auto;
