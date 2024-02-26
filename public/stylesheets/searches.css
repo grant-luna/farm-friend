@@ -74,7 +74,6 @@ main {
 }
 
 form.file-upload {
-  border: 1px solid black;
   border-radius: .5rem;
   padding: .5rem;
   display: flex;
@@ -86,11 +85,34 @@ form.file-upload {
 
 form.file-upload > * {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: .5rem;
-  width: 100%;
+  width: 70%;
 }
 
+form.file-upload input[type="text"] {
+  padding: .5rem;
+  border-radius: .25rem;
+}
+
+form.file-upload input[type="text"]:focus {
+  outline: none;
+}
+
+form.file-upload .submit {
+  padding: .5rem;
+  border-radius: .25rem;
+  display: flex;
+  width: 40%;
+  background-color: transparent;
+}
+
+form.file-upload .submit:hover {
+  cursor: pointer;
+  opacity: 70%;
+  background-color: var(--dark-blue);
+  color: var(--white);
+  border-color: var(--white);
+}
 
 
