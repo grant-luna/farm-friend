@@ -1,28 +1,26 @@
 import { FileValidator } from './file-validator.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const clientWorker = new ClientWorker();
-
   const userSearchesContainer = document.querySelector('ul.user-searches-container');
-  userSearchesContainer.addEventListener('click', clientWorker.handleUserSearchSelection);
+  userSearchesContainer.addEventListener('click', ClientWorker.handleUserSearchSelection);
 
   const newSearchContainer = document.querySelector('.new-search-container')
-  newSearchContainer.addEventListener('click', clientWorker.handleNewSearchClick)
+  newSearchContainer.addEventListener('click', ClientWorker.handleNewSearchClick)
 });
 
 class ClientWorker {
-  attachNewSearchWindowEventListeners(newSearchMenu) {
+  static attachNewSearchWindowEventListeners(newSearchMenu) {
     const closeButton = newSearchMenu.querySelector('img');
-    closeButton.addEventListener('click', ClientWorker.prototype.handleCloseNewSearchMenu)
+    closeButton.addEventListener('click', ClientWorker.handleCloseNewSearchMenu)
     
     const fileInput = newSearchMenu.querySelector('input[type="file"]');
-    fileInput.addEventListener('change', ClientWorker.prototype.verifyFileFormat);
+    fileInput.addEventListener('change', ClientWorker.verifyFileFormat);
     
     const uploadButton = newSearchMenu.querySelector('button.submit');
-    uploadButton.addEventListener('click', ClientWorker.prototype.handleUploadFile);
+    uploadButton.addEventListener('click', ClientWorker.handleUploadFile);
   }
 
-  handleCloseNewSearchMenu(event) {
+  static handleCloseNewSearchMenu(event) {
     const newSearchMenu = document.querySelector('.new-search-menu');
 
     if (newSearchMenu) {
@@ -30,7 +28,7 @@ class ClientWorker {
     }
   }
   
-  async handleNewSearchClick(event) {
+  static async handleNewSearchClick(event) {
     event.stopPropagation();
 
     let newSearchMenu = document.querySelector('.new-search-menu');
@@ -46,7 +44,7 @@ class ClientWorker {
         newSearchMenu.classList.add('new-search-menu');
         newSearchMenu.innerHTML = newSearchHtml;
 
-        ClientWorker.prototype.attachNewSearchWindowEventListeners(newSearchMenu);
+        ClientWorker.attachNewSearchWindowEventListeners(newSearchMenu);
         
         document.querySelector('main').appendChild(newSearchMenu);
       } catch (error) {
@@ -55,7 +53,7 @@ class ClientWorker {
     }
   }
   
-  handleUploadFile(event) {
+  static handleUploadFile(event) {
     event.preventDefault();
 
     const fileInput = document.querySelector('input[type="file"]').files[0];
@@ -94,7 +92,7 @@ class ClientWorker {
     }
   }
 
-  async handleUserSearchSelection(event) {
+  static async handleUserSearchSelection(event) {
     event.stopPropagation();
     
     const searchId = event.target.closest('li').dataset.id;
@@ -104,7 +102,7 @@ class ClientWorker {
     }
   }
 
-  async signUserOut(event) {
+  static async signUserOut(event) {
     try {
       const response = await fetch('/sign-out', { method: 'POST' });
       if (response.ok) {
@@ -117,7 +115,7 @@ class ClientWorker {
     }
   }
 
-  async verifyFileFormat(event) {
+  static async verifyFileFormat(event) {
     const fileInput = event.target.files[0];
     const fileReader = new FileReader();
 
