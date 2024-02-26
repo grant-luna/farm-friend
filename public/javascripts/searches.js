@@ -2,6 +2,9 @@ import { FileValidator } from './file-validator.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const accountDropdownMenu = await ClientWorker.generateAccountDropdownMenu();  
+  const accountDropdownIcon = document.querySelector('.account-dropdown-icon');
+  accountDropdownIcon.addEventListener('click', ClientWorker.handleAccountDropdownClick.bind(null, accountDropdownMenu));
+
   const userSearchesContainer = document.querySelector('ul.user-searches-container');
   userSearchesContainer.addEventListener('click', ClientWorker.handleUserSearchSelection);
 
@@ -19,6 +22,15 @@ class ClientWorker {
     
     const uploadButton = newSearchMenu.querySelector('button.submit');
     uploadButton.addEventListener('click', ClientWorker.handleUploadFile);
+  }
+
+  static handleAccountDropdownClick(accountDropdownMenu, event) {
+    const existingDropdownMenu = document.querySelector('.account-dropdown-menu');
+    if (existingDropdownMenu) {
+      existingDropdownMenu.remove();
+    } else {
+      document.querySelector('header').appendChild(accountDropdownMenu);
+    }
   }
 
   static handleCloseNewSearchMenu(event) {

@@ -36,15 +36,16 @@ header {
   align-items: center;
   padding: 1rem;
   border-bottom: .5px solid var(--light-font);
+  position: relative;
 }
 
-.account-menu {
+.account-dropdown-icon {
   display: flex;
   align-items: center;
   gap: .25rem;
 }
 
-.account-menu:hover {
+.account-dropdown-icon:hover {
   cursor: pointer;
   opacity: 70%;
 }
@@ -58,6 +59,23 @@ header {
 .dropdown-icon {
   width: .5rem;
   height: .5rem;
+}
+
+.account-dropdown-menu {
+  position: absolute;
+  bottom: -55%;
+  right: 0;
+  background-color: var(--dark-blue);
+  z-index: 2;
+}
+
+.account-dropdown-menu > * {
+  padding: .5rem 1rem;
+}
+
+.account-dropdown-menu > *:hover {
+  cursor: pointer;
+  background-color: var(--nav-hover-grey);
 }
 
 nav {
