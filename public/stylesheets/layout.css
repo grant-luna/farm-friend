@@ -43,6 +43,10 @@ header img.farm-friend-icon {
   width: 7rem;
 }
 
+header img.farm-friend-icon:hover {
+  cursor: pointer;
+}
+
 .account-dropdown-icon {
   display: flex;
   align-items: center;
