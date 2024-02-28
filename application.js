@@ -87,6 +87,10 @@ app.get('/account-dropdown-menu-items', authenticateUser, (request, response, ne
   response.render('account-dropdown-menu');
 });
 
+app.get('/mapme', authenticateUser, (request, response, next) => {
+  response.render('mapme', { googleMapsApiKey: process.env['GOOGLEMAPSAPI'] });
+});
+
 app.get('/newSearchWindow', authenticateUser, (request, response, next) => {
   response.render('create-search-menu');
 });
