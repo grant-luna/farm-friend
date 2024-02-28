@@ -24,7 +24,7 @@ export class ClientWorker {
   static async handleContactInformationButtonClick(event) {
     const eventTarget = event.target;
     
-    if (eventTarget.tagName === 'A' && eventTarget.closest('div').classList.contains('property-links')) {
+    if (eventTarget.tagName === 'BUTTON' && eventTarget.closest('div').classList.contains('property-links')) {
       event.preventDefault();
 
       const fpsWindow = document.createElement('div');
@@ -33,7 +33,7 @@ export class ClientWorker {
       const fpsWindowBody = await requestForFpsWindow.text();
       
       fpsWindow.innerHTML = fpsWindowBody;
-      fpsWindow.querySelector('.fps-iframe').src = eventTarget.href;
+      fpsWindow.querySelector('.fps-iframe').src = eventTarget.dataset.link;
 
       const minimizeWindowButton = fpsWindow.querySelector('.fps-window-header img');
       minimizeWindowButton.addEventListener('click', function (fpsWindow, event) {

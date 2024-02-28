@@ -73,8 +73,8 @@ main {
   flex-direction: column;
 }
 
-.site-address-fps-link a,
-.mail-address-fps-link a {
+.site-address-fps-link button,
+.mail-address-fps-link button {
   background-color: var(--green);
   color: var(--white);
   padding: .5rem;
@@ -85,13 +85,13 @@ main {
   width: max-content;
 }
 
-.site-address-fps-link a:hover,
-.mail-address-fps-link a:hover {
+.site-address-fps-link button:hover,
+.mail-address-fps-link button:hover {
   cursor: pointer;
   box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
-.property-links a {
+.property-links button {
   cursor: pointer;
 }
 
