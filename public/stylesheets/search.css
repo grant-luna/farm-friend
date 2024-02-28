@@ -91,6 +91,10 @@ main {
   box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
+.property-links a {
+  cursor: pointer;
+}
+
 .site-address-fps-link {
   grid-area: site-address;
   justify-content: space-between;
@@ -138,9 +142,28 @@ main {
   height: 100%;
   width: 40%;
   background-color: var(--dark-blue);
+  display: grid;
+  grid-template-rows: 5% 1fr;
 }
 
-.fpsIframe {
-  height: 80%;
+.fps-window-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: .5rem;
+}
+
+.fps-window-header img {
+  width: 2rem;
+  height: 2rem;
+}
+
+.fps-window-header img:hover {
+  cursor: pointer;
+  opacity: 70%;
+}
+
+.fps-iframe {
+  height: 100%;
   width: 100%;
 }

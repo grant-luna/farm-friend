@@ -87,6 +87,10 @@ app.get('/account-dropdown-menu-items', authenticateUser, (request, response, ne
   response.render('account-dropdown-menu');
 });
 
+app.get('/fetch-fps-window', authenticateUser, (request, response, next) => {
+  response.render('fps-window');
+});
+
 app.get('/mapme', authenticateUser, (request, response, next) => {
   response.render('mapme', { googleMapsApiKey: process.env['GOOGLEMAPSAPI'] });
 });
