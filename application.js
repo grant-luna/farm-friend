@@ -102,7 +102,7 @@ app.get('/search/:searchId', authenticateUser, catchError(async (request, respon
   const search = await response.locals.store.findSearchBySearchId(searchId);
   if (!search) throw new Error('Unable to locate a search for the given ID');
   const reformattedSearch = FileReformatter.prepareForDisplay(search);
-  
+
   response.render('search', { reformattedSearch });
 }));
 

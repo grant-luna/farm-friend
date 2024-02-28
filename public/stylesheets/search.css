@@ -131,3 +131,16 @@ main {
   height: 1.5rem;
 }
 
+.fps-window {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 40%;
+  background-color: var(--dark-blue);
+}
+
+.fpsIframe {
+  height: 80%;
+  width: 100%;
+}
