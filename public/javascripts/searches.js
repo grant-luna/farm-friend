@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const accountDropdownIcon = document.querySelector('.account-dropdown-icon');
   accountDropdownIcon.addEventListener('click', ClientWorker.handleAccountDropdownClick.bind(null, accountDropdownMenu));
 
-  const userSearchesContainer = document.querySelector('ul.user-searches-container');
-  userSearchesContainer.addEventListener('click', ClientWorker.handleUserSearchSelection);
+  const searchesContainer = document.querySelector('ul.searches-container');
+  searchesContainer.addEventListener('click', ClientWorker.handleUserSearchSelection);
 
   const newSearchContainer = document.querySelector('.new-search-container')
   newSearchContainer.addEventListener('click', ClientWorker.handleNewSearchClick)
