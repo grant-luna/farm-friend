@@ -113,10 +113,14 @@ app.get('/search/:searchId', authenticateUser, catchError(async (request, respon
 // Creating a New Search
 const { v4: uuidv4 } = require('uuid');
 app.post('/search', catchError(async (request, response, next) => {
+  const userEmail = request.session.email;
+  const fileName = request.body.fileNameInput;
+  const parsedCsvString = request.body.parsedCsvString;
+
   const searchId = uuidv4();
-  
-  const search = await response.locals.store.saveSearchToDatabase(searchId, request.session.email, request.body);
-  if (!search) throw new Error('Unable to generate your requested search');
+
+  const search = await response.locals.store.saveSearchToDatabase(searchId, userEmail, fileName, parsedCsvString);
+  // if (!search) throw new Error('Unable to generate your requested search');
 
   response.redirect(`/search/${searchId}`);
 }));

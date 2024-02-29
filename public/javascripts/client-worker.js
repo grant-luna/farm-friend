@@ -12,6 +12,25 @@ export class ClientWorker {
     uploadButton.addEventListener('click', ClientWorker.handleUploadFile);
   }
 
+  static async generateAccountDropdownMenu() {
+    try {
+      const accountDropdownMenu = document.createElement('div');
+      accountDropdownMenu.classList.add('account-dropdown-menu');
+      
+      const response = await fetch('/account-dropdown-menu-items');
+      if (!response.ok) throw new Error('Unable to fetch account dropdown menu items');
+      const accountDropdownItems = await response.text();
+      if (!accountDropdownItems) throw new Error('Unable to generate account dropdown menu items');
+
+      accountDropdownMenu.innerHTML = accountDropdownItems;
+      accountDropdownMenu.querySelector('.account-dropdown-menu-sign-out').addEventListener('click', ClientWorker.signUserOut);
+      
+      return accountDropdownMenu;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   static handleAccountDropdownClick(accountDropdownMenu, event) {
     const existingDropdownMenu = document.querySelector('.account-dropdown-menu');
     if (existingDropdownMenu) {
@@ -51,26 +70,7 @@ export class ClientWorker {
       newSearchMenu.remove();
     }
   }
-  
-  static async generateAccountDropdownMenu() {
-    try {
-      const accountDropdownMenu = document.createElement('div');
-      accountDropdownMenu.classList.add('account-dropdown-menu');
-      
-      const response = await fetch('/account-dropdown-menu-items');
-      if (!response.ok) throw new Error('Unable to fetch account dropdown menu items');
-      const accountDropdownItems = await response.text();
-      if (!accountDropdownItems) throw new Error('Unable to generate account dropdown menu items');
 
-      accountDropdownMenu.innerHTML = accountDropdownItems;
-      accountDropdownMenu.querySelector('.account-dropdown-menu-sign-out').addEventListener('click', ClientWorker.signUserOut);
-      
-      return accountDropdownMenu;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  
   static async handleNewSearchClick(event) {
     event.stopPropagation();
 
@@ -106,11 +106,13 @@ export class ClientWorker {
       if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')
       
       const fileReader = new FileReader();
+
       fileReader.addEventListener('load', async (event) => {
         const csvString = event.target.result;
         const parsedCsvString = Papa.parse(csvString, { header: true }).data;
         const dataProperty = {
           notes: {},
+          confirmedNumbers: {},
           callLogs: {},
           status: 'Not Contacted',
         }
@@ -123,7 +125,7 @@ export class ClientWorker {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(parsedCsvString),
+          body: JSON.stringify({fileNameInput, parsedCsvString}),
         }
 
         const response = await fetch('/search', postRequestConfiguration);
