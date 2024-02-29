@@ -82,6 +82,7 @@ main {
 
 .new-search-menu h3 {
   margin: 0 auto;
+  font-size: 1.5rem;
 }
 
 .new-search-menu img {
@@ -95,17 +96,6 @@ main {
 .new-search-menu img:hover {
   cursor: pointer;
   opacity: 70%;
-}
-.file-name-input {
-  grid-area: file-name-input;
-}
-
-.file-input {
-  grid-area: file-inpu;
-}
-
-.submit {
-  grid-area: submit-button;
 }
 
 form.file-upload {
@@ -123,6 +113,11 @@ form.file-upload > * {
   gap: .5rem;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
+}
+
+form.file-upload label {
+  font-size: 1.25rem;
 }
 
 
@@ -137,17 +132,19 @@ form.file-upload input[type="text"]:focus {
 
 .new-search-menu .submit {
   padding: .5rem;
-  border-radius: .25rem;
+  border-radius: .5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: transparent;
+  width: 200px;
+  font-size: 1.25rem;
 }
 
 .new-search-menu .submit:hover {
   cursor: pointer;
   opacity: 70%;
-  background-color: var(--dark-blue);
+  background-color: #051D40;
   color: var(--white);
   border-color: var(--white);
 }
