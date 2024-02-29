@@ -10,6 +10,11 @@ main {
   align-self: center;
 }
 
+.searches-header img {
+  width: 4rem;
+  height: 4rem;
+}
+
 .searches-header h3 {
   font-size: 1.5rem;
 }

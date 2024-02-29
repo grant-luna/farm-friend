@@ -17,3 +17,4 @@ block main-content
     each search in userSearches
       li.user-search-container(data-id=search.id)
         h3= search.file_name
+        h3 Number of Contacts: #{search.json_data.length}

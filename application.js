@@ -129,7 +129,6 @@ app.post('/search', catchError(async (request, response, next) => {
 app.get('/searches', authenticateUser, catchError(async (request, response, next) => {
   const userSearches = await response.locals.store.findUserSearches(request.session.email);
   if (!userSearches) throw new Error('Unable to locate user searches');
-  
   response.render('searches', { userSearches });
 }));
 
