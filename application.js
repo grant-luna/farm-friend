@@ -26,7 +26,7 @@ const pg = require('pg');
 const pgSession = require('connect-pg-simple')(session);
 
 const pgPool = new pg.Pool({
-  database: 'ffps',
+  database: 'farm-friend',
   max: 20,
 });
 
@@ -42,7 +42,7 @@ app.use(session({
     createTableIfMissing: true,
     tableName: 'session',
   }),
-  name: 'ffps-session',
+  name: 'farm-friend-session',
   saveUninitialized: false,
   resave: false,
   secret: process.env.SESSIONSECRET,
