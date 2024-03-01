@@ -110,6 +110,14 @@ app.get('/search/:searchId', authenticateUser, catchError(async (request, respon
   response.render('search', { reformattedSearch });
 }));
 
+app.delete('/search/:searchId', authenticateUser, catchError(async (request, response, next) => {
+  const searchId = request.params.searchId;
+  const deleteResponse = await response.locals.store.deleteSearch(searchId);
+  if (!deleteResponse) throw new Error('Unable to delete the requested search');
+  
+  response.status(204).end();
+}));
+
 // Creating a New Search
 const { v4: uuidv4 } = require('uuid');
 app.post('/search', catchError(async (request, response, next) => {
@@ -120,7 +128,7 @@ app.post('/search', catchError(async (request, response, next) => {
   const searchId = uuidv4();
 
   const search = await response.locals.store.saveSearchToDatabase(searchId, userEmail, fileName, parsedCsvString);
-  // if (!search) throw new Error('Unable to generate your requested search');
+  if (!search) throw new Error('Unable to generate your requested search');
 
   response.redirect(`/search/${searchId}`);
 }));
@@ -129,6 +137,7 @@ app.post('/search', catchError(async (request, response, next) => {
 app.get('/searches', authenticateUser, catchError(async (request, response, next) => {
   const userSearches = await response.locals.store.findUserSearches(request.session.email);
   if (!userSearches) throw new Error('Unable to locate user searches');
+  
   response.render('searches', { userSearches });
 }));
 

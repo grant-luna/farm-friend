@@ -146,13 +146,40 @@ export class ClientWorker {
   }
 
   static async handleUserSearchSelection(event) {
-    event.stopPropagation();
-
-    const searchId = event.target.closest('li').dataset.id;
-    const response = await fetch(`/search/${searchId}`);
+    const closestLi = event.target.closest('li');
     
-    if (response.ok) {
-      window.location.href = response.url;
+    if (closestLi.classList.contains('user-search-container')) {
+      event.stopPropagation();
+
+      const searchId = closestLi.dataset.id;
+      try {
+        if (event.target.classList.contains('delete-icon')) {
+          const deleteSearchResponse = await fetch(
+            `/search/${searchId}`,
+            { method: 'DELETE' }
+          );
+          if (!deleteSearchResponse.ok) throw new Error('Unable to delete the requested search');
+          location.reload();
+        } else {
+          const response = await fetch(`/search/${searchId}`);
+
+          if (!response.ok) throw new Error('Unable to locate the requested search');
+          window.location.href = response.url;
+        }
+      } catch (error) {
+
+      }
+    }
+
+    if (event.target.classList.contains('delete-icon')) {
+      event.stopPropagation();
+    } else {
+      const searchId = event.target.closest('li').dataset.id;
+      const response = await fetch(`/search/${searchId}`);
+      
+      if (response.ok) {
+        window.location.href = response.url;
+      }
     }
   }
 

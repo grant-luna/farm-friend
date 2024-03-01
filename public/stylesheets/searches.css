@@ -46,7 +46,6 @@ main {
 }
 
 .searches-container h3 {
-  left: .75rem;
   font-size: 1rem;
 }
 
@@ -62,7 +61,7 @@ main {
 }
 
 .new-search-container img {
-  width: 1.5rem;
+  width: 1.75rem;
   height: 1.5rem;
 }
 
@@ -100,6 +99,15 @@ main {
 
 .new-search-menu img:hover {
   cursor: pointer;
+  opacity: 70%;
+}
+
+.user-search-container img {
+  width: 1.75rem;
+  height: 1.5rem;
+}
+
+.user-search-container img:hover {
   opacity: 70%;
 }
 
