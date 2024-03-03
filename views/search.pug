@@ -14,7 +14,7 @@ block main-content
     h3  Search Results
   ul.search-results
     each propertyRecord in reformattedSearch
-      li.search-result
+      li.search-result(data-row-id=propertyRecord.data.id)
         dl.property-details
           div.owner-names
             small Owner Names

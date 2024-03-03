@@ -1,3 +1,19 @@
 div.fps-window-header
   img(src='/images/icons/close-window-white-icon.png')
+  h3 FastPeopleSearch Results
 iframe.fps-iframe
+div.call-log-container
+  div.call-log-header
+    img(src='/images/icons/phone-icon-white.png')
+    h3 Log a Call
+  form.log-call
+    fieldset
+      label(for='contact-peson') Who did you speak to?
+      input(type='text' name='contact-person')
+    fieldset
+      label(for='call-notes') Call Notes
+      textarea(rows='5' name='call-notes')
+    fieldset
+      label(for='confirmed-number') Would you like to save a phone number?
+      input(type='number' name='confirmed-number')
+    button.submit Log Call

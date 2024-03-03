@@ -106,7 +106,7 @@ app.get('/search/:searchId', authenticateUser, catchError(async (request, respon
   const search = await response.locals.store.findSearchBySearchId(searchId);
   if (!search) throw new Error('Unable to locate a search for the given ID');
   const reformattedSearch = FileReformatter.prepareForDisplay(search);
-
+  
   response.render('search', { reformattedSearch });
 }));
 
@@ -116,6 +116,24 @@ app.delete('/search/:searchId', authenticateUser, catchError(async (request, res
   if (!deleteResponse) throw new Error('Unable to delete the requested search');
   
   response.status(204).end();
+}));
+
+app.put('/updateSearch/:searchId', authenticateUser, catchError(async (request, response, next) => {
+  const searchId = request.params.searchId;
+  const searchData = request.body;
+  
+  const searchUpdated = await response.locals.store.updateSearchData(searchId, searchData);
+  if (!searchUpdated) throw new Error('Unable to update search data');
+
+  response.status(200).end();
+}));
+
+app.get('/search-data/:searchId', authenticateUser, catchError(async (request, response, next) => {
+  const searchId = request.params.searchId;
+  const search = await response.locals.store.findSearchBySearchId(searchId);
+  if (!search) throw new Error('Unable to locate a search for the given ID');
+
+  response.json(search);
 }));
 
 // Creating a New Search
