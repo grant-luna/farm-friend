@@ -17,7 +17,7 @@ class SearchesClientWorker extends ClientWorker {
     fileInput.addEventListener('change', ClientWorker.verifyFileFormat);
     
     const uploadButton = newSearchMenu.querySelector('button.submit');
-    uploadButton.addEventListener('click', ClientWorker.handleUploadFile);
+    uploadButton.addEventListener('click', SearchesClientWorker.handleUploadFile);
   }
 
   static handleCloseNewSearchMenu(newSearchMenu, _event) {
@@ -55,6 +55,55 @@ class SearchesClientWorker extends ClientWorker {
     }
   }
 
+  static handleUploadFile(event) {
+    event.preventDefault();
+
+    const fileInput = document.querySelector('input[type="file"]').files[0];
+    const fileNameInput = document.querySelector('form.file-upload input[type="text"]').value;
+    
+    try {
+      if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')
+      
+      const fileReader = new FileReader();
+
+      fileReader.addEventListener('load', async (event) => {
+        const csvString = event.target.result;
+        const parsedCsvString = Papa.parse(csvString, { header: true }).data;
+        
+        // Add 'data' property to the object prior to adding the search into the database
+        const dataProperty = {
+          confirmedNumbers: [],
+          callLogs: [],
+        }
+        parsedCsvString.forEach((row, index) => {
+          row.data = { ...dataProperty, id: index };
+        });
+        
+        const postRequestConfiguration = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({fileNameInput, parsedCsvString}),
+        }
+
+        const response = await fetch('/search', postRequestConfiguration);
+        if (!response.ok) throw new Error('Error with creating your search');
+        window.location.href = response.url;
+      });
+  
+      fileReader.addEventListener('error', (event) => {
+        console.error('Error reading file:', event.target.error);
+      });
+  
+      if (fileInput) {
+        fileReader.readAsText(fileInput);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   static removeNewSearchMenuEventListener(newSearchMenu) {
     const closeButton = newSearchMenu.querySelector('img');
     closeButton.removeEventListener('click', SearchesClientWorker.handleCloseNewSearchMenu.bind(null, newSearchMenu));
@@ -63,6 +112,6 @@ class SearchesClientWorker extends ClientWorker {
     fileInput.removeEventListener('change', ClientWorker.verifyFileFormat);
     
     const uploadButton = newSearchMenu.querySelector('button.submit');
-    uploadButton.removeEventListener('click', ClientWorker.handleUploadFile);
+    uploadButton.removeEventListener('click', SearchesClientWorker.handleUploadFile);
   }
 }

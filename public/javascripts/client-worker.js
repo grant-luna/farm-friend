@@ -1,17 +1,6 @@
 import { FileValidator } from './file-validator.js';
 
 export class ClientWorker {
-  static attachNewSearchWindowEventListeners(newSearchMenu) {
-    const closeButton = newSearchMenu.querySelector('img');
-    closeButton.addEventListener('click', ClientWorker.handleCloseNewSearchMenu)
-    
-    const fileInput = newSearchMenu.querySelector('input[type="file"]');
-    fileInput.addEventListener('change', ClientWorker.verifyFileFormat);
-    
-    const uploadButton = newSearchMenu.querySelector('button.submit');
-    uploadButton.addEventListener('click', ClientWorker.handleUploadFile);
-  }
-
   static handleAccountDropdownToggleDisplay(_event) {
     const accountDropdownMenu = document.querySelector('.account-dropdown-menu');
     const signOutButton = document.querySelector('.account-dropdown-menu-sign-out');
@@ -49,55 +38,6 @@ export class ClientWorker {
       }
     } catch (error) {
       console.error('Error signing out:', error);
-    }
-  }
-  
-  static handleUploadFile(event) {
-    event.preventDefault();
-
-    const fileInput = document.querySelector('input[type="file"]').files[0];
-    const fileNameInput = document.querySelector('form.file-upload input[type="text"]').value;
-    
-    try {
-      if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')
-      
-      const fileReader = new FileReader();
-
-      fileReader.addEventListener('load', async (event) => {
-        const csvString = event.target.result;
-        const parsedCsvString = Papa.parse(csvString, { header: true }).data;
-        
-        // Add 'data' property to the object prior to adding the search into the database
-        const dataProperty = {
-          confirmedNumbers: [],
-          callLogs: [],
-        }
-        parsedCsvString.forEach((row, index) => {
-          row.data = { ...dataProperty, id: index };
-        });
-        
-        const postRequestConfiguration = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({fileNameInput, parsedCsvString}),
-        }
-
-        const response = await fetch('/search', postRequestConfiguration);
-        if (!response.ok) throw new Error('Error with creating your search');
-        window.location.href = response.url;
-      });
-  
-      fileReader.addEventListener('error', (event) => {
-        console.error('Error reading file:', event.target.error);
-      });
-  
-      if (fileInput) {
-        fileReader.readAsText(fileInput);
-      }
-    } catch (error) {
-      console.log(error);
     }
   }
 
