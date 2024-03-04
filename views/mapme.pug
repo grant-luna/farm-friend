@@ -6,7 +6,7 @@ block append headJavascripts
   script(src=`https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}` async defer)
   script(src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js")
   script(src='/javascripts/mapme.js')
-block main-content
+block append main-content
   h3 MapMe
   label(for='file-input') Upload Your File
   input(type='file' accept='.csv' required)

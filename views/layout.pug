@@ -5,7 +5,7 @@ html(lang='en')
     title Farm Friend
     block headStylesheets
       link(rel='stylesheet' href='/stylesheets/layout.css')
-      script(src='/javascripts/layout.js')
+      script(src='/javascripts/layout.js' type='module')
     block headJavascripts
   body
     block header-content
@@ -29,3 +29,11 @@ html(lang='en')
           
     main
       block main-content
+        if session.signedIn
+          div.account-dropdown-menu
+            div.account-dropdown-menu-header
+              img(src='/images/headshots/grant-luna.png')
+              h3 Grant Luna
+              p grantlunafidelity@gmail.com
+            ul.account-dropdown-menu-items
+              li.account-dropdown-menu-sign-out Sign Out
