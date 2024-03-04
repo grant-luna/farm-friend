@@ -3,6 +3,7 @@ import { ClientWorker } from './client-worker.js';
 document.addEventListener('DOMContentLoaded', async () => {
   const searchResults = document.querySelector('.search-results');
   searchResults.addEventListener('click', SearchClientWorker.handleContactInformationButtonClick);
+  searchResults.addEventListener('click', SearchClientWorker.handleDisplayCallLog);
 });
 
 class SearchClientWorker extends ClientWorker {
@@ -93,5 +94,32 @@ class SearchClientWorker extends ClientWorker {
     if (newSearchMenu) {
       newSearchMenu.remove();
     }
+  }
+
+  static async handleDisplayCallLog(event) {
+    const closestDiv = event.target.closest('div');
+    
+    if (closestDiv && closestDiv.classList.contains('call-log')) {
+      event.stopPropagation();
+      
+      try {
+        const searchResult = event.target.closest('.search-result');
+        const rowId = searchResult.dataset.rowId;
+        const searchId = window.location.pathname.split('/')[window.location.pathname.split('/').length - 1];
+        const callLogs = await fetch(`/call-logs/${searchId}/${rowId}`);
+        const html = await callLogs.text();
+        const callLogContainer = document.createElement('div');
+        callLogContainer.classList.add('call-log-container');
+        callLogContainer.innerHTML = html;
+        searchResult.insertAdjacentElement('afterend', callLogContainer);
+        
+      } catch (error) {
+        console.error('Unable to display the call log.');
+      }
+    }
+  }
+
+  static formatCallLogsForDisplay(callLogRowData) {
+    return 
   }
 }

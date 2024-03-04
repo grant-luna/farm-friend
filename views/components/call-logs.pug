@@ -1,0 +1,7 @@
+div.call-log-menu-log-new-call-container
+  h3 Create a new call Log
+ul.call-logs
+  each callLog in callLogRowData.callLogs
+    li= callLog.date
+    li= callLog.callNotes
+    li= callLog.contactPerson

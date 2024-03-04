@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const newSearchContainer = document.querySelector('.new-search-container')
   newSearchContainer.addEventListener('click', SearchesClientWorker.handleNewSearchClick)
+
 });
 
 class SearchesClientWorker extends ClientWorker {
@@ -110,7 +111,7 @@ class SearchesClientWorker extends ClientWorker {
     
     if (closestLi.classList.contains('user-search-container')) {
       event.stopPropagation();
-
+      
       const searchId = closestLi.dataset.id;
       try {
         if (event.target.classList.contains('delete-icon')) {
@@ -122,23 +123,12 @@ class SearchesClientWorker extends ClientWorker {
           location.reload();
         } else {
           const response = await fetch(`/search/${searchId}`);
-
+          
           if (!response.ok) throw new Error('Unable to locate the requested search');
           window.location.href = response.url;
         }
       } catch (error) {
-
-      }
-    }
-
-    if (event.target.classList.contains('delete-icon')) {
-      event.stopPropagation();
-    } else {
-      const searchId = event.target.closest('li').dataset.id;
-      const response = await fetch(`/search/${searchId}`);
-      
-      if (response.ok) {
-        window.location.href = response.url;
+        console.log('The error is in SearchesClientWOrker.handleUserSearchSelection');
       }
     }
   }
@@ -164,7 +154,8 @@ class SearchesClientWorker extends ClientWorker {
       const csvHeaders = Object.keys(parsedCsvString[0]);
       
       if (!FileValidator.isValidHeading(csvHeaders)) {
-        console.log('Unsupported File Format');
+        const newSearchMenu = document.querySelector('.new-search-menu');
+        alert('Invalid File Format');
       }
     });
 

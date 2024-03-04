@@ -10,6 +10,7 @@ html {
   --asana-header-grey: #2E2E30;
   --asana-nav-grey: #2E2E30;
   --nav-hover-grey: rgba(255, 255, 255, 0.11);
+  --error-color: red;
   font-size: 16px;
   font-family: "myriad-pro", "myriad pro", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
 }

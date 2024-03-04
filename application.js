@@ -87,6 +87,16 @@ app.get('/account-dropdown-menu-items', authenticateUser, (request, response, ne
   response.render('account-dropdown-menu');
 });
 
+app.get('/call-logs/:searchId/:rowId', authenticateUser, catchError(async (request, response, next) => {
+  const searchId = request.params.searchId;
+  const rowId = request.params.rowId;
+  const search = await response.locals.store.findSearchBySearchId(searchId);
+  if (!search) throw new Error('Unable to locate a search for the given ID');
+  const callLogRowData = search.find((row) => Number(row.data.id) === Number(rowId)).data;
+  
+  response.render('call-logs', { callLogRowData });
+}));
+
 app.get('/fetch-fps-window', authenticateUser, (request, response, next) => {
   response.render('fps-window');
 });

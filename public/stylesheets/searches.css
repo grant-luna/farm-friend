@@ -87,6 +87,25 @@ main {
   opacity: 70%;
 }
 
+.new-search-menu .submit {
+  padding: .5rem;
+  border-radius: .5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  width: 200px;
+  font-size: 1.25rem;
+}
+
+.new-search-menu .submit:hover {
+  cursor: pointer;
+  opacity: 70%;
+  background-color: #051D40;
+  color: var(--white);
+  border-color: var(--white);
+}
+
 .user-search-container img {
   width: 1.75rem;
   height: 1.5rem;
@@ -126,25 +145,6 @@ form.file-upload input[type="text"] {
 
 form.file-upload input[type="text"]:focus {
   outline: none;
-}
-
-.new-search-menu .submit {
-  padding: .5rem;
-  border-radius: .5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
-  width: 200px;
-  font-size: 1.25rem;
-}
-
-.new-search-menu .submit:hover {
-  cursor: pointer;
-  opacity: 70%;
-  background-color: #051D40;
-  color: var(--white);
-  border-color: var(--white);
 }
 
 
