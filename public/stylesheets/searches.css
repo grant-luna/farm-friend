@@ -66,22 +66,7 @@ main {
 }
 
 .new-search-menu {
-  position: absolute;
-  background-color: var(--white);
-  padding: 1rem;
-  border-radius: .5rem;
-  top: 25%;
-  left: 25%;
-  width: 50%;
-  min-width: max-content;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: .5rem;
-  box-shadow: 10px 10px 20px 0 rgba(0, 0, 0, 0.2);
-  border: 3px solid var(--dark-font);
-  margin: 0 auto;
+  display: none;
 }
 
 .new-search-menu h3 {

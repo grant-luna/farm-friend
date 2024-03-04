@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 class SearchesClientWorker extends ClientWorker {
-  static attachNewSearchWindowEventListeners(newSearchMenu) {
+  static attachNewSearchWindowEventListeners(newSearchMenu) {  
     const closeButton = newSearchMenu.querySelector('img');
-    closeButton.addEventListener('click', SearchesClientWorker.handleCloseNewSearchMenu)
+    closeButton.addEventListener('click', SearchesClientWorker.handleCloseNewSearchMenu.bind(null, newSearchMenu));
     
     const fileInput = newSearchMenu.querySelector('input[type="file"]');
     fileInput.addEventListener('change', ClientWorker.verifyFileFormat);
@@ -20,33 +20,49 @@ class SearchesClientWorker extends ClientWorker {
     uploadButton.addEventListener('click', ClientWorker.handleUploadFile);
   }
 
-  static handleCloseNewSearchMenu(event) {
-    const newSearchMenu = document.querySelector('.new-search-menu');
-    newSearchMenu.remove();
+  static handleCloseNewSearchMenu(newSearchMenu, _event) {
+    newSearchMenu.style.display = '';
+    SearchesClientWorker.removeNewSearchMenuEventListener(newSearchMenu);
   }
   
   static async handleNewSearchClick(event) {
     event.stopPropagation();
 
+    const newSearchMenuStyles = {
+      position: 'absolute',
+      backgroundColor: 'var(--white)',
+      padding: '1rem',
+      borderRadius: '.5rem',
+      top: '25%',
+      left: '25%',
+      width: '50%',
+      minWidth: 'max-content',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: '.5rem',
+      boxShadow: '10px 10px 20px 0 rgba(0, 0, 0, 0.2)',
+      border: '3px solid var(--dark-font)',
+      margin: '0 auto',
+    };
+
     let newSearchMenu = document.querySelector('.new-search-menu');
-
-    if (!newSearchMenu) {
-      try {
-        const response = await fetch('/newSearchWindow')
-        if (!response.ok) throw new Error('Unable to fetch the New Search window');
-        const newSearchHtml = await response.text();
-        if (!newSearchHtml) throw new Error('Unable to create the New Search menu');
-        
-        const newSearchMenu = document.createElement('div');
-        newSearchMenu.classList.add('new-search-menu');
-        newSearchMenu.innerHTML = newSearchHtml;
-
-        SearchesClientWorker.attachNewSearchWindowEventListeners(newSearchMenu);
-        
-        document.querySelector('main').appendChild(newSearchMenu);
-      } catch (error) {
-        console.log(error);
-      }
+    
+    if (!newSearchMenu.style.display) {
+      Object.assign(newSearchMenu.style, newSearchMenuStyles);
+      SearchesClientWorker.attachNewSearchWindowEventListeners(newSearchMenu);
     }
+  }
+
+  static removeNewSearchMenuEventListener(newSearchMenu) {
+    const closeButton = newSearchMenu.querySelector('img');
+    closeButton.removeEventListener('click', SearchesClientWorker.handleCloseNewSearchMenu.bind(null, newSearchMenu));
+    
+    const fileInput = newSearchMenu.querySelector('input[type="file"]');
+    fileInput.removeEventListener('change', ClientWorker.verifyFileFormat);
+    
+    const uploadButton = newSearchMenu.querySelector('button.submit');
+    uploadButton.removeEventListener('click', ClientWorker.handleUploadFile);
   }
 }
