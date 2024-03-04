@@ -1,6 +1,4 @@
-import { FileValidator } from './file-validator.js';
-
-export class ClientWorker {
+;export class ClientWorker {
   static handleAccountDropdownToggleDisplay(_event) {
     const accountDropdownMenu = document.querySelector('.account-dropdown-menu');
     const signOutButton = document.querySelector('.account-dropdown-menu-sign-out');
@@ -38,63 +36,6 @@ export class ClientWorker {
       }
     } catch (error) {
       console.error('Error signing out:', error);
-    }
-  }
-
-  static async handleUserSearchSelection(event) {
-    const closestLi = event.target.closest('li');
-    
-    if (closestLi.classList.contains('user-search-container')) {
-      event.stopPropagation();
-
-      const searchId = closestLi.dataset.id;
-      try {
-        if (event.target.classList.contains('delete-icon')) {
-          const deleteSearchResponse = await fetch(
-            `/search/${searchId}`,
-            { method: 'DELETE' }
-          );
-          if (!deleteSearchResponse.ok) throw new Error('Unable to delete the requested search');
-          location.reload();
-        } else {
-          const response = await fetch(`/search/${searchId}`);
-
-          if (!response.ok) throw new Error('Unable to locate the requested search');
-          window.location.href = response.url;
-        }
-      } catch (error) {
-
-      }
-    }
-
-    if (event.target.classList.contains('delete-icon')) {
-      event.stopPropagation();
-    } else {
-      const searchId = event.target.closest('li').dataset.id;
-      const response = await fetch(`/search/${searchId}`);
-      
-      if (response.ok) {
-        window.location.href = response.url;
-      }
-    }
-  }
-
-  static async verifyFileFormat(event) {
-    const fileInput = event.target.files[0];
-    const fileReader = new FileReader();
-
-    fileReader.addEventListener('load', async (event) => {
-      const csvString = event.target.result;
-      const parsedCsvString = await Papa.parse(csvString, { header: true }).data;
-      const csvHeaders = Object.keys(parsedCsvString[0]);
-      
-      if (!FileValidator.isValidHeading(csvHeaders)) {
-        console.log('Unsupported File Format');
-      }
-    });
-
-    if (fileInput) {
-      fileReader.readAsText(fileInput);
     }
   }
 }

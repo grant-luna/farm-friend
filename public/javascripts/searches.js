@@ -1,8 +1,9 @@
 import { ClientWorker } from './client-worker.js';
+import { FileValidator } from './file-validator.js'
 
 document.addEventListener('DOMContentLoaded', async () => {
   const searchesContainer = document.querySelector('ul.searches-container');
-  searchesContainer.addEventListener('click', ClientWorker.handleUserSearchSelection);
+  searchesContainer.addEventListener('click', SearchesClientWorker.handleUserSearchSelection);
 
   const newSearchContainer = document.querySelector('.new-search-container')
   newSearchContainer.addEventListener('click', SearchesClientWorker.handleNewSearchClick)
@@ -14,7 +15,7 @@ class SearchesClientWorker extends ClientWorker {
     closeButton.addEventListener('click', SearchesClientWorker.handleCloseNewSearchMenu.bind(null, newSearchMenu));
     
     const fileInput = newSearchMenu.querySelector('input[type="file"]');
-    fileInput.addEventListener('change', ClientWorker.verifyFileFormat);
+    fileInput.addEventListener('change', SearchesClientWorker.verifyFileFormat);
     
     const uploadButton = newSearchMenu.querySelector('button.submit');
     uploadButton.addEventListener('click', SearchesClientWorker.handleUploadFile);
@@ -104,14 +105,71 @@ class SearchesClientWorker extends ClientWorker {
     }
   }
 
+  static async handleUserSearchSelection(event) {
+    const closestLi = event.target.closest('li');
+    
+    if (closestLi.classList.contains('user-search-container')) {
+      event.stopPropagation();
+
+      const searchId = closestLi.dataset.id;
+      try {
+        if (event.target.classList.contains('delete-icon')) {
+          const deleteSearchResponse = await fetch(
+            `/search/${searchId}`,
+            { method: 'DELETE' }
+          );
+          if (!deleteSearchResponse.ok) throw new Error('Unable to delete the requested search');
+          location.reload();
+        } else {
+          const response = await fetch(`/search/${searchId}`);
+
+          if (!response.ok) throw new Error('Unable to locate the requested search');
+          window.location.href = response.url;
+        }
+      } catch (error) {
+
+      }
+    }
+
+    if (event.target.classList.contains('delete-icon')) {
+      event.stopPropagation();
+    } else {
+      const searchId = event.target.closest('li').dataset.id;
+      const response = await fetch(`/search/${searchId}`);
+      
+      if (response.ok) {
+        window.location.href = response.url;
+      }
+    }
+  }
+
   static removeNewSearchMenuEventListener(newSearchMenu) {
     const closeButton = newSearchMenu.querySelector('img');
     closeButton.removeEventListener('click', SearchesClientWorker.handleCloseNewSearchMenu.bind(null, newSearchMenu));
     
     const fileInput = newSearchMenu.querySelector('input[type="file"]');
-    fileInput.removeEventListener('change', ClientWorker.verifyFileFormat);
+    fileInput.removeEventListener('change', SearchesClientWorker.verifyFileFormat);
     
     const uploadButton = newSearchMenu.querySelector('button.submit');
     uploadButton.removeEventListener('click', SearchesClientWorker.handleUploadFile);
+  }
+
+  static async verifyFileFormat(event) {
+    const fileInput = event.target.files[0];
+    const fileReader = new FileReader();
+
+    fileReader.addEventListener('load', async (event) => {
+      const csvString = event.target.result;
+      const parsedCsvString = await Papa.parse(csvString, { header: true }).data;
+      const csvHeaders = Object.keys(parsedCsvString[0]);
+      
+      if (!FileValidator.isValidHeading(csvHeaders)) {
+        console.log('Unsupported File Format');
+      }
+    });
+
+    if (fileInput) {
+      fileReader.readAsText(fileInput);
+    }
   }
 }
