@@ -1,4 +1,5 @@
 import { ClientWorker } from './client-worker.js';
+import { findSearchIdFromUrl } from './find-search-id-from-url.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const searchResults = document.querySelector('.search-results');
@@ -13,7 +14,7 @@ class SearchClientWorker extends ClientWorker {
     if (eventTarget.tagName === 'BUTTON' && eventTarget.closest('div').classList.contains('property-links')) {
       event.preventDefault();
       
-      const searchId = window.location.href.split('/')[window.location.href.split('/').length - 1];
+      const searchId = findSearchIdFromUrl();
       const responseForSearchRequest = await fetch(`/search-data/${searchId}`);
       const searchObject = await responseForSearchRequest.json();
 
@@ -96,6 +97,32 @@ class SearchClientWorker extends ClientWorker {
     }
   }
 
+  static async handleCallLogsMenuLogCallSubmission(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const userInputs = [...document.querySelectorAll('.log-call-form input, .log-call-form textarea')].map((element) => element.value);
+    
+    if (userInputs.some((input) => input)) {
+      try {
+        const callLogFormData = new FormData(document.querySelector('.log-call-form'));
+        const searchId = findSearchIdFromUrl();
+        const searchDataResponse = await fetch(`/search-data/${searchId}`);
+        
+
+        if (!searchDataResponse.ok) throw new Error('Unable to access the requested search data');
+        const searchData = await searchDataResponse.json()
+        debugger;
+        const confirmedNumber = callLogFormData.get('confirmed-number');
+      } catch (error) {
+        console.error('Error: ', error);
+      }
+
+    }
+
+
+  }
+
   static hideCallLogsMenu(event) {
     const callLogsMenu = event.target.closest('div.call-logs-menu');
     const hideCallLogMenuButton = event.currentTarget;
@@ -106,11 +133,17 @@ class SearchClientWorker extends ClientWorker {
   static hideLogCall(event) {
     const callLogForm = document.querySelector('.log-call-form');
     callLogForm.style.opacity = '0';
+    const callLogFormInputs = callLogForm.querySelectorAll('input, textarea');
+    [...callLogFormInputs].forEach((input) => input.value = '');
+    const callLogFormSubmitButton = callLogForm.querySelector('button[type="submit"]');
+
   }
 
   static displayLogCallForm(event) {
     const logCallForm = document.querySelector('.log-call-form');
     logCallForm.style.opacity = '100%';
+    const logCallFormSubmitButton = logCallForm.querySelector('button[type="submit"]');
+    logCallFormSubmitButton.addEventListener('click', SearchClientWorker.handleCallLogsMenuLogCallSubmission);
   }
 
   static async displayCallLogsMenu(event) {
@@ -143,9 +176,5 @@ class SearchClientWorker extends ClientWorker {
         console.error('Error: ', error);
       }
     }
-  }
-
-  static formatCallLogsForDisplay(callLogRowData) {
-    return 
   }
 }

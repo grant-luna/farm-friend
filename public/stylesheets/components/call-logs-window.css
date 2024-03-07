@@ -7,8 +7,9 @@
   gap: .5rem;
   position: relative;
   padding: .5rem;
-  border-top-color: var(--dark-blue);
-  border-top: 5px;
+  border-bottom: .5rem solid var(--dark-blue);
+  border-right: .25rem solid var(--dark-blue);
+  border-left: .25rem solid var(--dark-blue);
 }
 
 h2 {
