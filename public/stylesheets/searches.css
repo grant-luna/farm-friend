@@ -96,12 +96,12 @@ main {
   background-color: transparent;
   width: 200px;
   font-size: 1.25rem;
+  border: 1px solid var(--dark-blue);
 }
 
 .new-search-menu .submit:hover {
   cursor: pointer;
-  opacity: 70%;
-  background-color: #051D40;
+  background-color: var(--dark-blue);
   color: var(--white);
   border-color: var(--white);
 }

@@ -1,3 +1,5 @@
+@import url("./components/call-logs-window.css");
+
 main {
   display: flex;
   flex-direction: column;

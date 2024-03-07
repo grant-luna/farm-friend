@@ -3,7 +3,7 @@ import { ClientWorker } from './client-worker.js';
 document.addEventListener('DOMContentLoaded', async () => {
   const searchResults = document.querySelector('.search-results');
   searchResults.addEventListener('click', SearchClientWorker.handleContactInformationButtonClick);
-  searchResults.addEventListener('click', SearchClientWorker.handleDisplayCallLog);
+  searchResults.addEventListener('click', SearchClientWorker.displayCallLogsMenu);
 });
 
 class SearchClientWorker extends ClientWorker {
@@ -96,25 +96,51 @@ class SearchClientWorker extends ClientWorker {
     }
   }
 
-  static async handleDisplayCallLog(event) {
+  static hideCallLogsMenu(event) {
+    const callLogsMenu = event.target.closest('div.call-logs-menu');
+    const hideCallLogMenuButton = event.currentTarget;
+    hideCallLogMenuButton.removeEventListener('click', SearchClientWorker.hideCallLogMenuButton);
+    callLogsMenu.remove();
+  }
+
+  static hideLogCall(event) {
+    const callLogForm = document.querySelector('.log-call-form');
+    callLogForm.style.opacity = '0';
+  }
+
+  static displayLogCallForm(event) {
+    const logCallForm = document.querySelector('.log-call-form');
+    logCallForm.style.opacity = '100%';
+  }
+
+  static async displayCallLogsMenu(event) {
     const closestDiv = event.target.closest('div');
-    
-    if (closestDiv && closestDiv.classList.contains('call-log')) {
+    const existingCallLogsMenu = document.querySelector('.call-logs-menu');
+
+    if (closestDiv && !existingCallLogsMenu && closestDiv.classList.contains('call-log-icon')) {
       event.stopPropagation();
-      
+
       try {
         const searchResult = event.target.closest('.search-result');
         const rowId = searchResult.dataset.rowId;
         const searchId = window.location.pathname.split('/')[window.location.pathname.split('/').length - 1];
         const callLogs = await fetch(`/call-logs/${searchId}/${rowId}`);
         const html = await callLogs.text();
-        const callLogContainer = document.createElement('div');
-        callLogContainer.classList.add('call-log-container');
-        callLogContainer.innerHTML = html;
-        searchResult.insertAdjacentElement('afterend', callLogContainer);
         
+        // Construct Call Log Menu
+        const callLogsMenu = document.createElement('div');
+        callLogsMenu.classList.add('call-logs-menu');
+        callLogsMenu.innerHTML = html;
+        const hideCallLogMenuButton = callLogsMenu.querySelector('.hide-call-log-menu-icon');
+        hideCallLogMenuButton.addEventListener('click', SearchClientWorker.hideCallLogsMenu)
+        const logCallButton = callLogsMenu.querySelector('.call-logs-menu-header .log-a-call-button');
+        logCallButton.addEventListener('click', SearchClientWorker.displayLogCallForm)
+        const hideLogCall = callLogsMenu.querySelector('.log-call-form img');
+        hideLogCall.addEventListener('click', SearchClientWorker.hideLogCall)
+
+        searchResult.insertAdjacentElement('afterend', callLogsMenu);
       } catch (error) {
-        console.error('Unable to display the call log.');
+        console.error('Error: ', error);
       }
     }
   }

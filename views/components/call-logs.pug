@@ -1,7 +1,34 @@
-div.call-log-menu-log-new-call-container
-  h3 Create a new call Log
-ul.call-logs
-  each callLog in callLogRowData.callLogs
-    li= callLog.date
-    li= callLog.callNotes
-    li= callLog.contactPerson
+// parent element is div.call-logs-menu
+h2 Call Logs
+div.call-logs-menu-header
+  div.call-logs-menu-header-element.log-a-call-button
+    img(src='/images/icons/black-add-icon.png')
+    h3 Log a Call
+  div.call-logs-menu-header-element.hide-call-log-menu-icon
+    h3 Hide
+    img.dropdown-icon(src='/images/icons/dropdown-black-icon.png')
+form.log-call-form
+  img(src='/images/icons/close-button-icon.png')
+  h3 Log a New Call
+  fieldset
+    label(for='contact-peson') Who did you speak to?
+    input(type='text' name='contact-person')
+  fieldset
+    label(for='call-notes') Call Notes
+    textarea(rows='5' name='call-notes')
+  fieldset
+    label(for='confirmed-number') Would you like to save a phone number?
+    input(type='number' name='confirmed-number')
+  button(type='submit') Log Call
+ul.call-logs-body
+  each callLog in callLogs
+    li.call-log-data
+      div.call-log-data-item
+        h3 Call Date
+        p #{callLog.date}
+      div.call-log-data-item
+        h3 Call Notes
+        p #{callLog.callNotes}
+      div.call-log-data-item
+        h3 Contact Person
+        p #{callLog.contactPerson}

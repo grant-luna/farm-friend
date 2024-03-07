@@ -87,14 +87,15 @@ app.get('/account-dropdown-menu-items', authenticateUser, (request, response, ne
   response.render('account-dropdown-menu');
 });
 
+const reformatCallLogDates = require('./lib/reformat-call-log-dates.js');
 app.get('/call-logs/:searchId/:rowId', authenticateUser, catchError(async (request, response, next) => {
   const searchId = request.params.searchId;
   const rowId = request.params.rowId;
   const search = await response.locals.store.findSearchBySearchId(searchId);
   if (!search) throw new Error('Unable to locate a search for the given ID');
-  const callLogRowData = search.find((row) => Number(row.data.id) === Number(rowId)).data;
-  
-  response.render('call-logs', { callLogRowData });
+  const callLogs = search.find((row) => Number(row.data.id) === Number(rowId)).data.callLogs;
+
+  response.render('call-logs', { callLogs: reformatCallLogDates(callLogs) });
 }));
 
 app.get('/fetch-fps-window', authenticateUser, (request, response, next) => {
