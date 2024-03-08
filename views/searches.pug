@@ -16,9 +16,11 @@ block append main-content
         img(src='/images/icons/black-add-icon.png')
     each search in userSearches
       li.user-search-container(data-id=search.id)
-        h3= search.file_name
         div.user-search-information
+          h3= search.file_name
           p #{search.json_data.length} Contacts
           p Date Created: #{search.date_created}
-        img.delete-icon(src='/images/icons/trash-icon.png')
+        div.user-search-container-footer
+          img.edit-icon(src='/images/icons/edit-icon.png')
+          img.delete-icon(src='/images/icons/trash-icon.png')
   include components/new-search-menu.pug

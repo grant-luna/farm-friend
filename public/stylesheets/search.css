@@ -171,7 +171,7 @@ main {
 
 .fps-window-header img {
   width: 2rem;
-  height: 2rem;
+  height: 1.75rem;
 }
 
 .fps-window-header img:hover {

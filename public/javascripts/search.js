@@ -108,18 +108,41 @@ class SearchClientWorker extends ClientWorker {
         const callLogFormData = new FormData(document.querySelector('.log-call-form'));
         const searchId = findSearchIdFromUrl();
         const searchDataResponse = await fetch(`/search-data/${searchId}`);
-        
-
         if (!searchDataResponse.ok) throw new Error('Unable to access the requested search data');
-        const searchData = await searchDataResponse.json()
-        debugger;
+        const searchData = await searchDataResponse.json();
+        const rowId = event.target.closest('div.call-logs-menu').previousElementSibling.dataset.rowId;
+        const row = searchData.find((row) => Number(row.data.id) === Number(rowId));
+        
         const confirmedNumber = callLogFormData.get('confirmed-number');
+        if (confirmedNumber) {
+          row.data.confirmedNumbers.push(confirmedNumber);
+        }
+
+        if (callLogFormData.get('contact-person') || callLogFormData.get('call-notes')) {
+          row.data.callLogs.push({
+            date: new Date(),
+            contactPerson: callLogFormData.get('contact-person'),
+            callNotes: callLogFormData.get('call-notes'),
+          });
+        }
+
+        const updateSearchResponse = await fetch(
+          `/updateSearch/${searchId}`,
+          { headers: {'Content-Type' : 'application/json'},
+            method: 'PUT', 
+            body: JSON.stringify(searchData), 
+          },
+        );
+                  
+        if (!updateSearchResponse.ok) {
+          throw new Error('Error with updating search.');
+        }
+        
+        SearchClientWorker.hideLogCall()
       } catch (error) {
         console.error('Error: ', error);
       }
-
     }
-
 
   }
 
@@ -130,13 +153,13 @@ class SearchClientWorker extends ClientWorker {
     callLogsMenu.remove();
   }
 
-  static hideLogCall(event) {
+  static hideLogCall() {
     const callLogForm = document.querySelector('.log-call-form');
     callLogForm.style.opacity = '0';
     const callLogFormInputs = callLogForm.querySelectorAll('input, textarea');
     [...callLogFormInputs].forEach((input) => input.value = '');
     const callLogFormSubmitButton = callLogForm.querySelector('button[type="submit"]');
-
+    // What needs to be done here?
   }
 
   static displayLogCallForm(event) {
