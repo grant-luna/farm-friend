@@ -1,4 +1,5 @@
 @import url("./components/call-logs-window.css");
+@import url("./components/fps-window.css");
 
 main {
   display: flex;
@@ -123,72 +124,4 @@ main {
 .search-result-footer-icon img {
   width: 1.5rem;
   height: 1.5rem;
-}
-
-.fps-window {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 40%;
-  background-color: var(--dark-blue);
-  display: grid;
-  grid-template-rows: 5% 70% 25%;
-}
-
-.fps-window-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.fps-window-header img {
-  width: 2rem;
-  height: 1.75rem;
-}
-
-.fps-window-header img:hover {
-  cursor: pointer;
-  opacity: 70%;
-}
-
-.fps-window-header h3 {
-  color: var(--white);
-  padding-right: .5rem;
-}
-
-.fps-iframe {
-  height: 100%;
-  width: 100%;
-}
-
-.call-log-container {
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  gap: .5rem;
-}
-
-.call-log-header {
-  display: flex;
-  gap: .5rem;
-}
-
-.call-log-header img {
-  width: 1.75rem;
-  height: 1.5rem;
-}
-
-.call-log-header h3 {
-  color: var(--white);
-  font-size: 1.25rem;
-}
-
-form.log-call {
-  width: 90%;
-  display: flex;
-  flex-direction: column;
 }

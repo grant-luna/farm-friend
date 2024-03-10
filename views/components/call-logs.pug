@@ -9,25 +9,25 @@ div.call-logs-menu-header
 form.log-call-form
   img(src='/images/icons/close-button-icon.png')
   h3 Log a New Call
-  fieldset
+  fieldset.form-floating
+    input.form-control(type='text' placeholder='Contact Person' name='contact-person')
     label(for='contact-peson') Who did you speak to?
-    input(type='text' name='contact-person')
-  fieldset
+  fieldset.form-floating
+    textarea.form-control(rows='5' placeholder='Call Notes' name='call-notes')
     label(for='call-notes') Call Notes
-    textarea(rows='5' name='call-notes')
-  fieldset
+  fieldset.form-floating
+    input.form-control(type='number' placeholder='Would you like to save a phone number?' name='confirmed-number')
     label(for='confirmed-number') Would you like to save a phone number?
-    input(type='number' name='confirmed-number')
-  button(type='submit') Log Call
+  button.btn.btn-primary(type='submit') Log Call
 ul.call-logs-body
   each callLog in callLogs
     li.call-log-data
-      div.call-log-data-item
+      div.call-log-data-item.mb-3
         h3 Call Date
         p #{callLog.date}
-      div.call-log-data-item
-        h3 Call Notes
-        p #{callLog.callNotes}
-      div.call-log-data-item
+      div.call-log-data-item.mb-3
         h3 Contact Person
         p #{callLog.contactPerson}
+      div.call-log-data-item.mb-3
+        h3 Call Notes
+        p #{callLog.callNotes}

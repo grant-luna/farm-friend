@@ -30,6 +30,7 @@ class SearchClientWorker extends ClientWorker {
 
       // Attach Event Listener to Call Log Submit Button
       const submitCallLogButton = fpsWindow.querySelector('form.log-call .submit');
+      
       submitCallLogButton.addEventListener('click', async function (searchId, searchObject, rowId, event) {
         event.preventDefault();
         
@@ -199,5 +200,9 @@ class SearchClientWorker extends ClientWorker {
         console.error('Error: ', error);
       }
     }
+  }
+
+  static async submitFpsWindowCallLog(searchId, searchObject, rowId, event) {
+
   }
 }

@@ -32,7 +32,7 @@ block append main-content
             small Property Address
             h3= propertyRecord['siteAddress']
           div.property-links
-            button.btn.btn-success(data-link=propertyRecord['siteAddressFpsLink']) Contact Information
+            button.btn.btn-success(data-link=propertyRecord['siteAddressFpsLink'] data-bs-toggle='collpase' data-bs-target='.fps-window' aria-expanded="false" aria-controls="fps-window") Contact Information
         div.mail-address-fps-link
           if propertyRecord['ownerOccupied'] === 'N'
             div.property-address

@@ -2,8 +2,8 @@
   background-color: var(--white);
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 200px;
-  width: 80%;
   gap: .5rem;
   position: relative;
   padding: .5rem;
@@ -102,32 +102,6 @@ h2 {
 .log-call-form img:hover {
   cursor: pointer;
   opacity: 70%;
-}
-
-.log-call-form fieldset {
-  display: flex;
-  flex-direction: column;
-  gap: .25rem;
-}
-
-.log-call-form fieldset input {
-  padding: .25rem;
-}
-
-.log-call-form button[type="submit"] {
-  width: 100px;
-  background-color: transparent;
-  border-radius: .5rem;
-  font-size: 1.25rem;
-  padding: .5rem;
-  margin: 0 auto;
-  border: 1px solid var(--dark-blue);
-}
-
-.log-call-form button[type="submit"]:hover {
-  cursor: pointer;
-  background-color: var(--dark-blue);
-  color: var(--white);
 }
 
 .call-logs-body {
