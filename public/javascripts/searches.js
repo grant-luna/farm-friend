@@ -61,7 +61,7 @@ class SearchesClientWorker extends ClientWorker {
     event.preventDefault();
 
     const fileInput = document.querySelector('input[type="file"]').files[0];
-    const fileNameInput = document.querySelector('form.file-upload input[type="text"]').value;
+    const fileNameInput = document.querySelector('.new-search-menu input[type="text"]').value;
     
     try {
       if (!fileInput || !fileNameInput) throw new Error('Mssing either a file name or a file for a search.')

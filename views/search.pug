@@ -32,7 +32,7 @@ block append main-content
             small Property Address
             h3= propertyRecord['siteAddress']
           div.property-links
-            button(data-link=propertyRecord['siteAddressFpsLink']) Contact Information
+            button.btn.btn-success(data-link=propertyRecord['siteAddressFpsLink']) Contact Information
         div.mail-address-fps-link
           if propertyRecord['ownerOccupied'] === 'N'
             div.property-address
@@ -40,8 +40,9 @@ block append main-content
               h3= propertyRecord['mailAddress']
             p The property is absentee-owned.  The owner likely lives at this address!
             div.property-links
-              button(data-link=propertyRecord['mailAddressFpsLink']) Contact Information
+              button.btn.btn-success(data-link=propertyRecord['mailAddressFpsLink']) Contact Information
         div.search-result-footer
-          div.search-result-footer-icon.call-log-icon
+          div.search-result-footer-icon.call-log-icon.btn.btn-light
             img(src='/images/icons/phone-icon.png')
             p Call Logs
+  

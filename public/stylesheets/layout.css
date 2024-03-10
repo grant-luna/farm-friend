@@ -40,11 +40,23 @@ header {
   position: relative;
 }
 
+.left-header-icons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+header img.nav-menu-icon {
+  width: 1.5rem;
+  height: 1.25rem;
+}
+
 header img.farm-friend-icon {
   width: 7rem;
 }
 
-header img.farm-friend-icon:hover {
+header img.farm-friend-icon:hover,
+header img.nav-menu-icon:hover {
   cursor: pointer;
 }
 

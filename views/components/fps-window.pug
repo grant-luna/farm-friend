@@ -4,16 +4,16 @@ div.fps-window-header
 iframe.fps-iframe
 div.call-log-container
   div.call-log-header
-    img(src='/images/icons/phone-icon-white.png')
     h3 Log a Call
   form.log-call
-    fieldset
+    fieldset.
+    fieldset.form-floating.mb-3
+      input.form-control(type='text' placeholder='Contact Person' name='contact-person')
       label(for='contact-peson') Who did you speak to?
-      input(type='text' name='contact-person')
-    fieldset
+    fieldset.form-floating.mb-3
+      textarea.form-control(rows='5' placeholder='Call Notes' name='call-notes')
       label(for='call-notes') Call Notes
-      textarea(rows='5' name='call-notes')
-    fieldset
-      label(for='confirmed-number') Would you like to save a phone number?
-      input(type='number' name='confirmed-number')
-    button.submit Log Call
+    fieldset.form-floating.mb-3
+      input.form-control(type='number' placeholder='Save a phone number?' name='confirmed-number')
+      label(for='confirmed-number') Save a phone number?
+    button.submit.btn.btn-primary Log Call

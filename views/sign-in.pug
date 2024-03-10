@@ -13,12 +13,12 @@ block main-content
       li= errorMessage
   h3 Sign In
   form(method='POST' action='/sign-in')
-    fieldset
-      label(for='email') Email Address:
-      input(type='email' name='email' required)
-    fieldset
-      label(for='password') Password:
-      input(type='password' name='password' required)
-    button.submit Sign In
+    fieldset.form-floating.mb-3
+      input.form-control(type='email' name='email' placeholder='Email Address' required)
+      label(for='email') Email Address
+    fieldset.form-floating.mb-3
+      input.form-control(type='password' name='password' placeholder='Password' required)
+      label(for='password') Password
+    button.submit.btn.btn-primary Sign In
   p Don't have an account? 
     a(href='/sign-up') Sign Up

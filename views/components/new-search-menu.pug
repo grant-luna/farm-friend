@@ -1,12 +1,11 @@
 div.new-search-menu
-  ul.flash-messages
   img(src='/images/icons/close-button-icon.png')
   h3 Start a Search
-  form.file-upload
-    fieldset.file-name-input
+  form
+    fieldset.form-floating.mb-3
+      input.form-control(type='text' placeholder='Name Your Search' required)
       label(for='fileName') Name Your Search
-      input(type='text' required)
-    fieldset.file-input
-      label(for='file') Upload Your File
-      input(type='file' accept='.csv' required)
-  button.submit Upload File
+    fieldset
+      label.form-label(for='file') Upload Your File
+      input.form-control.form-control-lg(type='file' accept='.csv' required)
+  button.submit.btn.btn-primary Upload File

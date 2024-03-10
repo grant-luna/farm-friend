@@ -14,18 +14,18 @@ block main-content
     
   h3 Sign Up
   form(method='POST' action='/sign-up')
-    fieldset
+    fieldset.form-floating
+      input.form-control(type='text' name='firstName' placeholder='First Name' value=firstName required)
       label(for='firstName') First Name
-      input(type='text' name='firstName' value=firstName required)
-    fieldset
+    fieldset.form-floating
+      input.form-control(type='text' name='lastName' placeholder='Last Name' value=lastName required)
       label(for='lastName') Last Name
-      input(type='text' name='lastName' value=lastName required)
-    fieldset
+    fieldset.form-floating
+      input.form-control(type='email' name='email' placeholder='Email Address' value=email required)
       label(for='email') Email Address
-      input(type='email' name='email' value=email required)
-    fieldset
+    fieldset.form-floating
+      input.form-control(type='password' name='password' placeholder='Password' value=password required)
       label(for='password') Password
-      input(type='password' name='password' value=password required)
-    button.submit Sign-Up
+    button.submit.btn.btn-primary Sign-Up
   p Already have an account? 
     a(href='sign-in') Sign In
