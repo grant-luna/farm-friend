@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import './globals.css'
+import styles from './page.module.css';
 
 export const metadata = {
   title: 'Farm Friend',
@@ -18,7 +19,7 @@ export default function RootLayout({ children }) {
             <li><Link href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link></li>
           </ul>
         </nav>
-        <main>
+        <main className={styles.mainContent}>
           {children}
         </main>
       </body>

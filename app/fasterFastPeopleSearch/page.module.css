@@ -1,0 +1,91 @@
+.matchBoxHeader {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.matchBoxInstructions {
+  border: 1px solid navy;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: .5rem;
+  border-radius: .5rem;
+  padding: 1rem 0;
+  gap: .75rem;
+}
+.matchBoxInstructions h2 {
+  width: 75%;
+  text-align: center;
+}
+
+.matchBoxExamples {
+  border: 1px solid navy;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  padding: 1rem;
+  border-radius: .5rem;
+}
+
+.headerBox {
+  height: 30%;
+  width: 90%;
+  overflow-y: auto;
+  margin: 0 auto;
+  margin-bottom: 1.5rem;
+  border: 1px solid white;
+  border-radius: 1.25rem;
+  z-index: 2;
+  position: relative;
+}
+
+.headerBox:hover {
+  border: 1px solid black;
+}
+
+.headerList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  margin-top: 3rem;
+}
+
+.headerList li:hover {
+  cursor: pointer;
+  opacity: 50%;
+}
+
+.headerList > li {
+  border: 1px solid navy;
+  width: 25%;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: .5rem;
+  border-radius: .75rem;
+  word-wrap: break-word;
+  white-space: normal;
+  text-align: center;
+}
+
+.scrollNotification {
+  padding: 1rem;
+  text-align: center;
+  border-radius: .5rem;
+  border-color: black;
+  position: absolute;
+  top: 2%;
+  left: 40%;
+  z-index: 1;
+  background-color: navy;
+  color: white;
+}
+
+.scrollNotification small {
+  display: block;
+}
