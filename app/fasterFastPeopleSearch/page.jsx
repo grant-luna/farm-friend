@@ -24,7 +24,7 @@ export default function Page() {
     <>
       <h1>Faster FastPeopleSearch</h1>
       {!parsedFile && <input type='file' accept='.csv' onChange={handleFileSelection}></input>}
-      {parsedFile && <FileMatcher parsedFile={parsedFile} setParsedFile={setParsedFile}/>}
+      {parsedFile && <FileMatchMenu parsedFile={parsedFile} setParsedFile={setParsedFile}/>}
     </>
   )
 }
@@ -32,19 +32,20 @@ export default function Page() {
 // https://www.fastpeoplesearch.com/address/3445-gurnard_san-pedro-ca
 // https://www.fastpeoplesearch.com/address/3445-gurnard-ave_san-pedro-ca
 // https://www.fastpeoplesearch.com/address/3529-e-broadway-7_long-beach-ca
-function FileMatcher({ parsedFile, setParsedFile }) {
-  const [ siteAddress, setSiteAddress ] = useState(undefined);
+function FileMatchMenu({ parsedFile, setParsedFile }) {
+  const [ primaryAddress, setPrimaryAddress ] = useState(undefined);
   const [ mailAddress, setMailAddress ] = useState(undefined);
-  const [ ownerName, setOwnerName ] = useState(undefined);
+  const [ ownerName, setOwnerNames ] = useState(undefined);
 
   return (
     <>
       <h3>File Matcher</h3>
-      {!siteAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setSiteAddress}/>}
-      {siteAddress && !mailAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setMailAddress}/>}
-      {siteAddress && mailAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setOwnerName}/>}
+      {!primaryAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setPrimaryAddress}/>}
+      {primaryAddress && !mailAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setMailAddress}/>}
+      {primaryAddress && mailAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setOwnerNames}/>}
       <div>
-        <button type="button" onClick={() => setParsedFile(false)}>Start Over</button>
+        <button type="button" disabled={true} onClick={() => setParsedFile(false)}>Start Over</button>
+        <button type="button" disabled={true} onClick={() => setParsedFile(false)}>New File</button>
         <button type="button" disabled={true}>Finish</button>
       </div>
     </>
@@ -52,15 +53,15 @@ function FileMatcher({ parsedFile, setParsedFile }) {
 }
 
 function FileHeaderSelector({ parsedFile, setterFunction }) {
-  // site address | mail address | owner name
-  const [ currentlyMatching, setCurrentlyMatching ] = useState('site address');
+  // primary address | mail address | owner name
+  const [ currentlyMatching, setCurrentlyMatching ] = useState('primary address');
   // true | false
   const [ isHovered, setIsHovered ] = useState(false);
   const [ currentMatch, setCurrentMatch ] = useState('');
   const [ matchedHeaders, setMatchedHeaders ] = useState({
-    "site address": [],
-    "mail address": [],
-    "owner name": []
+    "primary address": {address: [], cityState: []},
+    "mail address": {address: [], cityState: []},
+    "owner names": { firstOwner: [], secondOwner: []},
   });
 
   // { [key: string]: string }
@@ -69,11 +70,6 @@ function FileHeaderSelector({ parsedFile, setterFunction }) {
   const sampleFormats = {
     address: '123 N Main St #525 | 5010 Main St | 123 Main',
     ownerName: 'Jane Doe',
-  }
-
-  function handleColumnHeaderSelection(setCurrentMatch, event) {
-    const selectedValue = event.currentTarget.querySelector('p')?.textContent;
-
   }
 
   function handleMouseOut(event) {
@@ -100,17 +96,27 @@ function FileHeaderSelector({ parsedFile, setterFunction }) {
         <ul className={styles.headerList}>
           {Object.keys(firstRow).map((header, index) => {
             return (
-            <li key={index} onClick={handleColumnHeaderSelection.bind(null, setCurrentMatch)}>
-              <div className="row-sample">
-                <h3>{header}</h3>
-                <p>{firstRow[header] || 'N/A'}</p>
-              </div>
-            </li>
+              <HeaderListItem key={index} header={header} sampleValue={firstRow[header]}/>
             );
           })}
           {isHovered && <p className={styles.scrollNotification}>Scroll to See More</p>}
         </ul>
       </div>
     </>
+  )
+}
+
+function HeaderListItem({ index, header, sampleValue = 'N/A' }) {
+  function handleColumnHeaderSelection(setCurrentMatch, event) {
+    const selectedValue = event.currentTarget.querySelector('p')?.textContent;
+  }
+  
+  return (
+    <li key={index} onClick={handleColumnHeaderSelection}>
+      <div className="row-sample">
+        <h3>{header}</h3>
+        <p>{sampleValue}</p>
+      </div>
+    </li>
   )
 }
