@@ -14,9 +14,6 @@ export default function Page() {
       complete: (result) => {
         setParsedFile(result);
       },
-      error: () => {
-        console.log('Error reading file');
-      }
     })
   }
   
@@ -54,10 +51,10 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
 
 function FileHeaderSelector({ parsedFile, setterFunction }) {
   // primary address | mail address | owner name
-  const [ currentlyMatching, setCurrentlyMatching ] = useState('primary address');
+  const [ propertyBeingMatched, setPropertyBeingMatched ] = useState('primary address');
   // true | false
   const [ isHovered, setIsHovered ] = useState(false);
-  const [ currentMatch, setCurrentMatch ] = useState('');
+  const [ userMatchedString, setUserMatchedString ] = useState('');
   const [ matchedHeaders, setMatchedHeaders ] = useState({
     "primary address": {address: [], cityState: []},
     "mail address": {address: [], cityState: []},
@@ -66,7 +63,6 @@ function FileHeaderSelector({ parsedFile, setterFunction }) {
 
   // { [key: string]: string }
   let firstRow = parsedFile.data[0];
-  const fileHeaders = Object.keys(parsedFile.data[0]);
   const sampleFormats = {
     address: '123 N Main St #525 | 5010 Main St | 123 Main',
     ownerName: 'Jane Doe',
@@ -84,19 +80,27 @@ function FileHeaderSelector({ parsedFile, setterFunction }) {
     <>
       <div className={styles.matchBoxHeader}>
         <div className={styles.matchBoxInstructions}>
-          <h2>Please help us create the {currentlyMatching} from your file by selecting the boxes needed to re-create the {currentlyMatching}</h2>
+          <h2>Please help us create the {propertyBeingMatched} from your file by selecting the boxes needed to re-create the {propertyBeingMatched}</h2>
           <div className={styles.matchBoxExamples}>
-            <h4>Examples</h4>
-            <p>{currentlyMatching === 'owner name' ? sampleFormats.ownerName : sampleFormats.address}</p>
+            <h4>Examples of Acceptable Formats</h4>
+            <p>{propertyBeingMatched === 'owner name' ? sampleFormats.ownerName : sampleFormats.address}</p>
           </div>
-          <p>Matched {currentlyMatching}: {currentMatch}</p>
+          <p>Matched {propertyBeingMatched}: {userMatchedString}</p>
         </div>
       </div>
       <div className={styles.headerBox} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
         <ul className={styles.headerList}>
           {Object.keys(firstRow).map((header, index) => {
             return (
-              <HeaderListItem key={index} header={header} sampleValue={firstRow[header]}/>
+              <HeaderListItem 
+                key={index} 
+                header={header} 
+                sampleValue={firstRow[header]} 
+                userMatchedString={userMatchedString} 
+                setUserMatchedString={setUserMatchedString} 
+                propertyBeingMatched={propertyBeingMatched} 
+                setMatchedHeaders={setMatchedHeaders}
+              />
             );
           })}
           {isHovered && <p className={styles.scrollNotification}>Scroll to See More</p>}
@@ -106,13 +110,15 @@ function FileHeaderSelector({ parsedFile, setterFunction }) {
   )
 }
 
-function HeaderListItem({ index, header, sampleValue = 'N/A' }) {
-  function handleColumnHeaderSelection(setCurrentMatch, event) {
+function HeaderListItem({ header, sampleValue = 'N/A', userMatchedString, setUserMatchedString, propertyBeingMatched, setMatchedHeaders }) {  
+  function handleColumnHeaderSelection(event) {
     const selectedValue = event.currentTarget.querySelector('p')?.textContent;
+    
+    setUserMatchedString(`${userMatchedString || ''} ${selectedValue}`);
   }
   
   return (
-    <li key={index} onClick={handleColumnHeaderSelection}>
+    <li onClick={handleColumnHeaderSelection}>
       <div className="row-sample">
         <h3>{header}</h3>
         <p>{sampleValue}</p>
