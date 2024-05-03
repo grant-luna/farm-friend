@@ -3,7 +3,7 @@ import styles from './page.module.css';
 import { useState, useRef } from 'react';
 import Papa from "papaparse";
 
-export default function Page() {
+export default function MainContent() {
   const [ parsedFile, setParsedFile ] = useState(null);
 
   function handleFileSelection(event) {
@@ -12,7 +12,7 @@ export default function Page() {
     Papa.parse(selectedFile, {
       header: true,
       complete: (result) => {
-        setParsedFile(result);
+        setParsedFile(result.data);
       },
     })
   }
@@ -26,103 +26,119 @@ export default function Page() {
   )
 }
 
-// https://www.fastpeoplesearch.com/address/3445-gurnard_san-pedro-ca
-// https://www.fastpeoplesearch.com/address/3445-gurnard-ave_san-pedro-ca
-// https://www.fastpeoplesearch.com/address/3529-e-broadway-7_long-beach-ca
 function FileMatchMenu({ parsedFile, setParsedFile }) {
-  const [ primaryAddress, setPrimaryAddress ] = useState(undefined);
-  const [ mailAddress, setMailAddress ] = useState(undefined);
-  const [ ownerName, setOwnerNames ] = useState(undefined);
+  const [ inputTypes, setInputTypes ] = useState([
+    { type: 'Primary Address', address: [], cityState: [], completable: false },
+    { type: 'Owner Names', firstOwner: [], secondOwner: [], completable: false },
+    { type: 'Mail Address', address: [], cityState: [], completable: false }
+  ]);
+
+  const [ isClicked, setIsClicked ] = useState(false);
+  const [ currentSelectedProperty, setCurrentSelectedProperty ] = useState('');
+
+  function handleInputTypeClick(event) {
+    const newSelectedProperty = event.currentTarget.textContent;
+
+    if (currentSelectedProperty === newSelectedProperty) {
+      setIsClicked(!isClicked);
+      setCurrentSelectedProperty('');
+    } else if (isClicked) {
+      setCurrentSelectedProperty(newSelectedProperty);
+    } else {
+      setIsClicked(!isClicked);
+      setCurrentSelectedProperty(newSelectedProperty);
+    }
+  }
+
+  const fileMatchMenuProps = { inputTypes, setInputTypes, currentSelectedProperty };
 
   return (
     <>
       <h3>File Matcher</h3>
-      {!primaryAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setPrimaryAddress}/>}
-      {primaryAddress && !mailAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setMailAddress}/>}
-      {primaryAddress && mailAddress && <FileHeaderSelector parsedFile={parsedFile} setterFunction={setOwnerNames}/>}
-      <div>
-        <button type="button" disabled={true} onClick={() => setParsedFile(false)}>Start Over</button>
-        <button type="button" disabled={true} onClick={() => setParsedFile(false)}>New File</button>
-        <button type="button" disabled={true}>Finish</button>
-      </div>
+      <p>
+        Thank you for uploading your file! Could you please help us
+        generate your search results by helping us make sense of the
+        file you uploaded?
+      </p>
+      <p>
+        At minimum, we require a <strong>primary address</strong> (address, city, and state) to be able
+        to generate results.  For best results, please provide matching
+        information for the primary address, owner names, and mail
+        address (if they exist).
+      </p>
+      <ul className={styles.inputTypeButtons}>
+        <li type="button" onClick={handleInputTypeClick}>Primary Address</li>
+        <li type="button" onClick={handleInputTypeClick}>Owner Names</li>
+        <li type="button" onClick={handleInputTypeClick}>Mail Address</li>
+      </ul>
+      {isClicked && <HeaderMatcher parsedFile={parsedFile} fileMatchMenuProps={fileMatchMenuProps} />}
     </>
   )
 }
 
-function FileHeaderSelector({ parsedFile, setterFunction }) {
-  // primary address | mail address | owner name
-  const [ propertyBeingMatched, setPropertyBeingMatched ] = useState('primary address');
-  // true | false
-  const [ isHovered, setIsHovered ] = useState(false);
-  const [ userMatchedString, setUserMatchedString ] = useState('');
-  const [ matchedHeaders, setMatchedHeaders ] = useState({
-    "primary address": {address: [], cityState: []},
-    "mail address": {address: [], cityState: []},
-    "owner names": { firstOwner: [], secondOwner: []},
+function HeaderMatcher({ parsedFile, fileMatchMenuProps }) {
+  const [ currentMatch, setCurrentMatch ] = useState('');
+  const [ currentRequiredKey, setCurrentRequiredKey ] = useState('');
+  const { inputTypes, setInputTypes, currentSelectedProperty } = fileMatchMenuProps;
+
+  const propertyToMatch = fileMatchMenuProps.inputTypes.find((inputType) => {
+    return inputType.type === fileMatchMenuProps.currentSelectedProperty;
   });
 
-  // { [key: string]: string }
-  let firstRow = parsedFile.data[0];
-  const sampleFormats = {
-    address: '123 N Main St #525 | 5010 Main St | 123 Main',
-    ownerName: 'Jane Doe',
+  const requiredKeys = Object.keys(propertyToMatch).filter((key) => {
+    return key !== 'type' && key !== 'completable';
+  });
+
+  const headers = Object.keys(parsedFile[0]);
+
+  const findSampleValue = (header, parsedFile) => {
+    const matchingRow = parsedFile.find((row) => {
+      return row[header] !== '';
+    });
+    return matchingRow[header] || 'Empty';
+  };
+
+  const sampleRow = headers.map((header) => {
+    return { header, value: findSampleValue(header, parsedFile) }
+  });
+
+  function handleHeaderClick(event) {
+    if (event.target.tagName === 'LI' || event.target.parentNode.tagName === 'LI') {
+      
+    }
   }
 
-  function handleMouseOut(event) {
-    setIsHovered(false);
-  }
-
-  function handleMouseOver(event) {
-    setIsHovered(true)
+  function handleRequiredKeyClick(event) {
+    if (event.target.tagName === 'LI') {
+      // Start Here to begin finding a way to create a sample value when
+      // a use clicks one of the required keys.  I have to imagine it
+      // would require getting the value from sampleRow
+      const sampleValues = propertyToMatch[event.target.textContent].map((columnHeader) => {
+        console.log(sampleRow[columnHeader])
+      });
+      setCurrentRequiredKey(event.target.textContent);
+    }
   }
 
   return (
-    <>
-      <div className={styles.matchBoxHeader}>
-        <div className={styles.matchBoxInstructions}>
-          <h2>Please help us create the {propertyBeingMatched} from your file by selecting the boxes needed to re-create the {propertyBeingMatched}</h2>
-          <div className={styles.matchBoxExamples}>
-            <h4>Examples of Acceptable Formats</h4>
-            <p>{propertyBeingMatched === 'owner name' ? sampleFormats.ownerName : sampleFormats.address}</p>
-          </div>
-          <p>Matched {propertyBeingMatched}: {userMatchedString}</p>
-        </div>
-      </div>
-      <div className={styles.headerBox} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-        <ul className={styles.headerList}>
-          {Object.keys(firstRow).map((header, index) => {
+    <div>
+      <ul className={styles.requiredKeys} onClick={handleRequiredKeyClick}>
+        {requiredKeys.map((requiredKey, index) => {
+          return <li key={index}>{requiredKey}</li>
+        })}
+      </ul>
+      <div className={styles.fileMatcherOptionsContainer}>
+        <ul className={styles.fileMatcherOptions} onClick={handleHeaderClick}>
+          {sampleRow.map((column, index) => {
             return (
-              <HeaderListItem 
-                key={index} 
-                header={header} 
-                sampleValue={firstRow[header]} 
-                userMatchedString={userMatchedString} 
-                setUserMatchedString={setUserMatchedString} 
-                propertyBeingMatched={propertyBeingMatched} 
-                setMatchedHeaders={setMatchedHeaders}
-              />
+              <li key={index} className={styles.fileMatcherOption}>
+                <h4>{column.header}</h4>
+                <p>{column.value}</p>
+              </li>
             );
           })}
-          {isHovered && <p className={styles.scrollNotification}>Scroll to See More</p>}
         </ul>
       </div>
-    </>
-  )
-}
-
-function HeaderListItem({ header, sampleValue = 'N/A', userMatchedString, setUserMatchedString, propertyBeingMatched, setMatchedHeaders }) {  
-  function handleColumnHeaderSelection(event) {
-    const selectedValue = event.currentTarget.querySelector('p')?.textContent;
-    
-    setUserMatchedString(`${userMatchedString || ''} ${selectedValue}`);
-  }
-  
-  return (
-    <li onClick={handleColumnHeaderSelection}>
-      <div className="row-sample">
-        <h3>{header}</h3>
-        <p>{sampleValue}</p>
-      </div>
-    </li>
+    </div>
   )
 }

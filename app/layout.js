@@ -8,16 +8,16 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+  const plainLinkStyles = { color: 'white', textDecoration: 'none' };
+
   return (
     <html lang="en">
       <body>
         <header>
-          <h1><Link href='/'>Farm Friend</Link></h1>
+          <h1><Link className={styles.headerLink} href='/'>Farm Friend</Link></h1>
         </header>
-        <nav>
-          <ul>
-            <li><Link href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link></li>
-          </ul>
+        <nav className={styles.navColumn}>
+          <Link className={styles.navColumnLink} href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link>
         </nav>
         <main className={styles.mainContent}>
           {children}
@@ -26,3 +26,6 @@ export default function RootLayout({ children }) {
     </html>
   )
 }
+
+// style={{...plainLinkStyles, fontSize: '1.5rem'}}
+// style={{...plainLinkStyles, fontSize: '1.25rem'}}

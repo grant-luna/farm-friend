@@ -11,6 +11,7 @@ body {
   font-size: 16px;
   height: 100vh;
   width: 100vw;
+  overflow-y: none;
 }
 
 ul, ol { list-style: none; }
@@ -36,25 +37,24 @@ summary::-webkit-details-marker { display: none; }
 
 body {
   display: grid;
+  gap: .05rem;
   grid-template-columns: 240px repeat(2, 1fr);
   grid-template-rows: 100px 1fr;
   grid-template-areas: "header header header"
                         "nav main main";
-
 }
 
 header {
   grid-area: header;
+  background-color: #002D62;
 }
 
 nav {
   grid-area: nav;
+  padding: 1rem;
+  background-color: #002D62;
 }
 
 main {
   grid-area: main;
-}
-
-body > * {
-  border: 1px solid navy;
 }
