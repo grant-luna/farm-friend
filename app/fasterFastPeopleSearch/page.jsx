@@ -66,15 +66,78 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
         information for the primary address, owner names, and mail
         address (if they exist).
       </p>
-      <ul className={styles.inputTypeButtons}>
-        <li type="button" onClick={handleInputTypeClick}>Primary Address</li>
-        <li type="button" onClick={handleInputTypeClick}>Owner Names</li>
-        <li type="button" onClick={handleInputTypeClick}>Mail Address</li>
-      </ul>
       {isClicked && <HeaderMatcher parsedFile={parsedFile} fileMatchMenuProps={fileMatchMenuProps} />}
+      <div class="accordion" id="accordionExample">
+        < AccordionItem itemName={"Primary Address"} toggleId={"collapseOne"} parsedFile={parsedFile} />
+        < AccordionItem itemName={"Owner Names"} toggleId={"collapseTwo"} parsedFile={parsedFile}/>
+        < AccordionItem itemName={"Mail Address"} toggleId={"collapseThree"} parsedFile={parsedFile}/>
+      </div>
     </>
   )
 }
+
+function AccordionItem({ itemName, toggleId, parsedFile  }) {
+  const [ isCompleted, setIsCompleted ] = useState(false);
+
+  const headers = Object.keys(parsedFile[0]);
+
+  const findSampleValue = (header, parsedFile) => {
+    const matchingRow = parsedFile.find((row) => {
+      return row[header] !== '';
+    });
+
+    return matchingRow ? matchingRow[header] : 'Empty';
+  };
+
+  const sampleRow = headers.map((header) => {
+    return { header, value: findSampleValue(header, parsedFile) }
+  });
+
+  function handleSampleColumnHover(event) {
+    const sampleColumn = event.currentTarget;
+
+    sampleColumn.classList.add('active');
+    sampleColumn.style.cursor = 'pointer';
+  }
+
+  function handleSampleColumnUnHover(event) {
+    const sampleColumn = event.currentTarget;
+
+    sampleColumn.classList.remove('active');
+    sampleColumn.style.cursor = 'default';
+  }
+
+  return (
+    <div className="accordion-item">
+      <h2 className="accordion-header">
+        <button className="accordion-button collapsed" type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target={`#${toggleId}`} 
+                aria-expanded="false" 
+                aria-controls={toggleId}>
+          {itemName}
+        </button>
+      </h2>
+      <div id={toggleId} className="accordion-collapse collapse" data-bs-parent="#accordionExample">
+        <div className={`${styles.inputTypeMatcherMenu} accordion-body`}>
+          <div className={styles.fileMatcherOptionsContainer}>
+            <ul className={`${styles.sampleColumns} list-group`}>
+              {sampleRow.map((column, index) => {
+                return (
+                  <li onMouseOver={handleSampleColumnHover} onMouseLeave={handleSampleColumnUnHover} className={`${styles.sampleColumn} list-group-item d-flex justify-content-between align-items-start`} key={index}>
+                    <h4><strong>{column.header}</strong></h4>
+                    <p><strong>Sample Value: </strong>{column.value}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 
 function HeaderMatcher({ parsedFile, fileMatchMenuProps }) {
   const [ currentMatch, setCurrentMatch ] = useState('');
@@ -90,7 +153,7 @@ function HeaderMatcher({ parsedFile, fileMatchMenuProps }) {
   });
 
   const headers = Object.keys(parsedFile[0]);
-
+  console.log(headers);
   const findSampleValue = (header, parsedFile) => {
     const matchingRow = parsedFile.find((row) => {
       return row[header] !== '';
@@ -101,12 +164,6 @@ function HeaderMatcher({ parsedFile, fileMatchMenuProps }) {
   const sampleRow = headers.map((header) => {
     return { header, value: findSampleValue(header, parsedFile) }
   });
-
-  function handleHeaderClick(event) {
-    if (event.target.tagName === 'LI' || event.target.parentNode.tagName === 'LI') {
-      
-    }
-  }
 
   function handleRequiredKeyClick(event) {
     if (event.target.tagName === 'LI') {

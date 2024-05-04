@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import './globals.css'
 import styles from './page.module.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import BootstrapClient from './components/BootstrapClient.js';
 
 export const metadata = {
   title: 'Farm Friend',
@@ -8,8 +10,6 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
-  const plainLinkStyles = { color: 'white', textDecoration: 'none' };
-
   return (
     <html lang="en">
       <body>
@@ -22,10 +22,8 @@ export default function RootLayout({ children }) {
         <main className={styles.mainContent}>
           {children}
         </main>
+        <BootstrapClient />
       </body>
     </html>
   )
 }
-
-// style={{...plainLinkStyles, fontSize: '1.5rem'}}
-// style={{...plainLinkStyles, fontSize: '1.25rem'}}
