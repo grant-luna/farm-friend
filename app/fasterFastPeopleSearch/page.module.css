@@ -1,3 +1,13 @@
+.generateResultsButton {
+  width: 200px;
+  max-width: 40%;
+  margin: 0 auto;
+}
+
+.generateResultsButton:hover {
+  cursor: pointer;
+}
+
 .accordionItem {
   overflow-y: auto;
   max-height: 300px;

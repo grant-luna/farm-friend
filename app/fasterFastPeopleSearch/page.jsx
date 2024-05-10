@@ -28,11 +28,14 @@ export default function MainContent() {
 }
 
 function FileMatchMenu({ parsedFile, setParsedFile }) {
-  const [ inputTypes, setInputTypes ] = useState([
-    { type: 'Primary Address', address: [], cityState: [], completable: false },
-    { type: 'Owner Names', firstOwner: [], secondOwner: [], completable: false },
-    { type: 'Mail Address', address: [], cityState: [], completable: false }
-  ]);
+  const [ inputTypes, setInputTypes ] = useState({
+    "Primary Address": { "Address": [], "City / State": []},
+    "Mail Address": { "Address": [], "City / State": []},
+    "Owner Names": { "First Owner": [], "Second Owner": [] },
+  });
+
+  const [isGeneratable, setIsGeneratable] = useState(false);
+  const toggleGeneratableStateProps = { isGeneratable, setIsGeneratable };
 
   return (
     <>
@@ -48,16 +51,38 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
         information for the primary address, owner names, and mail
         address (if they exist).
       </p>
+      <button onClick={handleGenerateResultsButtonClick} className={`btn btn-primary ${styles.generateResultsButton}`} disabled={!isGeneratable} type="button">Generate Results</button>
       <ul class="accordion" id="accordionExample">
-        < AccordionItem key={uuidv4()} itemName={"Primary Address"} toggleId={"collapseOne"} parsedFile={parsedFile} />
-        < AccordionItem key={uuidv4()} itemName={"Owner Names"} toggleId={"collapseTwo"} parsedFile={parsedFile}/>
-        < AccordionItem key={uuidv4()} itemName={"Mail Address"} toggleId={"collapseThree"} parsedFile={parsedFile}/>
+        < AccordionItem key={1}
+                        itemName={"Primary Address"}
+                        toggleId={"collapseOne"}
+                        parsedFile={parsedFile}
+                        toggleGeneratableStateProps={toggleGeneratableStateProps}
+        />
+        < AccordionItem key={2} 
+                        itemName={"Owner Names"}
+                        toggleId={"collapseTwo"}
+                        parsedFile={parsedFile}
+                        toggleGeneratableStateProps={toggleGeneratableStateProps}
+        />
+        < AccordionItem key={3}
+                        itemName={"Mail Address"}
+                        toggleId={"collapseThree"}
+                        parsedFile={parsedFile}
+                        toggleGeneratableStateProps={toggleGeneratableStateProps}
+        />
       </ul>
     </>
   )
+
+  function handleGenerateResultsButtonClick(event) {
+    if (isGeneratable) {
+      debugger;
+    }
+  }
 }
 
-function AccordionItem({ itemName, toggleId, parsedFile }) {
+function AccordionItem({ itemName, toggleId, parsedFile, toggleGeneratableStateProps}) {
   const [isCompleted, setIsCompleted] = useState(false);
 
   function findRequiredHeaders(itemName) {
@@ -66,94 +91,29 @@ function AccordionItem({ itemName, toggleId, parsedFile }) {
 
   const [requiredHeaders, setRequiredHeaders] = useState(findRequiredHeaders(itemName));
 
-  const headers = Object.keys(parsedFile[0]);
+  const parsedFileHeaders = Object.keys(parsedFile[0]);
 
-  const findSampleValue = (header, parsedFile) => {
-    const matchingRow = parsedFile.find((row) => {
-      return row[header] !== '';
+  const findColumnHeaderSampleValue = (columnHeader, parsedFile) => {
+    const matchingRowWithValue = parsedFile.find((row) => {
+      return row[columnHeader] !== '';
     });
 
-    return matchingRow ? matchingRow[header] : 'Empty';
+    return matchingRowWithValue ? matchingRowWithValue[columnHeader] : 'Empty';
   };
 
-  const sampleRow = headers.map((header) => {
-    return { header, value: findSampleValue(header, parsedFile) };
+  const sampleRow = parsedFileHeaders.map((header) => {
+    return { header, value: findColumnHeaderSampleValue(header, parsedFile) };
   });
 
-  function generateCurrentMatch(requiredHeaders, requiredHeader, sampleRow) {
-    return requiredHeaders[requiredHeader].map((columnHeader) => {
-      return sampleRow.find((row) => row.header === columnHeader).value;
-    }).join(' ');
-  }
-
-  function checkIfCompleted(itemName) {
-    if (itemName === 'Owner Names') {
-      if (Object.keys(requiredHeaders).some((requiredHeader) => requiredHeaders[requiredHeader].length > 0 )) {
-        setIsCompleted(true);
-      } else {
-        setIsCompleted(false);
-      }
-    } else if (itemName === 'Primary Address' || iteName === 'Mail Address') {
-      if (Object.keys(requiredHeaders).every((requiredHeader) => requiredHeaders[requiredHeader].length > 0)) {
-        setIsCompleted(true);
-      } else {
-        setIsCompleted(false);
-      }
-    }
-  }
-
-  function handleAccordionItemClick(event) {
-    
-  }
-
-  function handleRequiredHeaderClick(event) {
-    event.preventDefault();
-  }
-
-  function handleResetRequiredHeaderMatch(requiredHeader) {
-    setRequiredHeaders({...requiredHeaders, [requiredHeader]: []});
-  }
-
-  function handleCancelRequiredHeaderMatch(requiredHeader) {
-    setRequiredHeaders({...requiredHeaders, [requiredHeader]: []});
-  }
-
-  function handleSampleColumnHover(event) {
-    const sampleColumn = event.currentTarget;
-
-    sampleColumn.classList.add('active');
-    sampleColumn.style.cursor = 'pointer';
-  }
-
-  function handleSampleColumnUnHover(event) {
-    const sampleColumn = event.currentTarget;
-
-    sampleColumn.classList.remove('active');
-    sampleColumn.style.cursor = 'default';
-  }
-
-  function handleSampleColumnClick(requiredHeader, event) {
-    if (event.target.parentNode.tagName === 'LI' || event.target.tagName === 'LI') {
-      event.preventDefault();
-
-      const sampleColumn = event.target.closest('li');
-      const [ sampleColumnHeader, sampleColumnValue ] = [...sampleColumn.children].map((child) => child.textContent);
-      const requiredHeadersCopy = { ...requiredHeaders }
-      requiredHeadersCopy[requiredHeader].push(sampleColumnHeader);
-      
-      setRequiredHeaders({ ...requiredHeaders, [requiredHeader]: requiredHeadersCopy[requiredHeader]} );
-    }
-  }
-
   return (
-    <div onClick={handleAccordionItemClick} className={`${styles.accordionItem} accordion-item`}>
+    <div className={`${styles.accordionItem} accordion-item`}>
       <h2 className="accordion-header">
         <button className="accordion-button collapsed" type="button"
           data-bs-toggle="collapse"
           data-bs-target={`#${toggleId}`}
           aria-expanded="false"
           aria-controls={toggleId}>
-          {`${itemName}: ${isCompleted}`}
+          {itemName}
         </button>
       </h2>
       <div id={toggleId} className={`accordion-collapse collapse`} data-bs-parent="#accordionExample">
@@ -161,15 +121,16 @@ function AccordionItem({ itemName, toggleId, parsedFile }) {
           <ul className={`${styles.requiredHeaders} list-group`}>
             {Object.keys(requiredHeaders).map((requiredHeader, index) => {
               const uniqueKey = uuidv4();
-
-              /*
-              func
-              */
-
+              
               return (
                 <>
-                  <li key={index} onClick={handleRequiredHeaderClick} className={`${styles.requiredHeader} list-group-item`} data-bs-toggle="modal" data-bs-target={`#matcherModal${uniqueKey}`}>
-                    <input class="form-check-input me-1" type="checkbox" value="" id={`checkbox${uniqueKey}`} />
+                  <li key={index}
+                      onClick={handleRequiredHeaderClick}
+                      className={`${styles.requiredHeader} list-group-item`}
+                      data-bs-toggle="modal"
+                      data-bs-target={`#matcherModal${uniqueKey}`}
+                  >
+                    <input checked={columnsSelected(requiredHeader, requiredHeaders) ? true : false} class="form-check-input me-1" type="checkbox" value="" id={`checkbox${uniqueKey}`} />
                     <label class="form-check-label" for={`checkbox${uniqueKey}`} >{requiredHeader}</label>
                   </li>
                   <div className="modal fade" id={`matcherModal${uniqueKey}`} data-bs-backdrop="static">
@@ -212,4 +173,71 @@ function AccordionItem({ itemName, toggleId, parsedFile }) {
       </div>
     </div>
   );
+
+  function generateCurrentMatch(requiredHeaders, requiredHeader, sampleRow) {
+    return requiredHeaders[requiredHeader].map((columnHeader) => {
+      return sampleRow.find((row) => row.header === columnHeader).value;
+    }).join(' ');
+  }
+
+  function columnsSelected(requiredHeader, requiredHeaders) {
+    return requiredHeaders[requiredHeader].length > 0;
+  }
+
+  function checkIfCompleted(itemName) {
+    if (itemName === 'Owner Names') {
+      if (Object.keys(requiredHeaders).some((requiredHeader) => requiredHeaders[requiredHeader].length > 0 )) {
+        setIsCompleted(true);
+      }
+    } else if (itemName === 'Primary Address' || itemName === 'Mail Address') {
+      if (Object.keys(requiredHeaders).every((requiredHeader) => requiredHeaders[requiredHeader].length > 0)) {
+        setIsCompleted(true);
+
+        if (itemName === 'Primary Address') {
+          toggleGeneratableStateProps.setIsGeneratable(true);
+        }
+      }
+    }
+  }
+
+  function handleResetRequiredHeaderMatch(requiredHeader) {
+    setRequiredHeaders({...requiredHeaders, [requiredHeader]: []});
+    toggleGeneratableStateProps.setIsGeneratable(false);
+  }
+
+  function handleRequiredHeaderClick(event) {
+    event.preventDefault();
+  }
+
+  function handleCancelRequiredHeaderMatch(requiredHeader) {
+    setRequiredHeaders({...requiredHeaders, [requiredHeader]: []});
+    toggleGeneratableStateProps.setIsGeneratable(false);
+  }
+
+  function handleSampleColumnHover(event) {
+    const sampleColumn = event.currentTarget;
+
+    sampleColumn.classList.add('active');
+    sampleColumn.style.cursor = 'pointer';
+  }
+
+  function handleSampleColumnUnHover(event) {
+    const sampleColumn = event.currentTarget;
+
+    sampleColumn.classList.remove('active');
+    sampleColumn.style.cursor = 'default';
+  }
+
+  function handleSampleColumnClick(requiredHeader, event) {
+    if (event.target.parentNode.tagName === 'LI' || event.target.tagName === 'LI') {
+      event.preventDefault();
+
+      const sampleColumn = event.target.closest('li');
+      const [ sampleColumnHeader, sampleColumnValue ] = [...sampleColumn.children].map((child) => child.textContent);
+      const requiredHeadersCopy = { ...requiredHeaders }
+      requiredHeadersCopy[requiredHeader].push(sampleColumnHeader);
+      
+      setRequiredHeaders({ ...requiredHeaders, [requiredHeader]: requiredHeadersCopy[requiredHeader]} );
+    }
+  }
 }
