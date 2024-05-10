@@ -1,23 +1,30 @@
-.matchBoxHeader {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+.accordionItem {
+  overflow-y: auto;
+  max-height: 300px;
 }
 
 .inputTypeMatcherMenu {
-  border: 1px solid yellow;
-  height: 300px;
-  overflow-y: auto;
+  padding: 0;
+}
+
+.requiredHeader {
+  display: flex;
+  gap: .5rem;
 }
 
 .sampleColumns {
-  height: 50%;
+  height: 300px;
+  width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 1rem;
   overflow-y: auto;
   justify-content: center;
+  border-top: 1px solid black;
+  border-radius: 0;
+  padding: .75rem;
+  padding-top: 1.5rem;
 }
 
 .sampleColumn {
@@ -31,7 +38,7 @@
 }
 
 .matchBoxInstructions {
-  border: 1px solid navy;
+  border: 1px solid black;
   width: 80%;
   display: flex;
   flex-direction: column;
