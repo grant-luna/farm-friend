@@ -28,14 +28,16 @@ export default function MainContent() {
 }
 
 function FileMatchMenu({ parsedFile, setParsedFile }) {
-  const [ inputTypes, setInputTypes ] = useState({
-    "Primary Address": { "Address": [], "City / State": []},
-    "Mail Address": { "Address": [], "City / State": []},
-    "Owner Names": { "First Owner": [], "Second Owner": [] },
-  });
-
   const [isGeneratable, setIsGeneratable] = useState(false);
   const toggleGeneratableStateProps = { isGeneratable, setIsGeneratable };
+
+  const [ inputTypes, setInputTypes ] = useState({
+    "Primary Address": {"Address": [], "City / State": []},
+    "Owner Names": {"First Owner": [], "Second Owner": []},
+    "Mail Address": {"Address": [], "City / State": []},
+  });
+
+  const inputTypeProps = { inputTypes, setInputTypes };
 
   return (
     <>
@@ -54,18 +56,21 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
       <button onClick={handleGenerateResultsButtonClick} className={`btn btn-primary ${styles.generateResultsButton}`} disabled={!isGeneratable} type="button">Generate Results</button>
       <ul class="accordion" id="accordionExample">
         < AccordionItem key={1}
+                        inputTypeProps={inputTypeProps}
                         itemName={"Primary Address"}
                         toggleId={"collapseOne"}
                         parsedFile={parsedFile}
                         toggleGeneratableStateProps={toggleGeneratableStateProps}
         />
         < AccordionItem key={2} 
+                        inputTypeProps={inputTypeProps}
                         itemName={"Owner Names"}
                         toggleId={"collapseTwo"}
                         parsedFile={parsedFile}
                         toggleGeneratableStateProps={toggleGeneratableStateProps}
         />
         < AccordionItem key={3}
+                        inputTypeProps={inputTypeProps}
                         itemName={"Mail Address"}
                         toggleId={"collapseThree"}
                         parsedFile={parsedFile}
@@ -76,20 +81,18 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
   )
 
   function handleGenerateResultsButtonClick(event) {
+    const primaryAddress = inputTypes["Primary Address"];
+    const file = parsedFile;
+    debugger;
     if (isGeneratable) {
       debugger;
     }
   }
 }
 
-function AccordionItem({ itemName, toggleId, parsedFile, toggleGeneratableStateProps}) {
+function AccordionItem({ inputTypeProps, itemName, toggleId, parsedFile, toggleGeneratableStateProps}) {
+  const [requiredHeaders, setRequiredHeaders] = useState(inputTypeProps.inputTypes[itemName]);
   const [isCompleted, setIsCompleted] = useState(false);
-
-  function findRequiredHeaders(itemName) {
-    return itemName === 'Owner Names' ? { "First Owner": [], "Second Owner": [] } : { "Address": [], "City / State": [] };
-  }
-
-  const [requiredHeaders, setRequiredHeaders] = useState(findRequiredHeaders(itemName));
 
   const parsedFileHeaders = Object.keys(parsedFile[0]);
 
@@ -138,7 +141,7 @@ function AccordionItem({ itemName, toggleId, parsedFile, toggleGeneratableStateP
                       <div class="modal-content">
                         <div class="modal-header">
                           <h5 class="modal-title">Matching {requiredHeader}</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          <button type="button" onClick={() => handleSaveRequiredHeaderMatch(event, itemName, requiredHeaders, inputTypeProps)} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
                         <h6>Current Match: {generateCurrentMatch(requiredHeaders, requiredHeader, sampleRow)}</h6>
@@ -159,8 +162,7 @@ function AccordionItem({ itemName, toggleId, parsedFile, toggleGeneratableStateP
                         </div>
                         <div class="modal-footer">
                           <button type="button" onClick={(event) => handleResetRequiredHeaderMatch(requiredHeader)} class="btn btn-light">Reset</button>
-                          <button type="button"  onClick={(event) => handleCancelRequiredHeaderMatch(requiredHeader)} class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          <button type="button" onClick={(event) => checkIfCompleted(itemName, requiredHeader)} data-bs-dismiss="modal" class="btn btn-primary">Save</button>
+                          <button type="button" onClick={(event) => handleSaveRequiredHeaderMatch(event, itemName, requiredHeaders, inputTypeProps)} data-bs-dismiss="modal" class="btn btn-primary">Save</button>
                         </div>
                       </div>
                     </div>
@@ -209,9 +211,9 @@ function AccordionItem({ itemName, toggleId, parsedFile, toggleGeneratableStateP
     event.preventDefault();
   }
 
-  function handleCancelRequiredHeaderMatch(requiredHeader) {
-    setRequiredHeaders({...requiredHeaders, [requiredHeader]: []});
-    toggleGeneratableStateProps.setIsGeneratable(false);
+  function handleSaveRequiredHeaderMatch(event, itemName, requiredHeaders, inputTypeProps) {
+    inputTypeProps.setInputTypes({...inputTypeProps.inputTypes, [itemName]: {...requiredHeaders}});
+    checkIfCompleted(itemName);
   }
 
   function handleSampleColumnHover(event) {
