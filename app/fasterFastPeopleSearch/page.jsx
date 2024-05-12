@@ -39,7 +39,7 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
 
   const inputTypeProps = { inputTypes, setInputTypes };
 
-  function handleGenerateResultsButtonClick(event) {
+  function handleGenerateResultsButtonClick() {
     if (isGeneratable) {
 
       const inputTypeHeaders = Object.keys(inputTypes);
@@ -48,7 +48,7 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
         const primaryAddressLink = createFastPeopleSearchLink(row, inputTypes["Primary Address"]);
         const mailAddressLink = createFastPeopleSearchLink(row, inputTypes["Mail Address"]);
 
-        const newList = {
+        return {
           primaryAddressLink,
           mailAddressLink,
           primaryAddress: {
@@ -64,9 +64,9 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
             secondOwner: inputTypes["Owner Names"]["Second Owner"].map((header) => row[header]).join(' '),
           }
         }
-        debugger;
-        return newList;
       }));
+
+      
     }
   }
   
