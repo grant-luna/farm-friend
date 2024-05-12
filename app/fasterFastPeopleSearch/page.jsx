@@ -39,6 +39,52 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
 
   const inputTypeProps = { inputTypes, setInputTypes };
 
+  function handleGenerateResultsButtonClick(event) {
+    if (isGeneratable) {
+
+      const inputTypeHeaders = Object.keys(inputTypes);
+
+      const processedFile = JSON.stringify(parsedFile.map((row) => {
+        const primaryAddressLink = createFastPeopleSearchLink(row, inputTypes["Primary Address"]);
+        const mailAddressLink = createFastPeopleSearchLink(row, inputTypes["Mail Address"]);
+
+        const newList = {
+          primaryAddressLink,
+          mailAddressLink,
+          primaryAddress: {
+            address: inputTypes["Primary Address"]["Address"].map((header) => row[header]).join(' '),
+            cityState: inputTypes["Primary Address"]["City / State"].map((header) => row[header]).join(' '),
+          },
+          mailAddress: {
+            address: inputTypes["Mail Address"]["Address"].map((header) => row[header]).join(' '),
+            cityState: inputTypes["Mail Address"]["City / State"].map((header) => row[header]).join(' '),
+          },
+          ownerNames: {
+            firstOwner: inputTypes["Owner Names"]["First Owner"].map((header) => row[header]).join(' '),
+            secondOwner: inputTypes["Owner Names"]["Second Owner"].map((header) => row[header]).join(' '),
+          }
+        }
+        debugger;
+        return newList;
+      }));
+    }
+  }
+  
+  function createFastPeopleSearchLink(fileRow, headers) {
+    const addressHeaders = headers["Address"];
+    const cityStateHeaders = headers["City / State"];
+
+    const address = addressHeaders.map((addressHeader) => {
+      return fileRow[addressHeader]?.replace(/[^0-9a-z ]/gi, '');
+    }).join(' ')
+
+    const cityState = cityStateHeaders.map((cityStateHeader) => {
+      return fileRow[cityStateHeader];
+    }).join(' ');
+    
+    return `http://www.fastpeoplesearch.com/address/${address}_${cityState}`.replace(/ /g, '-');
+  }
+
   return (
     <>
       <h3>File Matcher</h3>
@@ -54,7 +100,7 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
         address (if they exist).
       </p>
       <button onClick={handleGenerateResultsButtonClick} className={`btn btn-primary ${styles.generateResultsButton}`} disabled={!isGeneratable} type="button">Generate Results</button>
-      <ul class="accordion" id="accordionExample">
+      <ul className="accordion" id="accordionExample">
         < AccordionItem key={1}
                         inputTypeProps={inputTypeProps}
                         itemName={"Primary Address"}
@@ -79,15 +125,6 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
       </ul>
     </>
   )
-
-  function handleGenerateResultsButtonClick(event) {
-    const primaryAddress = inputTypes["Primary Address"];
-    const file = parsedFile;
-    debugger;
-    if (isGeneratable) {
-      debugger;
-    }
-  }
 }
 
 function AccordionItem({ inputTypeProps, itemName, toggleId, parsedFile, toggleGeneratableStateProps}) {
@@ -126,7 +163,7 @@ function AccordionItem({ inputTypeProps, itemName, toggleId, parsedFile, toggleG
               const uniqueKey = uuidv4();
               
               return (
-                <>
+                <li key={index}>
                   <RequiredHeader index={index} requiredHeader={requiredHeader} requiredHeaders={requiredHeaders} uniqueKey={uniqueKey} />
                   <RequiredHeaderModal requiredHeader={requiredHeader} 
                                        itemName={itemName}
@@ -138,7 +175,7 @@ function AccordionItem({ inputTypeProps, itemName, toggleId, parsedFile, toggleG
                                        sampleRow={sampleRow}
                                        setIsCompleted={setIsCompleted}
                   />
-                </>
+                </li>
               );
             })}
           </ul>
@@ -158,7 +195,7 @@ function RequiredHeader({ index, requiredHeader, requiredHeaders, uniqueKey }) {
   }
 
   return (
-    <li key={index}
+    <div key={index}
         onClick={handleRequiredHeaderClick}
         className={`${styles.requiredHeader} list-group-item`}
         data-bs-toggle="modal"
@@ -166,7 +203,7 @@ function RequiredHeader({ index, requiredHeader, requiredHeaders, uniqueKey }) {
     >
       <input checked={columnsSelected(requiredHeader, requiredHeaders) ? true : false} className="form-check-input me-1" type="checkbox" value="" id={`checkbox${uniqueKey}`} />
       <label className="form-check-label" htmlFor={`checkbox${uniqueKey}`}>{requiredHeader}</label>
-    </li>
+    </div>
   );
 }
 
