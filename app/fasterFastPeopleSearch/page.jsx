@@ -1,6 +1,7 @@
 "use client"
 import styles from './page.module.css';
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Papa from "papaparse";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,6 +31,7 @@ export default function MainContent() {
 function FileMatchMenu({ parsedFile, setParsedFile }) {
   const [isGeneratable, setIsGeneratable] = useState(false);
   const toggleGeneratableStateProps = { isGeneratable, setIsGeneratable };
+  const router = useRouter();
 
   const [ inputTypes, setInputTypes ] = useState({
     "Primary Address": {"Address": [], "City / State": []},
@@ -39,7 +41,7 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
 
   const inputTypeProps = { inputTypes, setInputTypes };
 
-  function handleGenerateResultsButtonClick() {
+  async function handleGenerateResultsButtonClick() {
     if (isGeneratable) {
 
       const inputTypeHeaders = Object.keys(inputTypes);
@@ -65,8 +67,23 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
           }
         }
       }));
-
       
+      try {
+        const response = await fetch('/fasterFastPeopleSearch/create-search/api', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: processedFile,
+        });
+
+        const responseData = await response.json()
+        const insertedData = responseData.rows[0];
+        const searchId = insertedData.id;
+        router.push(`/fasterFastPeopleSearch/searches/${searchId}`);
+      } catch (error) {
+        console.error('Error while generating results:', error);
+      }
     }
   }
   
