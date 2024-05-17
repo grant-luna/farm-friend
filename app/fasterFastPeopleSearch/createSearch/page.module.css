@@ -1,0 +1,141 @@
+.generateResultsButton {
+  width: 200px;
+  max-width: 40%;
+  margin: 0 auto;
+}
+
+.generateResultsButton:hover {
+  cursor: pointer;
+}
+
+.accordionItem {
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.inputTypeMatcherMenu {
+  padding: 0;
+}
+
+.requiredHeader {
+  display: flex;
+  gap: .5rem;
+}
+
+.sampleColumns {
+  height: 300px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  overflow-y: auto;
+  justify-content: center;
+  border-top: 1px solid black;
+  border-radius: 0;
+  padding: .75rem;
+  padding-top: 1.5rem;
+}
+
+.sampleColumn {
+  flex-wrap: wrap;
+  flex-direction: column;
+  border-radius: .75rem;
+}
+
+.sampleColumn h4 {
+  font-size: 1.25rem;
+}
+
+.matchBoxInstructions {
+  border: 1px solid black;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: .5rem;
+  border-radius: .5rem;
+  padding: 1rem 0;
+  gap: .75rem;
+}
+.matchBoxInstructions h2 {
+  width: 75%;
+  text-align: center;
+}
+
+.matchBoxExamples {
+  border: 1px solid navy;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  padding: 1rem;
+  border-radius: .5rem;
+}
+
+.headerBox {
+  height: 30%;
+  width: 90%;
+  overflow-y: auto;
+  margin: 0 auto;
+  margin-bottom: 1.5rem;
+  border: 1px solid white;
+  border-radius: 1.25rem;
+  z-index: 2;
+  position: relative;
+
+}
+
+.headerBox:hover {
+  border: 1px solid black;
+}
+
+.headerList {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-auto-columns: repeat(auto-fill, minmax(100px, 1fr));
+  padding: 1.5rem;
+  margin-top: 3rem;
+  height: 50%;
+}
+
+.headerList li:hover {
+  cursor: pointer;
+  opacity: 50%;
+}
+
+.headerList > li {
+  border: 1px solid navy;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: .5rem;
+  border-radius: .75rem;
+  word-wrap: break-word;
+  white-space: normal;
+  text-align: center;
+}
+
+.headerList > li h3 {
+  margin-bottom: .5rem;
+}
+
+.scrollNotification {
+  padding: 1rem;
+  text-align: center;
+  border-radius: .5rem;
+  border-color: black;
+  position: absolute;
+  top: 3%;
+  left: 50%;
+  height: 3%;
+  transform: translate(-50%);
+  z-index: 1;
+  border: 1px solid navy;
+}
+
+.scrollNotification small {
+  display: block;
+}

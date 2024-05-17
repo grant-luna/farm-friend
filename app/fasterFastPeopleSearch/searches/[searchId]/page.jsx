@@ -32,17 +32,12 @@ function SearchResults({ searchId }) {
     fetchSearchData(searchId);
   }, [searchId])
 
-  function handleClick(searchData) {
-    debugger;
-  }
-
   function handleContactInformationClick(contactInformationLink) {
     
   }
 
   return (
     <>
-      <h2 onClick={() => handleClick(searchData)}>{searchId}</h2>
       {!loading && <ul>
         {searchData.map((searchRow, index) => {
           return (
