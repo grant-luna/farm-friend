@@ -2,6 +2,7 @@
 import styles from './page.module.css';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Papa from "papaparse";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,6 +23,7 @@ export default function MainContent() {
   return (
     <>
       <h1>Faster FastPeopleSearch</h1>
+      <Link href='/fasterFastPeopleSearch/searches'>Searches</Link>
       {!parsedFile && <input type='file' accept='.csv' onChange={handleFileSelection}></input>}
       {parsedFile && <FileMatchMenu parsedFile={parsedFile} setParsedFile={setParsedFile}/>}
     </>

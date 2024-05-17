@@ -1,6 +1,4 @@
 import { pool } from '../../../lib/db.js';
-import { redirect } from 'next/navigation';
-import { NextRequest } from 'next/server';
 
 export async function POST(request) {
   try {

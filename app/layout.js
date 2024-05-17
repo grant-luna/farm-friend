@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <header>
+        <header className={styles.headerLinks}>
           <h1><Link className={styles.headerLink} href='/'>Farm Friend</Link></h1>
         </header>
         <nav className={styles.navColumn}>
