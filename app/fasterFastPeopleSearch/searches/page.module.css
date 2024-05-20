@@ -1,3 +1,13 @@
+.searchesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  padding: .25rem;
+  gap: .5rem;
+  border-radius: .25rem;
+}
+
 .searchItem {
-  border: 1px solid yellow;
+  border: 1px solid #002D62;
+  padding: .5rem;
+  border-radius: .25rem;
 }

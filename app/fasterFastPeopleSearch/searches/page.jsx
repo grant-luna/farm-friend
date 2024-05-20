@@ -33,8 +33,7 @@ function SearchesContainer() {
 
   return (
     <>
-      <p>Searches</p>
-      {!loading && <ul>
+      {!loading && <ul className={styles.searchesContainer}>
         {searches.map((search, index) => {
           return <SearchItem key={index} search={search}/>
         })}

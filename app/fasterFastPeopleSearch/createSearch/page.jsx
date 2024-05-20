@@ -22,7 +22,7 @@ export default function MainContent() {
   
   return (
     <>
-      {!parsedFile && <input type='file' accept='.csv' onChange={handleFileSelection}></input>}
+      {!parsedFile && <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>}
       {parsedFile && <FileMatchMenu parsedFile={parsedFile} setParsedFile={setParsedFile}/>}
     </>
   )
