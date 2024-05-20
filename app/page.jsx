@@ -1,10 +1,8 @@
 export default function Page() {
   return (
     <>
-      <h1>User Dashboard</h1>
-      <div>
-        <h2>Faster FastPeopleSearch Overview</h2>
-      </div>
+      <h4>Welcome to Farm Friend</h4>
+      <p>To get started select an application from the navigation menu.</p>
     </>
   )
 }
