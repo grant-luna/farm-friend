@@ -2,7 +2,6 @@
 import styles from './page.module.css';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Papa from "papaparse";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -28,7 +27,7 @@ export default function MainContent() {
   )
 }
 
-function FileMatchMenu({ parsedFile, setParsedFile }) {
+function FileMatchMenu({ parsedFile }) {
   const [isGeneratable, setIsGeneratable] = useState(false);
   const toggleGeneratableStateProps = { isGeneratable, setIsGeneratable };
   const router = useRouter();
@@ -43,8 +42,6 @@ function FileMatchMenu({ parsedFile, setParsedFile }) {
 
   async function handleGenerateResultsButtonClick() {
     if (isGeneratable) {
-
-      const inputTypeHeaders = Object.keys(inputTypes);
 
       const processedFile = JSON.stringify(parsedFile.map((row) => {
         const primaryAddressLink = createFastPeopleSearchLink(row, inputTypes["Primary Address"]);
