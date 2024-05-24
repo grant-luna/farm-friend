@@ -1,8 +1,11 @@
 "use client"
 import styles from './page.module.css';
-import { useState } from 'react';
+import { useState, createContext, useContext } from 'react';
 import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
+
+const FileContext = createContext();
 
 export default function MainContent() {
   const [ parsedFile, setParsedFile ] = useState(null);
@@ -20,13 +23,15 @@ export default function MainContent() {
   
   return (
     <>
-      {!parsedFile && <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>}
-      {parsedFile && <FileMatchMenu parsedFile={parsedFile} setParsedFile={setParsedFile}/>}
+      <FileContext.Provider value={{parsedFile, setParsedFile}}>
+        {!parsedFile && <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>}
+        {parsedFile && <FileMatchMenu parsedFile={parsedFile} setParsedFile={setParsedFile}/>}
+      </FileContext.Provider>
     </>
   );
 }
 
-function FileMatchMenu({ parsedFile }) {
+function FileMatchMenu() {
   const [ isGeneratable, setIsGeneratable ] = useState(false);
   const router = useRouter();
 
@@ -47,10 +52,11 @@ function FileMatchMenu({ parsedFile }) {
         file you uploaded?
       </p>
       <p>
-        At minimum, we require a <strong>primary address</strong> (address, city, and state) to be able
-        to generate results. For best results, please provide matching
-        information for the primary address, owner names, and mail
-        address (if they exist).
+        At minimum, we require a <strong>Primary Address</strong> (address, city, and state)
+        to generate results.
+      </p>
+      <p>
+        For best results, please provide matching information for a Primary Address, Owner Name(s), and a Mail Address.
       </p>
       <ul className="accordion" id="accordionMenu">
         {matchedColumnHeadersKeys.map((matchedColumnHeaderKey, index) => {
@@ -85,10 +91,12 @@ function AccordionBody({ toggleId, requiredHeaders }) {
       <div className="accordion-body">
         <ul className={`${styles.requiredHeaders} list-group`}>
           {requiredHeaders.map((requiredHeader, index) => {
+            const uniqueId = uuidv4();
+            
             return (
               <li key={index}>
-                <RequiredHeader requiredHeader={requiredHeader}/>
-                <RequiredHeaderModal requiredHeader={requiredHeader}/>
+                <RequiredHeader requiredHeader={requiredHeader} uniqueId={uniqueId}/>
+                <RequiredHeaderModal requiredHeader={requiredHeader} requiredHeaders={requiredHeaders} uniqueId={uniqueId}/>
               </li>
             );
           })}
@@ -98,7 +106,7 @@ function AccordionBody({ toggleId, requiredHeaders }) {
   );
 }
 
-function RequiredHeader({ requiredHeader }) {
+function RequiredHeader({ requiredHeader, uniqueId }) {
   function handleRequiredHeaderClick(event) {
     event.preventDefault();
   }
@@ -108,7 +116,7 @@ function RequiredHeader({ requiredHeader }) {
         onClick={handleRequiredHeaderClick}
         className={`${styles.requiredHeader} list-group-item`}
         data-bs-toggle="modal"
-        data-bs-target={`#${requiredHeader.toLowerCase().replace(/ /g, '-')}-modal`}
+        data-bs-target={`#${uniqueId}`}
     >
       <input className="form-check-input" type="checkbox" value=""/>
       <label className="form-check-label">{requiredHeader}</label>
@@ -116,9 +124,11 @@ function RequiredHeader({ requiredHeader }) {
   );
 }
 
-function RequiredHeaderModal({ requiredHeader }) {
+function RequiredHeaderModal({ requiredHeader, requiredHeaders, uniqueId }) {
+  const { parsedFile } = useContext(FileContext);
+
   return (
-    <div class="modal fade" data-bs-backdrop="static" id={`${requiredHeader.toLowerCase().replace(/ /g, '-')}-modal`} aria-hidden="true">
+    <div class="modal fade" data-bs-backdrop="static" id={uniqueId} aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div className="modal-header">
@@ -127,17 +137,9 @@ function RequiredHeaderModal({ requiredHeader }) {
             </div>
             <div className="modal-body">
               <h6>Current Match:</h6>
+              <p>{JSON.stringify(parsedFile)}</p>
               <ul className={`${styles.sampleColumns} list-group`}>
-                {sampleRow.map((column, index) => (
-                  <li onMouseOver={handleSampleColumnHover}
-                      onMouseLeave={handleSampleColumnUnHover}
-                      className={`${styles.sampleColumn} list-group-item d-flex justify-content-between align-items-start`}
-                      key={index}
-                    >
-                    <h4><strong>{column.header}</strong></h4>
-                    <p>{column.value}</p>
-                  </li>
-                ))}
+                
               </ul>
             </div>
             <div className="modal-footer">
