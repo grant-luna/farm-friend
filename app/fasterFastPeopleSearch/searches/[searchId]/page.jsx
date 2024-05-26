@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
+import Image from 'next/image';
 
 export default function MainContent({ params }) {
   const searchId = params.searchId;
@@ -35,44 +36,10 @@ function SearchResults({ searchId }) {
   
   return (
     <>
-      {!loading && <ul>
+      {!loading && <ul className={`${styles.searchItems}`}>
         {searchData.map((searchRow, index) => {
           return (
-            <li className={`${styles.searchItem} card`} key={index}>
-              <div className="card">
-                <div className={`${styles.cardHeader} card-header`}>
-                  Owner Name(s)
-                </div>
-                <div className={`${styles.cardBody} card-body`}>                  
-                  <p><strong>First Owner: </strong>{searchRow.ownerNames.firstOwner}</p>
-                  <p><strong>Second Owner: </strong>{searchRow.ownerNames.secondOwner}</p>
-                </div>
-              </div>
-              <div className="card">
-                <div className={`${styles.cardHeader} card-header`}>
-                  Primary Address
-                </div>
-                <div className={`${styles.cardBody} card-body`}>            
-                  <p><strong>Address: </strong>{searchRow.primaryAddress.address}</p>
-                  <p><strong>City / State: </strong>{searchRow.primaryAddress.cityState}</p>
-                  <a href={searchRow.primaryAddressLink} target="_blank" className="btn btn-primary" type="button">
-                    Contact Information
-                  </a>
-                </div>
-              </div>
-              <div className="card">
-                <div className={`${styles.cardHeader} card-header`}>
-                  Mail Address
-                </div>
-                <div className={`${styles.cardBody} card-body`}>
-                  <p><strong>Address: </strong>{searchRow.mailAddress.address}</p>
-                  <p><strong>City / State: </strong>{searchRow.mailAddress.cityState}</p>
-                  <a href={searchRow.mailAddressLink} target="_blank" className="btn btn-primary" type="button">
-                      Contact Information
-                  </a>
-                </div>
-              </div>
-            </li>
+            <SearchItem searchRow={searchRow} key={index} />
           )
         })};
       </ul>}
@@ -80,19 +47,57 @@ function SearchResults({ searchId }) {
   )
 }
 
-function FastPeopleSearchOffcanvas({ index, addressType, propertyAddress, ownerNames, fastPeopleSearchLink}) {
+function SearchItem({ searchRow, index}) {
   return (
-    <div className={`${styles.offCanvas} offcanvas offcanvas-start`} id={`searchRow${addressType.replace(/ /g, '')}${index}Offcanvas`}>
+    <li className={`${styles.searchItem} card text-start`}>
+      <div className="card-body">
+        <h5 className="card-title">{searchRow.primaryAddress.address}</h5>
+        <p className="card-text">{searchRow.primaryAddress.cityState}</p>
+      </div>
+      <div className="card-header">
+        Owned By:
+      </div>
+      <ul className="list-group list-group-flush">
+        {Object.keys(searchRow.ownerNames).filter((owner) => {
+          return searchRow.ownerNames[owner].length > 0;
+        }).map((owner, index) => {
+          return <li className={`list-group-item`} key={index}>{`${searchRow.ownerNames[owner]}`}</li>
+        })}
+      </ul>
+      <div className="card-body dropdown">
+        <button
+          className="btn btn-primary dropdown-toggle" 
+          href="#" role="button" 
+          data-bs-toggle="dropdown" 
+          >
+          Contact Information
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Primary Address Contact Information</a></li>
+          <li><a class="dropdown-item" href="#">Mail Address Contact Information</a></li>
+        </ul>
+      </div>
+      <SearchItemOffCanvas searchRow={searchRow} index={index}/>
+    </li>
+  )
+}
+
+function SearchItemOffCanvas({ searchRow, index }) {
+  return (
+    <div
+      className={`offcanvas offcanvas-end text-bg-dark`}
+      data-bs-scroll="true"
+      data-bs-backdrop="false"
+      id={`searchItem${index}Offcanvas`}
+      aria-labelledby={`searchItem${index}OffcanvasLabel`}
+    >
       <div className="offcanvas-header">
-        <h5 className="offcanvas-title" id="offcanvasExampleLabel">{`${propertyAddress.address} ${propertyAddress.cityState}`}</h5>
-        <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <h5 className="offcanvas-title" id={`searchItem${index}OffcanvasLabel`}>Contact Information</h5>
+        <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div className="offcanvas-body">
-        <div>
-          Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-        </div>
-        <div className="dropdown mt-3">
-          <iframe className={`${styles.fastPeopleSearchWindow}`} src={fastPeopleSearchLink}></iframe>
+        <div className>
+          {JSON.stringify(searchRow)}
         </div>
       </div>
     </div>
