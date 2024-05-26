@@ -38,7 +38,7 @@ function SearchResults({ searchId }) {
       {!loading && <ul>
         {searchData.map((searchRow, index) => {
           return (
-            <li className={styles.searchItem} key={index}>
+            <li className={`${styles.searchItem} card`} key={index}>
               <div className="card">
                 <div className={`${styles.cardHeader} card-header`}>
                   Owner Name(s)
