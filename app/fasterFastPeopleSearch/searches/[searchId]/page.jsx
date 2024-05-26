@@ -39,26 +39,38 @@ function SearchResults({ searchId }) {
         {searchData.map((searchRow, index) => {
           return (
             <li className={styles.searchItem} key={index}>
-              <div>
-                <h3>Primary Address</h3>
-                <p><strong>Address: </strong>{searchRow.primaryAddress.address}</p>
-                <p><strong>City / State: </strong>{searchRow.primaryAddress.cityState}</p>
-                <a href={searchRow.primaryAddressLink} target="_blank" className="btn btn-primary" type="button">
-                  Contact Information
-                </a>
+              <div className="card">
+                <div className={`${styles.cardHeader} card-header`}>
+                  Owner Name(s)
+                </div>
+                <div className={`${styles.cardBody} card-body`}>                  
+                  <p><strong>First Owner: </strong>{searchRow.ownerNames.firstOwner}</p>
+                  <p><strong>Second Owner: </strong>{searchRow.ownerNames.secondOwner}</p>
+                </div>
               </div>
-              <div>
-                <h3>Mail Address</h3>
-                <p><strong>Address: </strong>{searchRow.mailAddress.address}</p>
-                <p><strong>City / State: </strong>{searchRow.mailAddress.cityState}</p>
-                <a href={searchRow.mailAddressLink} target="_blank" className="btn btn-primary" type="button">
+              <div className="card">
+                <div className={`${styles.cardHeader} card-header`}>
+                  Primary Address
+                </div>
+                <div className={`${styles.cardBody} card-body`}>            
+                  <p><strong>Address: </strong>{searchRow.primaryAddress.address}</p>
+                  <p><strong>City / State: </strong>{searchRow.primaryAddress.cityState}</p>
+                  <a href={searchRow.primaryAddressLink} target="_blank" className="btn btn-primary" type="button">
                     Contact Information
-                </a>
+                  </a>
+                </div>
               </div>
-              <div>
-                <h3>Owner Name</h3>
-                <p><strong>First Owner: </strong>{searchRow.ownerNames.firstOwner}</p>
-                <p><strong>Second Owner: </strong>{searchRow.ownerNames.secondOwner}</p>
+              <div className="card">
+                <div className={`${styles.cardHeader} card-header`}>
+                  Mail Address
+                </div>
+                <div className={`${styles.cardBody} card-body`}>
+                  <p><strong>Address: </strong>{searchRow.mailAddress.address}</p>
+                  <p><strong>City / State: </strong>{searchRow.mailAddress.cityState}</p>
+                  <a href={searchRow.mailAddressLink} target="_blank" className="btn btn-primary" type="button">
+                      Contact Information
+                  </a>
+                </div>
               </div>
             </li>
           )

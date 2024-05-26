@@ -15,6 +15,15 @@ export default function RootLayout({ children }) {
       <body>
         <header className={styles.headerLinks}>
           <h1><Link className={styles.headerLink} href='/'>Farm Friend</Link></h1>
+          <div className="dropdown">
+            <button className="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img className={styles.dropdownIcon} src="/avatar-icon.png"></img>
+            </button>
+            <ul className="dropdown-menu">
+              <li><a className="dropdown-item" href="#">Sign Out</a></li>
+              <li><a className="dropdown-item" href="#">Contact Support</a></li>
+            </ul>
+          </div>
         </header>
         <nav className={styles.navColumn}>
           <Link className={styles.navColumnLink} href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link>
