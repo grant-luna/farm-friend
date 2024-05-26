@@ -3,3 +3,7 @@
   padding: .25rem;
   border-radius: .25rem;
 }
+
+.offCanvas {
+  border: 1px solid red;
+}

@@ -43,19 +43,17 @@ function SearchResults({ searchId }) {
                 <h3>Primary Address</h3>
                 <p><strong>Address: </strong>{searchRow.primaryAddress.address}</p>
                 <p><strong>City / State: </strong>{searchRow.primaryAddress.cityState}</p>
-                <button className="btn btn-primary" type="button" data-bs-toggle="offcanvas" href={`#searchRowPrimaryAddress${index}Offcanvas`} aria-controls={`searchRowPrimaryAddress${index}Offcanvas`}>
+                <a href={searchRow.primaryAddressLink} target="_blank" className="btn btn-primary" type="button">
                   Contact Information
-                </button>
-                <FastPeopleSearchOffcanvas index={index} addressType={"Primary Address"} fastPeopleSearchLink={searchRow.primaryAddressLink} />
+                </a>
               </div>
               <div>
                 <h3>Mail Address</h3>
                 <p><strong>Address: </strong>{searchRow.mailAddress.address}</p>
                 <p><strong>City / State: </strong>{searchRow.mailAddress.cityState}</p>
-                <button className="btn btn-primary" type="button" data-bs-toggle="offcanvas" href={`#searchRowMailAddress${index}Offcanvas`} aria-controls={`searchRowPrimaryAddress${index}Offcanvas`}>
+                <a href={searchRow.mailAddressLink} target="_blank" className="btn btn-primary" type="button">
                     Contact Information
-                </button>
-                <FastPeopleSearchOffcanvas index={index} addressType={"Mail Address"} fastPeopleSearchLink={searchRow.mailAddressLink} />
+                </a>
               </div>
               <div>
                 <h3>Owner Name</h3>
@@ -70,11 +68,11 @@ function SearchResults({ searchId }) {
   )
 }
 
-function FastPeopleSearchOffcanvas({ index, addressType, fastPeopleSearchLink}) {
+function FastPeopleSearchOffcanvas({ index, addressType, propertyAddress, ownerNames, fastPeopleSearchLink}) {
   return (
-    <div className="offcanvas offcanvas-start" id={`searchRow${addressType.replace(/ /g, '')}${index}Offcanvas`}>
+    <div className={`${styles.offCanvas} offcanvas offcanvas-start`} id={`searchRow${addressType.replace(/ /g, '')}${index}Offcanvas`}>
       <div className="offcanvas-header">
-        <h5 className="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+        <h5 className="offcanvas-title" id="offcanvasExampleLabel">{`${propertyAddress.address} ${propertyAddress.cityState}`}</h5>
         <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div className="offcanvas-body">
@@ -82,14 +80,7 @@ function FastPeopleSearchOffcanvas({ index, addressType, fastPeopleSearchLink}) 
           Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
         </div>
         <div className="dropdown mt-3">
-          <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            Dropdown button
-          </button>
-          <ul className="dropdown-menu">
-            <li><a className="dropdown-item" href="#">Action</a></li>
-            <li><a className="dropdown-item" href="#">Another action</a></li>
-            <li><a className="dropdown-item" href="#">Something else here</a></li>
-          </ul>
+          <iframe className={`${styles.fastPeopleSearchWindow}`} src={fastPeopleSearchLink}></iframe>
         </div>
       </div>
     </div>
