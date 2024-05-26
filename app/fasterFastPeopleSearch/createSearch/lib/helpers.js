@@ -1,19 +1,5 @@
-export default function checkIfRequiredHeaderIsCompleted() {
-  if (itemName === 'Owner Names') {
-    if (Object.keys(requiredHeaders).some((requiredHeader) => requiredHeaders[requiredHeader].length > 0 )) {
-      setIsCompleted(true);
-    }
-  } else if (itemName === 'Primary Address' || itemName === 'Mail Address') {
-    if (Object.keys(requiredHeaders).every((requiredHeader) => requiredHeaders[requiredHeader].length > 0)) {
-      setIsCompleted(true);
-
-      /*
-      if (itemName === 'Primary Address') {
-        toggleGeneratableStateProps.setIsGeneratable(true);
-      }
-      */
-    }
-  }
+export function checkIfRequiredHeaderIsCompleted() {
+  
 }
 
 export function generateRequiredHeaderSampleValue(matchedColumnHeaders, sampleRow) {
@@ -36,4 +22,22 @@ export function generateSampleRow(parsedFile) {
   return parsedFileHeaders.map((header) => {
     return { header, value: findColumnHeaderSampleValue(header, parsedFile) };
   });
+}
+
+export function resultsAreGenerateable(matchedColumnHeaderContext) {
+  const matchedColumnHeaders = matchedColumnHeaderContext.matchedColumnHeaders;
+  const matchedColumnHeaderKeysWithMatchedColumns = Object.keys(matchedColumnHeaders).filter((matchedColumnHeaderKey) => {
+    return Object.keys(matchedColumnHeaders[matchedColumnHeaderKey]).some((requiredHeader) => matchedColumnHeaders[matchedColumnHeaderKey][requiredHeader].length > 0)
+  });
+  const onlyPrimaryAddressMatched = matchedColumnHeaderKeysWithMatchedColumns.length === 1 && matchedColumnHeaderKeysWithMatchedColumns[0] === 'Primary Key'
+  const multipleMatchedColumnHeaderKeysMatched = matchedColumnHeaderKeysWithMatchedColumns.length > 1;
+
+  if (onlyPrimaryAddressMatched) {
+    const allPrimaryAddressRequiredHeadersMatched = Object.keys(matchedColumnHeaders["Primary Key"]).every((requiredHeader) => matchedColumnHeaders["PrimaryKey"][requiredHeader].length > 0);
+
+    if (allPrimaryAddressRequiredHeadersMatched) return true;
+  } else if (multipleMatchedColumnHeaderKeysMatched) {
+
+  }
+  
 }

@@ -8,6 +8,7 @@ import {
   checkIfRequiredHeaderIsCompleted,
   generateSampleRow,
   generateRequiredHeaderSampleValue,
+  resultsAreGenerateable
 } from './lib/helpers.js';
 
 
@@ -37,6 +38,7 @@ export default function MainContent() {
   );
 }
 
+const SetIsGeneratableContext = createContext();
 const MatchedColumnHeadersContext = createContext();
 
 function FileMatchMenu() {
@@ -52,43 +54,45 @@ function FileMatchMenu() {
   const matchedColumnHeadersKeys = Object.keys(matchedColumnHeaders);
 
   return (
-    <MatchedColumnHeadersContext.Provider value={{ matchedColumnHeaders, setMatchedColumnHeaders }}>
-      <h3>File Matcher</h3>
-      <p>
-        Thank you for uploading your file! Could you please help us
-        generate your search results by helping us make sense of the
-        file you uploaded?
-      </p>
-      <p>
-        At minimum, we require a <strong>Primary Address</strong> (address, city, and state)
-        to generate results.
-      </p>
-      <p>
-        For best results, please provide matching information for a Primary Address, Owner Name(s), and a Mail Address.
-      </p>
-      <ul className="accordion" id="accordionMenu">
-        {matchedColumnHeadersKeys.map((matchedColumnHeaderKey, index) => {
-          const requiredHeaders = Object.keys(matchedColumnHeaders[matchedColumnHeaderKey]);
-          return (
-            <li key={index} className="accordion-item">
-              <h2 className="accordion-header">
-                <button className="accordion-button collapsed" 
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target={`#accordion-item-${index}`}
-                        aria-expanded="false"
-                        aria-controls={`accordion-item-${index}`}
-                >
-                  {matchedColumnHeaderKey}
-                </button>
-              </h2>
-              <AccordionBody toggleId={index} requiredHeaders={requiredHeaders} matchedColumnHeaderKey={matchedColumnHeaderKey}/>
-            </li>
-          );
-        })}
-      </ul>
-      <button className={`btn btn-primary ${styles.generateResultsButton}`} disabled={!isGeneratable} type="button">Generate Results</button>
-    </MatchedColumnHeadersContext.Provider>
+    <SetIsGeneratableContext.Provider value={setIsGeneratable}>
+      <MatchedColumnHeadersContext.Provider value={{ matchedColumnHeaders, setMatchedColumnHeaders }}>
+        <h3>File Matcher</h3>
+        <p>
+          Thank you for uploading your file! Could you please help us
+          generate your search results by helping us make sense of the
+          file you uploaded?
+        </p>
+        <p>
+          At minimum, we require a <strong>Primary Address</strong> (address, city, and state)
+          to generate results.
+        </p>
+        <p>
+          For best results, please provide matching information for a Primary Address, Owner Name(s), and a Mail Address.
+        </p>
+        <ul className="accordion" id="accordionMenu">
+          {matchedColumnHeadersKeys.map((matchedColumnHeaderKey, index) => {
+            const requiredHeaders = Object.keys(matchedColumnHeaders[matchedColumnHeaderKey]);
+            return (
+              <li key={index} className="accordion-item">
+                <h2 className="accordion-header">
+                  <button className="accordion-button collapsed" 
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target={`#accordion-item-${index}`}
+                          aria-expanded="false"
+                          aria-controls={`accordion-item-${index}`}
+                  >
+                    {matchedColumnHeaderKey}
+                  </button>
+                </h2>
+                <AccordionBody toggleId={index} requiredHeaders={requiredHeaders} matchedColumnHeaderKey={matchedColumnHeaderKey}/>
+              </li>
+            );
+          })}
+        </ul>
+        <button className={`btn btn-primary ${styles.generateResultsButton}`} disabled={!isGeneratable} type="button">Generate Results</button>
+      </MatchedColumnHeadersContext.Provider>
+    </SetIsGeneratableContext.Provider>
   );
 }
 
@@ -133,6 +137,7 @@ function RequiredHeader({ requiredHeader, uniqueId }) {
 
 function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId }) {
   const { parsedFile } = useContext(FileContext);
+  const setIsGeneratable = useContext(SetIsGeneratableContext);
   const matchedColumnHeaderContext = useContext(MatchedColumnHeadersContext);
   const sampleRow = generateSampleRow(parsedFile);
   const requiredHeaderSampleValue = generateRequiredHeaderSampleValue(matchedColumnHeaderContext.matchedColumnHeaders[matchedColumnHeaderKey][requiredHeader], sampleRow)
@@ -142,6 +147,7 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
 
     const { matchedColumnHeaders, setMatchedColumnHeaders} = { ...matchedColumnHeaderContext };
     setMatchedColumnHeaders({...matchedColumnHeaders, [matchedColumnHeaderKey]: {...matchedColumnHeaders[matchedColumnHeaderKey], [requiredHeader]: []}});
+    if (matchedColumnHeaderKey === 'Primary Address') setIsGeneratable(false);
   }
 
   function handleSampleColumnClick(requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext, event) {
@@ -174,8 +180,10 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
     sampleColumn.style.cursor = 'default';
   }
 
-  function handleSaveMatchedColumnHeaders() {
-
+  function handleSaveMatchedColumnHeaders(matchedColumnHeaderContext) {
+    if (resultsAreGenerateable(matchedColumnHeaderContext)) {
+      setIsGeneratable(true);
+    }
   }
 
   return (
@@ -184,7 +192,7 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
         <div className="modal-content">
           <div className="modal-header">
               <h5 className="modal-title">Matching {requiredHeader}</h5>
-              <button onClick={handleSaveMatchedColumnHeaders} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button onClick={handleSaveMatchedColumnHeaders.bind(null, matchedColumnHeaderContext)} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
               <h6>Current Match: {requiredHeaderSampleValue}</h6>
@@ -204,7 +212,7 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
             </div>
             <div className="modal-footer">
               <button onClick={handleResetMatchedColumnHeaders.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)} type="button"  className="btn btn-light">Reset</button>
-              <button onClick={handleSaveMatchedColumnHeaders} type="button" data-bs-dismiss="modal" className="btn btn-primary">Save</button>
+              <button onClick={handleSaveMatchedColumnHeaders.bind(null, matchedColumnHeaderContext)} type="button" data-bs-dismiss="modal" className="btn btn-primary">Save</button>
             </div>
           </div>
       </div>
