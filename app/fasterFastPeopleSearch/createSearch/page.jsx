@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   generateSampleRow,
   generateRequiredHeaderSampleValue,
+  processFileForDatabase,
   resultsAreGenerateable
 } from './lib/helpers.js';
 
@@ -14,7 +15,7 @@ import {
 const FileContext = createContext();
 
 export default function MainContent() {
-  const [ parsedFile, setParsedFile ] = useState(null);
+  const [ parsedCsvFile, setParsedFile ] = useState(null);
 
   function handleFileSelection(event) {
     const selectedFile = event.target.files[0];
@@ -29,9 +30,9 @@ export default function MainContent() {
   
   return (
     <>
-      <FileContext.Provider value={{parsedFile, setParsedFile}}>
-        {!parsedFile && <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>}
-        {parsedFile && <FileMatchMenu parsedFile={parsedFile} setParsedFile={setParsedFile}/>}
+      <FileContext.Provider value={{parsedCsvFile, setParsedFile}}>
+        {!parsedCsvFile && <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>}
+        {parsedCsvFile && <FileMatchMenu parsedCsvFile={parsedCsvFile} setParsedFile={setParsedFile}/>}
       </FileContext.Provider>
     </>
   );
@@ -41,6 +42,7 @@ const SetIsGeneratableContext = createContext();
 const MatchedColumnHeadersContext = createContext();
 
 function FileMatchMenu() {
+  const { parsedCsvFile } = useContext(FileContext);
   const [ isGeneratable, setIsGeneratable ] = useState(false);
   const router = useRouter();
 
@@ -51,6 +53,30 @@ function FileMatchMenu() {
   });
 
   const matchedColumnHeadersKeys = Object.keys(matchedColumnHeaders);
+
+  async function handleGenerateResults() {
+    if (isGeneratable) {
+      const processedFile = processFileForDatabase(parsedCsvFile, matchedColumnHeaders);
+      
+      try {
+        const response = await fetch('/fasterFastPeopleSearch/createSearch/api', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(processedFile),
+        });
+
+        const responseData = await response.json();
+        
+        const insertedData = responseData.rows[0];
+        const searchId = insertedData.id;
+        router.push(`/fasterFastPeopleSearch/searches/${searchId}`);
+      } catch (error) {
+        console.error('Error while generating results:', error);
+      }
+    }
+  }
 
   return (
     <SetIsGeneratableContext.Provider value={setIsGeneratable}>
@@ -89,7 +115,12 @@ function FileMatchMenu() {
             );
           })}
         </ul>
-        <button className={`btn btn-primary ${styles.generateResultsButton}`} disabled={!isGeneratable} type="button">Generate Results</button>
+        <button onClick={handleGenerateResults}
+                className={`btn btn-primary ${styles.generateResultsButton}`}
+                disabled={!isGeneratable}
+                type="button">
+                Generate Results
+        </button>
       </MatchedColumnHeadersContext.Provider>
     </SetIsGeneratableContext.Provider>
   );
@@ -135,10 +166,10 @@ function RequiredHeader({ requiredHeader, uniqueId }) {
 }
 
 function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId }) {
-  const { parsedFile } = useContext(FileContext);
+  const { parsedCsvFile } = useContext(FileContext);
   const setIsGeneratable = useContext(SetIsGeneratableContext);
   const matchedColumnHeaderContext = useContext(MatchedColumnHeadersContext);
-  const sampleRow = generateSampleRow(parsedFile);
+  const sampleRow = generateSampleRow(parsedCsvFile);
   const requiredHeaderSampleValue = generateRequiredHeaderSampleValue(matchedColumnHeaderContext.matchedColumnHeaders[matchedColumnHeaderKey][requiredHeader], sampleRow)
 
   function handleResetMatchedColumnHeaders(requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext, event) {
@@ -229,7 +260,7 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
 
 /*
 
-function AccordionItem({ inputTypeProps, itemName, toggleId, parsedFile, toggleGeneratableStateProps}) {
+function AccordionItem({ inputTypeProps, itemName, toggleId, parsedCsvFile, toggleGeneratableStateProps}) {
   const [requiredHeaders, setRequiredHeaders] = useState(inputTypeProps.inputTypes[itemName]);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -474,7 +505,7 @@ function RequiredHeader({ index, requiredHeader, requiredHeaders, uniqueKey }) {
 */
 
 /*
-function FileMatchMenu({ parsedFile }) {
+function FileMatchMenu({ parsedCsvFile }) {
   const [isGeneratable, setIsGeneratable] = useState(false);
   const toggleGeneratableStateProps = { isGeneratable, setIsGeneratable };
   const router = useRouter();
@@ -490,7 +521,7 @@ function FileMatchMenu({ parsedFile }) {
   async function handleGenerateResultsButtonClick() {
     if (isGeneratable) {
 
-      const processedFile = JSON.stringify(parsedFile.map((row) => {
+      const processedFile = JSON.stringify(parsedCsvFile.map((row) => {
         const primaryAddressLink = createFastPeopleSearchLink(row, inputTypes["Primary Address"]);
         const mailAddressLink = createFastPeopleSearchLink(row, inputTypes["Mail Address"]);
 
@@ -566,21 +597,21 @@ function FileMatchMenu({ parsedFile }) {
                         inputTypeProps={inputTypeProps}
                         itemName={"Primary Address"}
                         toggleId={"collapseOne"}
-                        parsedFile={parsedFile}
+                        parsedCsvFile={parsedCsvFile}
                         toggleGeneratableStateProps={toggleGeneratableStateProps}
         />
         < AccordionItem key={2} 
                         inputTypeProps={inputTypeProps}
                         itemName={"Owner Names"}
                         toggleId={"collapseTwo"}
-                        parsedFile={parsedFile}
+                        parsedCsvFile={parsedCsvFile}
                         toggleGeneratableStateProps={toggleGeneratableStateProps}
         />
         < AccordionItem key={3}
                         inputTypeProps={inputTypeProps}
                         itemName={"Mail Address"}
                         toggleId={"collapseThree"}
-                        parsedFile={parsedFile}
+                        parsedCsvFile={parsedCsvFile}
                         toggleGeneratableStateProps={toggleGeneratableStateProps}
         />
       </ul>

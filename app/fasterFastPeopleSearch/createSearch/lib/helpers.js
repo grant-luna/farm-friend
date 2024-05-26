@@ -4,19 +4,84 @@ export function generateRequiredHeaderSampleValue(matchedColumnHeaders, sampleRo
   }).join(' ');
 }
 
-export function generateSampleRow(parsedFile) {
-  const findColumnHeaderSampleValue = (columnHeader, parsedFile) => {
-    const matchingRowWithValue = parsedFile.find((row) => {
+export function generateSampleRow(parsedCsvFile) {
+  const findColumnHeaderSampleValue = (columnHeader, parsedCsvFile) => {
+    const matchingRowWithValue = parsedCsvFile.find((row) => {
       return row[columnHeader] !== '';
     });
   
     return matchingRowWithValue ? matchingRowWithValue[columnHeader] : 'Empty';
   };
 
-  const parsedFileHeaders = Object.keys(parsedFile[0]);
+  const parsedFileHeaders = Object.keys(parsedCsvFile[0]);
 
   return parsedFileHeaders.map((header) => {
-    return { header, value: findColumnHeaderSampleValue(header, parsedFile) };
+    return { header, value: findColumnHeaderSampleValue(header, parsedCsvFile) };
+  });
+}
+
+/*
+
+JSON.stringify(parsedFile.map((row) => {
+        const primaryAddressLink = createFastPeopleSearchLink(row, inputTypes["Primary Address"]);
+        const mailAddressLink = createFastPeopleSearchLink(row, inputTypes["Mail Address"]);
+
+        return {
+          primaryAddressLink,
+          mailAddressLink,
+          primaryAddress: {
+            address: inputTypes["Primary Address"]["Address"].map((header) => row[header]).join(' '),
+            cityState: inputTypes["Primary Address"]["City / State"].map((header) => row[header]).join(' '),
+          },
+          mailAddress: {
+            address: inputTypes["Mail Address"]["Address"].map((header) => row[header]).join(' '),
+            cityState: inputTypes["Mail Address"]["City / State"].map((header) => row[header]).join(' '),
+          },
+          ownerNames: {
+            firstOwner: inputTypes["Owner Names"]["First Owner"].map((header) => row[header]).join(' '),
+            secondOwner: inputTypes["Owner Names"]["Second Owner"].map((header) => row[header]).join(' '),
+          }
+        }
+      }));
+
+*/
+
+export function processFileForDatabase(parsedCsvFile, matchedColumnHeaders) {
+  function createFastPeopleSearchLink(pasredCsvFileRow, matchedColumnHeaders) {
+    const addressHeaders = matchedColumnHeaders["Address"];
+    const cityStateHeaders = matchedColumnHeaders["City / State"];
+
+    const address = addressHeaders.map((addressHeader) => {
+      return pasredCsvFileRow[addressHeader]?.replace(/[^0-9a-z ]/gi, '');
+    }).join(' ')
+
+    const cityState = cityStateHeaders.map((cityStateHeader) => {
+      return pasredCsvFileRow[cityStateHeader];
+    }).join(' ');
+    
+    return `http://www.fastpeoplesearch.com/address/${address}_${cityState}`.replace(/ /g, '-');
+  }
+
+  return parsedCsvFile.map(function (parsedCsvFileRow) {
+    const primaryAddressLink = createFastPeopleSearchLink(parsedCsvFileRow, matchedColumnHeaders["Primary Address"]);
+    const mailAddressLink = createFastPeopleSearchLink(parsedCsvFileRow, matchedColumnHeaders["Mail Address"]);
+
+    return {
+      primaryAddressLink,
+      mailAddressLink,
+      primaryAddress: {
+        address: matchedColumnHeaders["Primary Address"]["Address"].map((header) => parsedCsvFileRow[header]).join(' '),
+        cityState: matchedColumnHeaders["Primary Address"]["City / State"].map((header) => parsedCsvFileRow[header]).join(' '),
+      },
+      mailAddress: {
+        address: matchedColumnHeaders["Mail Address"]["Address"].map((header) => parsedCsvFileRow[header]).join(' '),
+        cityState: matchedColumnHeaders["Mail Address"]["City / State"].map((header) => parsedCsvFileRow[header]).join(' '),
+      },
+      ownerNames: {
+        firstOwner: matchedColumnHeaders["Owner Names"]["First Owner"].map((header) => parsedCsvFileRow[header]).join(' '),
+        secondOwner: matchedColumnHeaders["Owner Names"]["Second Owner"].map((header) => parsedCsvFileRow[header]).join(' '),
+      }
+    }
   });
 }
 
