@@ -5,7 +5,6 @@ import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  checkIfRequiredHeaderIsCompleted,
   generateSampleRow,
   generateRequiredHeaderSampleValue,
   resultsAreGenerateable
@@ -180,10 +179,18 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
     sampleColumn.style.cursor = 'default';
   }
 
-  function handleSaveMatchedColumnHeaders(matchedColumnHeaderContext) {
-    if (resultsAreGenerateable(matchedColumnHeaderContext)) {
-      setIsGeneratable(true);
-    }
+  function handleSaveMatchedColumnHeaders(requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext) {
+    const requiredHeaderInput = [...document.querySelectorAll(`.accordion-body .form-check-input`)].filter((requiredHeaderInput) => {
+      return requiredHeaderInput.nextElementSibling.textContent === requiredHeader;
+    }).find((requiredHeaderInput) => {
+      const accordionHeaderText = requiredHeaderInput.closest('li.accordion-item').querySelector('h2.accordion-header')?.textContent;
+      return matchedColumnHeaderKey === accordionHeaderText;
+    });
+
+    const requiredHeaderColumnsMatched = matchedColumnHeaderContext.matchedColumnHeaders[matchedColumnHeaderKey][requiredHeader].length > 0;
+    requiredHeaderInput.checked = requiredHeaderColumnsMatched ? true : false;
+
+    setIsGeneratable(resultsAreGenerateable(matchedColumnHeaderContext) ? true : false)
   }
 
   return (
@@ -192,7 +199,7 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
         <div className="modal-content">
           <div className="modal-header">
               <h5 className="modal-title">Matching {requiredHeader}</h5>
-              <button onClick={handleSaveMatchedColumnHeaders.bind(null, matchedColumnHeaderContext)} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button onClick={handleSaveMatchedColumnHeaders.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
               <h6>Current Match: {requiredHeaderSampleValue}</h6>
@@ -212,7 +219,7 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
             </div>
             <div className="modal-footer">
               <button onClick={handleResetMatchedColumnHeaders.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)} type="button"  className="btn btn-light">Reset</button>
-              <button onClick={handleSaveMatchedColumnHeaders.bind(null, matchedColumnHeaderContext)} type="button" data-bs-dismiss="modal" className="btn btn-primary">Save</button>
+              <button onClick={handleSaveMatchedColumnHeaders.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)} type="button" data-bs-dismiss="modal" className="btn btn-primary">Save</button>
             </div>
           </div>
       </div>
