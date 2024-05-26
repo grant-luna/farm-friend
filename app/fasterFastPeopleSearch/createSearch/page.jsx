@@ -4,7 +4,12 @@ import { useState, createContext, useContext } from 'react';
 import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
-import generateSampleRow from './lib/generateSampleRow.js';
+import {
+  checkIfRequiredHeaderIsCompleted,
+  generateSampleRow,
+  generateRequiredHeaderSampleValue,
+} from './lib/helpers.js';
+
 
 const FileContext = createContext();
 
@@ -32,6 +37,8 @@ export default function MainContent() {
   );
 }
 
+const MatchedColumnHeadersContext = createContext();
+
 function FileMatchMenu() {
   const [ isGeneratable, setIsGeneratable ] = useState(false);
   const router = useRouter();
@@ -45,7 +52,7 @@ function FileMatchMenu() {
   const matchedColumnHeadersKeys = Object.keys(matchedColumnHeaders);
 
   return (
-    <>
+    <MatchedColumnHeadersContext.Provider value={{ matchedColumnHeaders, setMatchedColumnHeaders }}>
       <h3>File Matcher</h3>
       <p>
         Thank you for uploading your file! Could you please help us
@@ -62,7 +69,6 @@ function FileMatchMenu() {
       <ul className="accordion" id="accordionMenu">
         {matchedColumnHeadersKeys.map((matchedColumnHeaderKey, index) => {
           const requiredHeaders = Object.keys(matchedColumnHeaders[matchedColumnHeaderKey]);
-          
           return (
             <li key={index} className="accordion-item">
               <h2 className="accordion-header">
@@ -76,17 +82,17 @@ function FileMatchMenu() {
                   {matchedColumnHeaderKey}
                 </button>
               </h2>
-              <AccordionBody toggleId={index} requiredHeaders={requiredHeaders}/>
+              <AccordionBody toggleId={index} requiredHeaders={requiredHeaders} matchedColumnHeaderKey={matchedColumnHeaderKey}/>
             </li>
           );
         })}
       </ul>
       <button className={`btn btn-primary ${styles.generateResultsButton}`} disabled={!isGeneratable} type="button">Generate Results</button>
-    </>
+    </MatchedColumnHeadersContext.Provider>
   );
 }
 
-function AccordionBody({ toggleId, requiredHeaders }) {
+function AccordionBody({ toggleId, requiredHeaders, matchedColumnHeaderKey }) {
   return (
     <div id={`accordion-item-${toggleId}`} className="accordion-collapse collapse" data-bs-parent="#accordionMenu">
       <div className="accordion-body">
@@ -97,7 +103,7 @@ function AccordionBody({ toggleId, requiredHeaders }) {
             return (
               <li key={index}>
                 <RequiredHeader requiredHeader={requiredHeader} uniqueId={uniqueId}/>
-                <RequiredHeaderModal requiredHeader={requiredHeader} requiredHeaders={requiredHeaders} uniqueId={uniqueId}/>
+                <RequiredHeaderModal requiredHeader={requiredHeader} matchedColumnHeaderKey={matchedColumnHeaderKey} uniqueId={uniqueId}/>
               </li>
             );
           })}
@@ -125,28 +131,80 @@ function RequiredHeader({ requiredHeader, uniqueId }) {
   );
 }
 
-function RequiredHeaderModal({ requiredHeader, requiredHeaders, uniqueId }) {
+function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId }) {
   const { parsedFile } = useContext(FileContext);
+  const matchedColumnHeaderContext = useContext(MatchedColumnHeadersContext);
   const sampleRow = generateSampleRow(parsedFile);
+  const requiredHeaderSampleValue = generateRequiredHeaderSampleValue(matchedColumnHeaderContext.matchedColumnHeaders[matchedColumnHeaderKey][requiredHeader], sampleRow)
+
+  function handleResetMatchedColumnHeaders(requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext, event) {
+    event.preventDefault();
+
+    const { matchedColumnHeaders, setMatchedColumnHeaders} = { ...matchedColumnHeaderContext };
+    setMatchedColumnHeaders({...matchedColumnHeaders, [matchedColumnHeaderKey]: {...matchedColumnHeaders[matchedColumnHeaderKey], [requiredHeader]: []}});
+  }
+
+  function handleSampleColumnClick(requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext, event) {
+    const isSampleColumn = event.target.closest('li').classList.contains('sample-column')
+
+    if (isSampleColumn) {
+      event.preventDefault();
+
+      const { matchedColumnHeaders, setMatchedColumnHeaders} = { ...matchedColumnHeaderContext };
+      const matchedColumnHeaderKeyMatchedColumns = [...matchedColumnHeaders[matchedColumnHeaderKey][requiredHeader]];
+      const sampleColumn = event.target.closest('li');
+      const [ sampleColumnHeader, sampleColumnValue ] = [...sampleColumn.children].map((child) => child.textContent);
+      matchedColumnHeaderKeyMatchedColumns.push(sampleColumnHeader);
+      
+      setMatchedColumnHeaders({...matchedColumnHeaders, [matchedColumnHeaderKey]: {...matchedColumnHeaders[matchedColumnHeaderKey], [requiredHeader]: matchedColumnHeaderKeyMatchedColumns}});
+    }
+  }
+
+  function handleSampleColumnHover(event) {
+    const sampleColumn = event.currentTarget;
+
+    sampleColumn.classList.add('active');
+    sampleColumn.style.cursor = 'pointer';
+  }
+
+  function handleSampleColumnUnHover(event) {
+    const sampleColumn = event.currentTarget;
+
+    sampleColumn.classList.remove('active');
+    sampleColumn.style.cursor = 'default';
+  }
+
+  function handleSaveMatchedColumnHeaders() {
+
+  }
 
   return (
-    <div class="modal fade" data-bs-backdrop="static" id={uniqueId} aria-hidden="true">
+    <div className="modal fade" data-bs-backdrop="static" id={uniqueId} aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+        <div className="modal-content">
           <div className="modal-header">
               <h5 className="modal-title">Matching {requiredHeader}</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button onClick={handleSaveMatchedColumnHeaders} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <h6>Current Match:</h6>
-              <p>{JSON.stringify(sampleRow)}</p>
-              <ul className={`${styles.sampleColumns} list-group`}>
-                
+              <h6>Current Match: {requiredHeaderSampleValue}</h6>
+              <ul className={`${styles.sampleColumns} list-group`} onClick={handleSampleColumnClick.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)}>
+                {sampleRow.map((column, index) => (
+                  <li
+                      onMouseOver={handleSampleColumnHover}
+                      onMouseLeave={handleSampleColumnUnHover}
+                      className={`${styles.sampleColumn} list-group-item sample-column`}
+                      key={index}
+                    >
+                    <h4><strong>{column.header}</strong></h4>
+                    <p>{column.value}</p>
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="modal-footer">
-              <button type="button"  className="btn btn-light">Reset</button>
-              <button type="button" data-bs-dismiss="modal" className="btn btn-primary">Save</button>
+              <button onClick={handleResetMatchedColumnHeaders.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)} type="button"  className="btn btn-light">Reset</button>
+              <button onClick={handleSaveMatchedColumnHeaders} type="button" data-bs-dismiss="modal" className="btn btn-primary">Save</button>
             </div>
           </div>
       </div>
@@ -239,47 +297,9 @@ function RequiredHeaderModal({ requiredHeader, itemName, requiredHeaders, setReq
     }
   }
 
-  function generateCurrentMatch(requiredHeaders, requiredHeader, sampleRow) {
-    return requiredHeaders[requiredHeader].map((columnHeader) => {
-      return sampleRow.find((row) => row.header === columnHeader).value;
-    }).join(' ');
-  }
-
-  function handleResetRequiredHeaderMatch(requiredHeader) {
-    setRequiredHeaders({...requiredHeaders, [requiredHeader]: []});
-    toggleGeneratableStateProps.setIsGeneratable(false);
-  }
-
   function handleSaveRequiredHeaderMatch(event, itemName, requiredHeaders, inputTypeProps) {
     inputTypeProps.setInputTypes({...inputTypeProps.inputTypes, [itemName]: {...requiredHeaders}});
     checkIfCompleted(itemName);
-  }
-
-  function handleSampleColumnClick(requiredHeader, event) {
-    if (event.target.parentNode.tagName === 'LI' || event.target.tagName === 'LI') {
-      event.preventDefault();
-
-      const sampleColumn = event.target.closest('li');
-      const [ sampleColumnHeader, sampleColumnValue ] = [...sampleColumn.children].map((child) => child.textContent);
-      const requiredHeadersCopy = { ...requiredHeaders }
-      requiredHeadersCopy[requiredHeader].push(sampleColumnHeader);
-      
-      setRequiredHeaders({ ...requiredHeaders, [requiredHeader]: requiredHeadersCopy[requiredHeader]} );
-    }
-  }
-
-  function handleSampleColumnHover(event) {
-    const sampleColumn = event.currentTarget;
-
-    sampleColumn.classList.add('active');
-    sampleColumn.style.cursor = 'pointer';
-  }
-
-  function handleSampleColumnUnHover(event) {
-    const sampleColumn = event.currentTarget;
-
-    sampleColumn.classList.remove('active');
-    sampleColumn.style.cursor = 'default';
   }
 
   return (
