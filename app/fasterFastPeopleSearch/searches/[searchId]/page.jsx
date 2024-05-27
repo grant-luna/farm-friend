@@ -73,33 +73,10 @@ function SearchItem({ searchRow, index}) {
           Contact Information
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Primary Address Contact Information</a></li>
-          <li><a class="dropdown-item" href="#">Mail Address Contact Information</a></li>
+          <li><a class="dropdown-item" href={searchRow.primaryAddressLink} target="_blank"><strong>{searchRow.primaryAddress.address} | {searchRow.primaryAddress.cityState}</strong> <span className="badge text-bg-info">Primary Address</span></a></li>
+          <li><a class="dropdown-item" href={searchRow.mailAddressLink} target="_blank"><strong>{searchRow.mailAddress.address} | {searchRow.mailAddress.cityState}</strong> <span className="badge text-bg-info">Mail Address</span></a></li>
         </ul>
       </div>
-      <SearchItemOffCanvas searchRow={searchRow} index={index}/>
     </li>
-  )
-}
-
-function SearchItemOffCanvas({ searchRow, index }) {
-  return (
-    <div
-      className={`offcanvas offcanvas-end text-bg-dark`}
-      data-bs-scroll="true"
-      data-bs-backdrop="false"
-      id={`searchItem${index}Offcanvas`}
-      aria-labelledby={`searchItem${index}OffcanvasLabel`}
-    >
-      <div className="offcanvas-header">
-        <h5 className="offcanvas-title" id={`searchItem${index}OffcanvasLabel`}>Contact Information</h5>
-        <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div className="offcanvas-body">
-        <div className>
-          {JSON.stringify(searchRow)}
-        </div>
-      </div>
-    </div>
   )
 }
