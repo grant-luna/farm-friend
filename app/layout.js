@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import './globals.css'
 import styles from './page.module.css';
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from './components/BootstrapClient.js';
 import Image from 'next/image';
 

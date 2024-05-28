@@ -18,7 +18,7 @@ export default function SignInForm() {
           <button type="submit" className="btn btn-primary">Submit</button>
         </div>
       </form>
-      <p>Already have an account? <Link href='/signUp'>Sign Up</Link></p>
+      <p>Already have an account? <Link class="btn btn-primary" href='/signUp'>Sign Up</Link></p>
     </>
   )
 }
