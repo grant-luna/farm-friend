@@ -3,7 +3,7 @@ import styles from './page.module.css';
 import { useState, useEffect, createContext, useContext } from 'react';
 import Link from 'next/link';
 import { validateFormInputs } from './lib/helpers.js';
-import bcrypt from 'bcryptjs';
+import { createNewUser } from '../actions/createNewUser.js';
 
 const ErrorObjectContext = createContext();
 export default function SignUpForm() {
@@ -47,20 +47,10 @@ export default function SignUpForm() {
   async function handleSubmitForm(event) {
     event.preventDefault();
 
-    if (!errorObject.errorsExist()) {
-      try {
-        const response = await fetch('/api/signUp', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        });
-        const responseData = await response.json();
-        debugger;
-      } catch (error) {
-        console.log('Error:',)
-      }
+    try {
+      const newUser = await createNewUser(formData);
+    } catch (error) {
+      // display error
     }
   }
 

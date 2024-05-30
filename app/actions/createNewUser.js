@@ -1,10 +1,10 @@
-import { pool } from '../../lib/db.js';
+"use server";
+
+import { pool } from '../lib/db.js';
 import bcrypt from 'bcryptjs';
 
-export async function POST(request) {
+export async function createNewUser(formData) {
   try {
-    const formData = await request.json();
-
     const { userFirstName, userLastName, userEmail, userPassword } = formData;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userPassword, salt);
@@ -14,9 +14,9 @@ export async function POST(request) {
       [userFirstName, userLastName, userEmail, hashedPassword]
     );
 
-    return new Response(JSON.stringify(dbResponse.rows[0]), { status: 201 });
+    return dbResponse
   } catch (error) {
     console.error('Database insertion error:', error);
-    return new Response(JSON.stringify({ error: 'Database insertion error' }), { status: 500 });
+    return new Error('Database insertion error');
   }
 }
