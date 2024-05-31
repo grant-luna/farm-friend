@@ -10,6 +10,7 @@ import {
   processFileForDatabase,
   resultsAreGenerateable
 } from './lib/helpers.js';
+import { createSearch } from '../actions/createSearch.js';
 
 
 const FileContext = createContext();
@@ -58,6 +59,9 @@ function FileMatchMenu() {
     if (isGeneratable) {
       const processedFile = processFileForDatabase(parsedCsvFile, matchedColumnHeaders);
       
+      /*
+      const searchData = await createSearch(processedFile);
+      */
       try {
         const response = await fetch('/fasterFastPeopleSearch/createSearch/api', {
           method: 'POST',

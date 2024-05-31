@@ -14,7 +14,7 @@ export async function createNewUser(formData) {
       [userFirstName, userLastName, userEmail, hashedPassword]
     );
 
-    return dbResponse
+    return dbResponse.rows[0];
   } catch (error) {
     console.error('Database insertion error:', error);
     return new Error('Database insertion error');

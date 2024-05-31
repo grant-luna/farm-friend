@@ -4,6 +4,7 @@ import { useState, useEffect, createContext, useContext } from 'react';
 import Link from 'next/link';
 import { validateFormInputs } from './lib/helpers.js';
 import { createNewUser } from '../actions/createNewUser.js';
+import { login } from '../actions/login.js';
 
 const ErrorObjectContext = createContext();
 export default function SignUpForm() {
@@ -49,6 +50,7 @@ export default function SignUpForm() {
 
     try {
       const newUser = await createNewUser(formData);
+      login(newUser);
     } catch (error) {
       // display error
     }
