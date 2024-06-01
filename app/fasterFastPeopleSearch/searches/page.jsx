@@ -2,6 +2,7 @@
 import styles from './page.module.css';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { fetchSearches } from '../actions/fetchSearches.js';
 
 export default function MainContent() {
   return (
@@ -17,22 +18,21 @@ function SearchesContainer() {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    async function findSearches() {
+    (async () => {
       try {
-        const fetchedSearches = await fetch('/fasterFastPeopleSearch/findSearches');
-        const parsedSearches = await fetchedSearches.json();
-        setSearches(parsedSearches.rows)
+        const fetchedSearches = await fetchSearches();
+        console.log(fetchedSearches);
+        setSearches(fetchedSearches);
         setLoading(false);
       } catch (error) {
         setLoading(false);
       }
-    }
-
-    findSearches()
+    })();
   }, []);
 
   return (
     <>
+      {loading && <p>Loading Your Searches...</p>}
       {!loading && <ul className={styles.searchesContainer}>
         {searches.map((search, index) => {
           return <SearchItem key={index} search={search}/>
@@ -50,6 +50,9 @@ function SearchItem({ search }) {
   }
   
   return (
-    <li className={styles.searchItem} onClick={() => handleSearchItemClick(search.id)}>{search.id}</li>
+    <li className={styles.searchItem} onClick={handleSearchItemClick.bind(null, search.id)}>
+      {search.id}
+      {search["created_at"].toDateString()}
+    </li>
   )
 }
