@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
-import Image from 'next/image';
+import { fetchSearchData } from '../../actions/fetchSearchData.js';
 
 export default function MainContent({ params }) {
   const searchId = params.searchId;
@@ -14,34 +14,28 @@ function SearchResults({ searchId }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchSearchData(searchId) {
+    (async () => {
       try {
-        const fetchedData = await fetch(`/fasterFastPeopleSearch/findSearch/${searchId}`, {
-          method: 'GET',
-        });
-        const parsedData = await fetchedData.json();
-        const searchData = JSON.parse(parsedData["search_data"]);
-        
-        setSearchData(searchData);
+        const fetchedSearchData = await fetchSearchData(searchId);
+        setSearchData(fetchedSearchData.data["search_data"]);
         setLoading(false);
       } catch (error) {
         console.error(error);
         setError(error);
         setLoading(false);
       }
-    }
-
-    fetchSearchData(searchId);
-  }, [searchId])
+    })();
+  }, [searchId]);
   
   return (
     <>
+      {loading && <p>Loading...</p>}
       {!loading && <ul className={`${styles.searchItems}`}>
-        {searchData.map((searchRow, index) => {
+        {searchData?.map((searchRow, index) => {
           return (
             <SearchItem searchRow={searchRow} key={index} />
           )
-        })};
+        })}
       </ul>}
     </>
   )
