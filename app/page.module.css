@@ -1,8 +1,5 @@
-.headerLinks {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
+.navbar {
+  border: 1px solid red;
 }
 
 .dropdownIcon {

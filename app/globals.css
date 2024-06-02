@@ -46,13 +46,13 @@ body {
   display: grid;
   gap: .05rem;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 100px 1fr;
-  grid-template-areas: "header header header"
+  grid-template-rows: max-content 1fr;
+  grid-template-areas: "nav nav nav"
                         "main main main";
 }
 
-header {
-  grid-area: header;
+nav {
+  grid-area: nav;
   background-color: #002D62;
 }
 
