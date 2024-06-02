@@ -3,10 +3,30 @@ import Link from 'next/link';
 export default function RootLayout({ children }) {
   return (
     <>
-      <h1>Faster FastPeopleSearch</h1>
-      <div className={` navbar bg-body-tertiary`}>
-        <Link href='/fasterFastPeopleSearch/searches'>Searches</Link>
-        <Link href='/fasterFastPeopleSearch/createSearch'>Create New Search</Link>
+      <div className={`navbar`}>
+        <div className="container-fluid">
+          <a className="navbar-brand" href="#">Faster FastPeopleSearch</a>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#fasterFastPeopleSearchNavbarContent"
+            aria-controls="fasterFastPeopleSearchNavbarContent"
+            aria-expanded="true"
+            aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="fasterFastPeopleSearchNavbarContent">
+              <ul className="navbar-nav">
+                <li className="navbar-item">
+                  <Link className="nav-link" href='/fasterFastPeopleSearch/createSearch'>Create New Search</Link>
+                </li>
+                <li className="navbar-item">
+                  <Link className="nav-link" href='/fasterFastPeopleSearch/searches'>Searches</Link>        
+                </li>
+              </ul>
+            </div>
+        </div>
       </div>
       {children}
     </>
