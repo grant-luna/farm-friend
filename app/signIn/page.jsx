@@ -69,8 +69,7 @@ export default function SignInModal() {
                   <label htmlFor="userPassword">Password</label>
                 </div>
                 <div>
-                  <button type="submit" onClick={handleFormSubmission} disabled={!formIsSubmittable} className="btn btn-primary">Submit</button>
-                  <button type="button" className="btn btn-light">Reset</button>
+                  <button type="submit" onClick={handleFormSubmission} disabled={!formIsSubmittable} className="btn btn-primary">Sign In</button>
                 </div>
               </form>
               <p>Already have an account? <Link className="btn btn-primary" href='/signUp'>Sign Up</Link></p>
