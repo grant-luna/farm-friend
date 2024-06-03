@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
               <Image src='/farm-friend-logo.png' alt="Farm Friend Logo" width={100} height={100}/>
             </Link>
             <AccountDropdown />
-            <div className="offcanvas offcanvas-start" id="navbarContent">
+            <div className="offcanvas offcanvas-start show" id="navbarContent">
               <div className="offcanvas-header">
                 <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Farm Friend</h5>
                 <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
