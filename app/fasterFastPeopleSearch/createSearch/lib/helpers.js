@@ -20,32 +20,6 @@ export function generateSampleRow(parsedCsvFile) {
   });
 }
 
-/*
-
-JSON.stringify(parsedFile.map((row) => {
-        const primaryAddressLink = createFastPeopleSearchLink(row, inputTypes["Primary Address"]);
-        const mailAddressLink = createFastPeopleSearchLink(row, inputTypes["Mail Address"]);
-
-        return {
-          primaryAddressLink,
-          mailAddressLink,
-          primaryAddress: {
-            address: inputTypes["Primary Address"]["Address"].map((header) => row[header]).join(' '),
-            cityState: inputTypes["Primary Address"]["City / State"].map((header) => row[header]).join(' '),
-          },
-          mailAddress: {
-            address: inputTypes["Mail Address"]["Address"].map((header) => row[header]).join(' '),
-            cityState: inputTypes["Mail Address"]["City / State"].map((header) => row[header]).join(' '),
-          },
-          ownerNames: {
-            firstOwner: inputTypes["Owner Names"]["First Owner"].map((header) => row[header]).join(' '),
-            secondOwner: inputTypes["Owner Names"]["Second Owner"].map((header) => row[header]).join(' '),
-          }
-        }
-      }));
-
-*/
-
 export function processFileForDatabase(parsedCsvFile, matchedColumnHeaders) {
   function createFastPeopleSearchLink(pasredCsvFileRow, matchedColumnHeaders) {
     const addressHeaders = matchedColumnHeaders["Address"];

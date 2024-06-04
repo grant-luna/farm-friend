@@ -68,40 +68,44 @@ function FileMatchMenu() {
   return (
     <SetIsGeneratableContext.Provider value={setIsGeneratable}>
       <MatchedColumnHeadersContext.Provider value={{ matchedColumnHeaders, setMatchedColumnHeaders }}>
-        <h3>File Matcher</h3>
-        <p>
-          Thank you for uploading your file! Could you please help us
-          generate your search results by helping us make sense of the
-          file you uploaded?
-        </p>
-        <p>
-          At minimum, we require a <strong>Primary Address</strong> (address, city, and state)
-          to generate results.
-        </p>
-        <p>
-          For best results, please provide matching information for a Primary Address, Owner Name(s), and a Mail Address.
-        </p>
-        <ul className="accordion" id="accordionMenu">
-          {matchedColumnHeadersKeys.map((matchedColumnHeaderKey, index) => {
-            const requiredHeaders = Object.keys(matchedColumnHeaders[matchedColumnHeaderKey]);
-            return (
-              <li key={index} className="accordion-item">
-                <h2 className="accordion-header">
-                  <button className="accordion-button collapsed" 
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target={`#accordion-item-${index}`}
-                          aria-expanded="false"
-                          aria-controls={`accordion-item-${index}`}
-                  >
-                    {matchedColumnHeaderKey}
-                  </button>
-                </h2>
-                <AccordionBody toggleId={index} requiredHeaders={requiredHeaders} matchedColumnHeaderKey={matchedColumnHeaderKey}/>
-              </li>
-            );
-          })}
-        </ul>
+        <div className={`${styles.fileMatchMenuInstructionsContainer}`}>
+          <h3>Help Us Generate Your Search Results</h3>
+          <p>
+          Thank you for uploading your file! Let&#39;s make sure we get the right information 
+          to generate your search results. Follow the steps below to choose the correct columns 
+          for each category. It&#39;s easy and anyone can do it!
+          </p>
+          <p>
+            For any item you select below, you will be asked to choose the column headers for 
+            each category of the item that can be used to re-create the required field.  For example,
+            in the Primary Address item, you will be asked to choose the columns which can ultimately
+            re-create an Address and a City / State.
+          </p>
+          <InstructionSteps />
+        </div>
+        <div>
+          <ul className="accordion" id="accordionMenu">
+            {matchedColumnHeadersKeys.map((matchedColumnHeaderKey, index) => {
+              const requiredHeaders = Object.keys(matchedColumnHeaders[matchedColumnHeaderKey]);
+              return (
+                <li key={index} className="accordion-item">
+                  <h2 className="accordion-header">
+                    <button className="accordion-button collapsed" 
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target={`#accordion-item-${index}`}
+                            aria-expanded="false"
+                            aria-controls={`accordion-item-${index}`}
+                    >
+                      {matchedColumnHeaderKey}
+                    </button>
+                  </h2>
+                  <AccordionBody toggleId={index} requiredHeaders={requiredHeaders} matchedColumnHeaderKey={matchedColumnHeaderKey}/>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
         <button onClick={handleGenerateResults}
                 className={`btn btn-primary ${styles.generateResultsButton}`}
                 disabled={!isGeneratable}
@@ -158,6 +162,12 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
   const matchedColumnHeaderContext = useContext(MatchedColumnHeadersContext);
   const sampleRow = generateSampleRow(parsedCsvFile);
   const requiredHeaderSampleValue = generateRequiredHeaderSampleValue(matchedColumnHeaderContext.matchedColumnHeaders[matchedColumnHeaderKey][requiredHeader], sampleRow)
+  const matchExamples = {
+    "Address": ["123 Main", "123 Main St", "123 S Main St", "123 S Main St #42"],
+    "City / State": ["Los Angeles, CA"],
+    "First Owner": ["Jane Doe", "Jane P Doe", "The Jane Doe Trust"],
+    "Second Owner": ["John Doe", "John P Doe", "The John P Doe Trust"],
+  };
 
   function handleResetMatchedColumnHeaders(requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext, event) {
     event.preventDefault();
@@ -220,6 +230,14 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
               <button onClick={handleSaveMatchedColumnHeaders.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
+              <div className={`${styles.matchExamplesContainer}`}>
+                <h6>Here are examples of what we&#39;re looking for:</h6>
+                <ul className={`${styles.matchExampleList}`}>
+                  {matchExamples[requiredHeader].map((matchExample, index) => {
+                    return <li key={index} className="badge text-bg-info">{matchExample}</li>
+                  })}
+                </ul>
+              </div>
               <h6>Current Match: {requiredHeaderSampleValue}</h6>
               <ul className={`${styles.sampleColumns} list-group`} onClick={handleSampleColumnClick.bind(null, requiredHeader, matchedColumnHeaderKey, matchedColumnHeaderContext)}>
                 {sampleRow.map((column, index) => (
@@ -243,4 +261,78 @@ function RequiredHeaderModal({ requiredHeader, matchedColumnHeaderKey, uniqueId 
       </div>
     </div>
   )
+}
+
+function InstructionSteps() {
+  const [ stepPage, setStepPage ] = useState(0);
+
+  const stepsHtmlFragments = [
+    <>
+      <h4>Step 1: Select Primary Address (Required)</h4>
+      <ul>
+        <li>Find and select the columns for the street address & city/state in your file</li>
+      </ul>
+    </>,
+    <>
+      <h4>Step 2: Select Owner Name(s) (Optional)</h4>
+      <ul>
+        <li>Find the columns for the owner&#39;s first and last name.</li>
+      </ul>
+    </>,
+    <>
+      <h4>Step 3: Select Mail Address (Optional)</h4>
+      <ul>
+        <li>Find the columns for mailing address, city, and state.</li>
+      </ul>
+    </>
+  ]
+
+  function handleNextStepClick() {
+    setStepPage(stepPage + 1)
+  }
+
+  function handlePreviousStepClick() {
+    setStepPage(stepPage - 1);
+  }
+
+  return (
+    <div className={styles.instructionSteps}>
+      <InstructionStep stepPage={stepPage}/>
+      <div>
+        <button className="btn btn-primary" type="button" disabled={stepPage === 0} onClick={handlePreviousStepClick}>Previous</button>
+        <button className="btn btn-primary" type="button" disabled = {stepPage === stepsHtmlFragments.length - 1} onClick={handleNextStepClick}>Next</button>
+      </div>
+    </div>
+  )
+}
+
+function InstructionStep({ stepPage }) {
+  if (stepPage === 0) {
+    return (
+      <>
+        <h4>Step 1: Select Primary Address (Required)</h4>
+        <ul>
+          <li>Find and select the columns for the street address & city/state in your file</li>
+        </ul>
+      </>
+    )
+  } else if (stepPage === 1) {
+    return (
+      <>
+        <h4>Step 2: Select Owner Name(s) (Optional)</h4>
+        <ul>
+          <li>Find the columns for the owner&#39;s first and last name.</li>
+        </ul>
+      </>
+    );
+  } else if (stepPage === 2) {
+    return (
+      <>
+        <h4>Step 3: Select Mail Address (Optional)</h4>
+        <ul>
+          <li>Find the columns for mailing address, city, and state.</li>
+        </ul>
+      </>
+    );
+  }
 }

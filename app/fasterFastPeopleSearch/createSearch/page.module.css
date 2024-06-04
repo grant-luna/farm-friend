@@ -5,6 +5,22 @@
   padding: 1rem;
 }
 
+.fileMatchMenuInstructionsContainer {
+  overflow-y: auto;
+}
+
+.instructionStepsContainer {
+  border: 1px solid red;
+}
+
+.instructionSteps {
+  height: 200px;
+  border: 1px solid red;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .generateResultsButton {
   width: 200px;
   max-width: 40%;
@@ -27,6 +43,13 @@
 .requiredHeader {
   display: flex;
   gap: .5rem;
+}
+
+.matchExampleList {
+  display:  flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: .5rem;
 }
 
 .sampleColumns {
