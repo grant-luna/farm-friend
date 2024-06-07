@@ -8,7 +8,8 @@ import {
   generateSampleRow,
   processFileForDatabase,
   generateHeaderSampleValue,
-  resultsAreGenerateable
+  resultsAreGenerateable,
+  updateInProgressStatus,
 } from './lib/helpers.js';
 import { createSearch } from '../actions/createSearch.js';
 import deepCopy from '../../lib/deepCopy.js';
@@ -113,6 +114,8 @@ function FileProcessModal() {
   const maxPage = categories.length - 1;
   const [ currentHeader, setCurrentHeader ] = useState(null);
   const currentCategory = categories[currentPage];
+  const { isGeneratable, setIsGeneratable } = useContext(SearchStatusContext);
+  const navTabsRef = useRef(null);
 
   const stepInstructions = [
     <>
@@ -134,8 +137,6 @@ function FileProcessModal() {
       </ul>
     </>
   ];
-  const navTabsRef = useRef(null);
-  const { isGeneratable } = useContext(SearchStatusContext);
 
   async function handleGenerateResults() {
     if (isGeneratable) {
@@ -164,6 +165,27 @@ function FileProcessModal() {
     setCurrentHeader(null);
     setCurrentPage(currentPage - 1)
   }
+
+  useEffect(() => {
+    const primaryAddressIndex = categories.findIndex((category) => category.type === 'Primary Address');
+    
+    if (categories[primaryAddressIndex].inProgress && !categories[primaryAddressIndex].completed()) {
+      
+      setIsGeneratable(false);
+    }
+    
+    const inProgressCategoriesAreComplete = (categories) => {
+      const inProgressCategories = categories.filter((category) => {
+        return category.inProgress;
+      });
+
+      return inProgressCategories.length > 0 && inProgressCategories.every((category) => {
+        return category.completed();
+      });
+    };
+    
+    setIsGeneratable(inProgressCategoriesAreComplete(categories));
+  }, [categories]);
 
   return (
     <div
@@ -265,6 +287,8 @@ function ColumnSelectorDropdown({ currentHeader, currentPage }) {
     // Make a copy of the currentCategory object and the categories object
     const currentCategoryCopy = {...deepCopy(currentCategory), headers: headersCopy};
     const categoriesCopy = categories.map((category) => deepCopy(category));
+
+    updateInProgressStatus(currentCategoryCopy);
 
     // Replace the current version of currentCategory in categories with
     // the updated copy

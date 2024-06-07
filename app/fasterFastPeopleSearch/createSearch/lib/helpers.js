@@ -93,3 +93,13 @@ export function resultsAreGenerateable(matchedColumnHeaderContext) {
     return generatableStatus;
   }
 }
+
+export function updateInProgressStatus(currentCategoryCopy) {
+  if (Object.keys(currentCategoryCopy.headers).some((header) => {
+    return currentCategoryCopy.headers[header].length > 0
+  })) {
+    currentCategoryCopy.inProgress = true;
+  } else {
+    currentCategoryCopy.inProgress = false;
+  }
+}
