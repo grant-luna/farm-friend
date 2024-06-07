@@ -1,6 +1,6 @@
-export function generateRequiredHeaderSampleValue(matchedColumnHeaders, sampleRow) {
-  return matchedColumnHeaders.map((columnHeader) => {
-    return sampleRow.find((row) => row.header === columnHeader).value;
+export function generateHeaderSampleValue(currentHeaderMatchedColumnHeaders, sampleRow) {
+  return currentHeaderMatchedColumnHeaders.map((header) => {
+    return sampleRow.find((column) => column.header === header).value || '';
   }).join(' ');
 }
 
