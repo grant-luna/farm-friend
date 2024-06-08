@@ -46,6 +46,7 @@ const SearchStatusContext = createContext();
 const CategoriesContext = createContext();
 
 function FileProcessMenu() {
+  const { setParsedFile } = useContext(FileContext);
   const [ isGeneratable, setIsGeneratable ] = useState(false);
   const [ categories, setCategories ] = useImmer([
     { 
@@ -83,6 +84,10 @@ function FileProcessMenu() {
     }
   ]);
 
+  function handleResetParsedFile() {
+    setParsedFile(null);
+  }
+
   return (
     <SearchStatusContext.Provider value={{ isGeneratable, setIsGeneratable}}>
       <CategoriesContext.Provider value={{ categories, setCategories }}>        
@@ -106,6 +111,12 @@ function FileProcessMenu() {
           className="btn btn-primary"
           disabled={true}>
           Choose Template
+        </button>
+        <button
+          type="button"
+          className="btn btn-light"
+          onClick={handleResetParsedFile}>
+          Reset
         </button>
         <FileProcessModal/>      
       </CategoriesContext.Provider>

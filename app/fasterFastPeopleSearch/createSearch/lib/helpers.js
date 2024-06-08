@@ -1,3 +1,34 @@
+function createFastPeopleSearchSearchLink(parsedCsvFileRow, category) {
+  const address = category.headers["Address"].map((header) => {
+    return parsedCsvFileRow[header];
+  }).join(' ')
+    .replace(/[^a-z0-9 ]/gi, '') // Remove non-alphanumeric characters except spaces
+    .replace(/\s+/g, ' ')        // Reduce multiple spaces to a single space
+    .trim()
+    .toLowerCase()
+    .replace(/\s/g, '-');
+
+  const city = category.headers["City"].map((header) => {
+    return parsedCsvFileRow[header];
+  }).join('-')
+    .replace(/[^a-z0-9 ]/gi, '') // Remove non-alphanumeric characters except spaces
+    .replace(/\s+/g, ' ')        // Reduce multiple spaces to a single space
+    .trim()
+    .toLowerCase()
+    .replace(/\s/g, '-');
+  
+  const state = category.headers["State"].map((header) => {
+    return parsedCsvFileRow[header];
+  }).join(' ')
+    .replace(/[^a-z]/gi, '') // Remove non-alphanumeric characters except spaces
+    .replace(/\s+/g, ' ')        // Reduce multiple spaces to a single space
+    .trim()
+    .toLowerCase()
+    .replace(/\s/g, '-');
+
+  return `https://www.fastpeoplesearch.com/address/${address}_${city}-${state}`;
+}
+
 export function generateHeaderSampleValue(currentHeaderMatchedColumnHeaders, sampleRow) {
   return currentHeaderMatchedColumnHeaders.map((header) => {
     return sampleRow.find((column) => column.header === header).value || '';
@@ -29,6 +60,10 @@ export function processFileForDatabase(parsedCsvFile, categories) {
         finalHeadersObject[header] = category.headers[header].map((matchedHeader) => parsedCsvFileRow[matchedHeader]).join(' ');
         return finalHeadersObject;
       }, {});
+
+      if (Object.keys(category.headers).includes("City")) {
+        finalParsedCsvFileRow[category.type]["FastPeopleSearch Url"] = createFastPeopleSearchSearchLink(parsedCsvFileRow, category);
+      }
 
       return finalParsedCsvFileRow;
     }, {});
