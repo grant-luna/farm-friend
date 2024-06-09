@@ -185,7 +185,6 @@ function FileProcessModal() {
     const primaryAddressIndex = categories.findIndex((category) => category.type === 'Primary Address');
     
     if (categories[primaryAddressIndex].inProgress && !categories[primaryAddressIndex].completed()) {
-      
       setIsGeneratable(false);
     }
     
