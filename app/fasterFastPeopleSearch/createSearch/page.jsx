@@ -15,6 +15,7 @@ import deepCopy from '../../lib/deepCopy.js';
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import { useImmer } from 'use-immer';
+import Image from 'next/image'
 
 const FileContext = createContext();
 
@@ -133,7 +134,7 @@ function FileProcessModal() {
   const { isGeneratable, setIsGeneratable } = useContext(SearchStatusContext);
   const navTabsRef = useRef(null);
   const { parsedCsvFile, setParsedFile } = useContext(FileContext);
-  const [ readyForDatabase, setReadyForDatabase ] = useState(false);
+  const [ readyForCheckout, setReadyForCheckout ] = useState(false);
 
   const stepInstructions = [
     <>
@@ -157,8 +158,6 @@ function FileProcessModal() {
   ];
 
   async function handleGenerateResults() {
-    const processedFile = processFileForDatabase(parsedCsvFile, categories);
-    debugger;
     setParsedFile(processFileForDatabase(parsedCsvFile, categories));
     setReadyForCheckout(true);
   }
@@ -206,54 +205,100 @@ function FileProcessModal() {
   return (
     <div
       className={`${styles.headerMatcherModal} modal fade`}
-      id="categoryModal" 
+      id="categoryModal"
       aria-labelledby="categoryModalLabel"
-      aria-hidden="true">
-        <div className={`${styles.modalDialog} modal-dialog modal-fullscreen modal-dialog-scrollable`} style={{top: '5%', width: '80%', height: '80%', margin: '0 auto'}}>
-          <div className={`${styles.modalContent} modal-content`}>
-            <div className="modal-header">
-              <h5>{categories[currentPage].type} <span className="badge text-bg-info">{categories[currentPage].required ? ' Required' : 'Optional'}</span></h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div className="modal-body">
-              {stepInstructions[currentPage]}
-              <ul className="nav nav-tabs" ref={navTabsRef}>
-                {Object.keys(currentCategory.headers).map((header, index) => {
-                  const navLinkCollapseMenuId = `${currentCategory.type}-${header}-collapse`.replace(/ /g, '-').toLowerCase();
-                  
-                  return (
-                    <li key={`${currentCategory.type}-${header}`} className={`nav-item`} onClick={handleHeaderClick}>
-                      <a 
-                        className={`nav-link${currentHeader === header ? ` active` : ''}`}
-                        aria-current="page" 
-                        data-bs-toggle="collapse"
-                        href={`#${navLinkCollapseMenuId}`}
-                        role="button"
-                        aria-expanded="false"
-                        aria-controls={navLinkCollapseMenuId}>
-                        {header}
-                      </a>
-                    </li>
-                  )
-                })}
-              </ul>
-              {currentHeader && <ColumnSelectorDropdown currentHeader={currentHeader} currentPage={currentPage}/>}
-            </div>
-            <div className="modal-footer">
-              <button onClick={handlePreviousButtonClick} type="button" className="btn btn-primary" disabled={currentPage === 0}>Previous</button>
-              <button onClick={handleNextButtonClick} type="button" className="btn btn-primary" disabled={currentPage === maxPage}>Next</button>
-            </div>
-            <button onClick={handleGenerateResults}
-                    className={`btn btn-primary ${styles.generateResultsButton}`}
-                    disabled={!isGeneratable}
-                    type="button">
-              Generate Results
+      aria-hidden="true"
+    >
+      <div
+        className={`${styles.modalDialog} modal-dialog modal-fullscreen modal-dialog-scrollable`}
+        style={{ top: '5%', width: '80%', height: '80%', margin: '0 auto' }}
+      >
+        {readyForCheckout && <SearchCheckoutModal /> || 
+        <div className={`${styles.modalContent} modal-content`}>
+          <div className="modal-header">
+            <h5>
+              {categories[currentPage].type}{' '}
+              <span className="badge text-bg-info">
+                {categories[currentPage].required ? ' Required' : 'Optional'}
+              </span>
+            </h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            {stepInstructions[currentPage]}
+            <ul className="nav nav-tabs" ref={navTabsRef}>
+              {Object.keys(currentCategory.headers).map((header, index) => {
+                const navLinkCollapseMenuId = `${currentCategory.type}-${header}-collapse`
+                  .replace(/ /g, '-')
+                  .toLowerCase();
+  
+                return (
+                  <li
+                    key={`${currentCategory.type}-${header}`}
+                    className="nav-item"
+                    onClick={handleHeaderClick}
+                  >
+                    <a
+                      className={`nav-link${currentHeader === header ? ' active' : ''}`}
+                      aria-current="page"
+                      data-bs-toggle="collapse"
+                      href={`#${navLinkCollapseMenuId}`}
+                      role="button"
+                      aria-expanded="false"
+                      aria-controls={navLinkCollapseMenuId}
+                    >
+                      {header}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+            {currentHeader && (
+              <ColumnSelectorDropdown
+                currentHeader={currentHeader}
+                currentPage={currentPage}
+              />
+            )}
+          </div>
+          <div className="modal-footer">
+            <button
+              onClick={handlePreviousButtonClick}
+              type="button"
+              className="btn btn-primary"
+              disabled={currentPage === 0}
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNextButtonClick}
+              type="button"
+              className="btn btn-primary"
+              disabled={currentPage === maxPage}
+            >
+              Next
             </button>
           </div>
-        </div>
+          <button
+            onClick={handleGenerateResults}
+            className={`btn btn-primary ${styles.generateResultsButton}`}
+            disabled={!isGeneratable}
+            type="button"
+          >
+            Generate Results
+          </button>
+        </div>}
+      </div>
     </div>
-  )
+  );
+  
 }
+
+
 
 function ColumnSelectorDropdown({ currentHeader, currentPage }) {
   const { parsedCsvFile } = useContext(FileContext);
@@ -271,10 +316,6 @@ function ColumnSelectorDropdown({ currentHeader, currentPage }) {
     "First Owner": ["Jane Doe", "Jane P Doe", "The Jane Doe Trust"],
     "Second Owner": ["John Doe", "John P Doe", "The John P Doe Trust"],
   };
-
-  useEffect(() => {
-
-  }, []);
 
   function handleResetSelectedColumns(event) {
     event.preventDefault();
@@ -364,6 +405,81 @@ function ColumnSelectorDropdown({ currentHeader, currentPage }) {
   )
 }
 
-function ModalCheckoutForm({}) {
+function SearchCheckoutModal() {
+  const { parsedCsvFile } = useContext(FileContext);
+  const [ buttonIsDisabled, setButtonIsDisabled ] = useState(true);
+  const router = useRouter();
+
+  const [ checkoutObject, setCheckoutObject ] = useImmer({
+    data: JSON.stringify(parsedCsvFile),
+    searchName: '',
+  });
+
+  async function handleFinalizeCheckout() {
+    try {
+      const newSearch = await createSearch(JSON.stringify(checkoutObject));
+      const closeModalButton = document.querySelector('#closeSearchCheckoutButton');
+      closeModalButton.click();
+      router.push(`/fasterFastPeopleSearch/searches/${newSearch.id}`);
+    } catch (error) {
+      // display createSearch error
+    }
+  }
+
+  function handleSearchNameChange(event) {
+    const searchNameInput = event.currentTarget;
+    
+    setCheckoutObject((draft) => {
+      draft.searchName = searchNameInput.value;
+    });
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setButtonIsDisabled(false);
+    }, 4000)
+  }, [])
   
+  return (
+    <div className={`modal-content`}>
+      <div className="modal-header">
+        <h2>Checkout</h2>
+        <button
+          type="button"
+          className="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          id='closeSearchCheckoutButton'
+        ></button>
+      </div>
+      <div className="modal-body d-flex flex-column justify-content-around">
+        <div className="d-flex justify-content-center align-items-center">
+          <Image src="/farm-friend-logo.png" alt="Farm Friend Logo" width={200} height={200}></Image>
+        </div>
+        <div>
+          <h5>Finalizing Your Results</h5>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <form className="form-floating d-flex flex-column" style={{gap: '.75rem', width: '60%', margin: '0 auto'}}>
+          <input 
+            type="text"
+            className="form-control"
+            id="searchName"
+            placeholder={``}
+            onChange={handleSearchNameChange}>
+          </input>
+          <label htmlFor="searchName">Want to Name Your Search? Type Here</label>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={buttonIsDisabled}
+            onClick={handleFinalizeCheckout}>
+            See Results
+          </button>
+        </form>
+      </div>
+    </div>
+  )
 }

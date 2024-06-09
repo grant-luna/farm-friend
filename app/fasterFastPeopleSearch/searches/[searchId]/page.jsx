@@ -11,21 +11,23 @@ export default function MainContent({ params }) {
 function SearchResults({ searchId }) {
   const [searchData, setSearchData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  
+  
   useEffect(() => {
     (async () => {
       try {
         const fetchedSearchData = await fetchSearchData(searchId);
+        window.location.
         setSearchData(fetchedSearchData.data["search_data"]);
         setLoading(false);
       } catch (error) {
+        // display error
         console.error(error);
-        setError(error);
         setLoading(false);
       }
     })();
   }, [searchId]);
+
   
   return (
     <>
@@ -41,36 +43,52 @@ function SearchResults({ searchId }) {
   )
 }
 
-function SearchItem({ searchRow, index}) {
+function SearchItem({ searchRow, index }) {
   return (
     <li className={`${styles.searchItem} card text-start`}>
       <div className="card-body">
-        <h5 className="card-title">{searchRow.primaryAddress.address}</h5>
-        <p className="card-text">{searchRow.primaryAddress.cityState}</p>
+        <h5 className="card-title">{searchRow["Primary Address"]["Address"]}</h5>
+        <p className="card-text">{`${searchRow["Primary Address"]["City"]} ${searchRow["Primary Address"]["State"]}`}</p>
       </div>
       <div className="card-header">
         Owned By:
       </div>
       <ul className="list-group list-group-flush">
-        {Object.keys(searchRow.ownerNames).filter((owner) => {
-          return searchRow.ownerNames[owner].length > 0;
+        {Object.keys(searchRow["Owner Names"]).filter((owner) => {
+          return searchRow["Owner Names"][owner].length > 0;
         }).map((owner, index) => {
-          return <li className={`list-group-item`} key={index}>{`${searchRow.ownerNames[owner]}`}</li>
+          return <li className={`list-group-item`} key={index}>{`${searchRow["Owner Names"][owner]}`}</li>
         })}
       </ul>
       <div className="card-body dropdown">
         <button
-          className="btn btn-primary dropdown-toggle" 
-          href="#" role="button" 
-          data-bs-toggle="dropdown" 
-          >
+          className="btn btn-primary dropdown-toggle"
+          type="button"
+          id={`dropdownMenuButton${index}`}
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
           Contact Information
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href={searchRow.primaryAddressLink} target="_blank"><strong>{searchRow.primaryAddress.address} | {searchRow.primaryAddress.cityState}</strong> <span className="badge text-bg-info">Primary Address</span></a></li>
-          <li><a class="dropdown-item" href={searchRow.mailAddressLink} target="_blank"><strong>{searchRow.mailAddress.address} | {searchRow.mailAddress.cityState}</strong> <span className="badge text-bg-info">Mail Address</span></a></li>
+        <ul className="dropdown-menu" aria-labelledby={`dropdownMenuButton${index}`}>
+          <li>
+            <a className="dropdown-item" href={searchRow["Primary Address"]["FastPeopleSearch Url"]} target="_blank">
+              <strong>
+                {searchRow["Primary Address"]["Address"]} | {`${searchRow["Primary Address"]["City"]} ${searchRow["Primary Address"]["State"]} `}
+              </strong>
+              <span className="badge text-bg-info">Primary Address</span>
+            </a>
+          </li>
+          <li>
+            <a className="dropdown-item" href={searchRow["Mail Address"]["FastPeopleSearch Url"]} target="_blank">
+              <strong>
+                {searchRow["Mail Address"]["Address"]} | {`${searchRow["Mail Address"]["City"]} ${searchRow["Mail Address"]["State"]} `}
+              </strong>
+              <span className="badge text-bg-info">Mail Address</span>
+            </a>
+          </li>
         </ul>
       </div>
     </li>
-  )
+  );
 }

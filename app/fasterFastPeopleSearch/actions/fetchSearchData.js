@@ -17,7 +17,7 @@ export async function fetchSearchData(searchId) {
     );
 
     if (dbResponse.rows.length === 0) {
-      return { success: false, message: 'No search data found' };
+      throw new Error('Unable to locate search');
     }
 
     return { success: true, data: dbResponse.rows[0] };
