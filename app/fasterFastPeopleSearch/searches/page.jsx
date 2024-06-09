@@ -21,7 +21,7 @@ function SearchesContainer() {
     (async () => {
       try {
         const fetchedSearches = await fetchSearches();
-        console.log(fetchedSearches);
+        
         setSearches(fetchedSearches);
         setLoading(false);
       } catch (error) {

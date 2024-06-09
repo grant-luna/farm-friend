@@ -298,8 +298,6 @@ function FileProcessModal() {
   
 }
 
-
-
 function ColumnSelectorDropdown({ currentHeader, currentPage }) {
   const { parsedCsvFile } = useContext(FileContext);
   const { categories, setCategories } = useContext(CategoriesContext);
@@ -357,31 +355,20 @@ function ColumnSelectorDropdown({ currentHeader, currentPage }) {
 
   return (
     <>
-      <div>
-        <p className="badge text-bg-info">Examples of Accepted Values</p>
-        <ul>
-          {matchExamples[currentHeader].map((matchExample, index) => <li key={index} className="badge text-bg-light">{matchExample}</li>)}
-        </ul>
-       {currentHeaderMatchedColumnHeaders.length > 0 && <div>
-          <div className="d-flex flex-row justify-content-around align-items-center">
-            <div className="d-flex flex-column align-items-center">
-              <p className="badge text-bg-info">Selected Columns:</p>
-              <ul className="d-flex justify-content-start">
-                {currentHeaderMatchedColumnHeaders.map((column, index) => {
-                  return (
-                  <li key={index} className="badge text-bg-light">
-                    {column}
-                  </li>);
-                })}
-              </ul>
-            </div>
-            <div className="d-flex flex-column align-items-center justify-content-center">
-              <p className="badge text-bg-info">Sample Value:</p>
-              <p className="badge text-bg-light">{sampleValue}</p>
-            </div>
+      <div className="d-flex flex-column"style={{padding: '.5rem', gap: '.5rem'}}>
+        <div className='d-flex justify-content-around'>
+          <div className="d-flex flex-column align-items-center justify-content-start" style={{width: '40%'}}>
+            <h6>Examples of Accepted Values</h6>
+            <ul>
+              {matchExamples[currentHeader].map((matchExample, index) => <li key={index} className="badge text-bg-light">{matchExample}</li>)}
+            </ul>
           </div>
-          <button type="button" className="btn btn-light" onClick={handleResetSelectedColumns}>Reset</button>
-        </div>}
+          <div className="d-flex flex-column align-items-center justify-content-start flex-wrap" style={{width: '40%'}}>
+            <h6>Sample Value</h6>
+            <p className="badge text-bg-light text-wrap">{sampleValue}</p>
+          </div>
+        </div>
+        <button type="button" className="btn btn-light" onClick={handleResetSelectedColumns}>Reset</button>
         <ul className={`list-group ${styles.sampleRowContainer}`}>
           {sampleRow.map((columnPair, index) => {
             return (
