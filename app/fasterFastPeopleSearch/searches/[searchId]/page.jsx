@@ -17,7 +17,6 @@ function SearchResults({ searchId }) {
     (async () => {
       try {
         const fetchedSearchData = await fetchSearchData(searchId);
-        window.location.
         setSearchData(fetchedSearchData.data["search_data"]);
         setLoading(false);
       } catch (error) {

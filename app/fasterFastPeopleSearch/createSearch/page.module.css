@@ -27,7 +27,6 @@
 }
 
 .sampleRowContainer {
-  height: 80%;
   overflow-y: auto;
   height: 500px;
 }
