@@ -46,12 +46,16 @@ function SearchesContainer() {
 function SearchItem({ search }) {
   const router = useRouter();
 
+  function handleDeleteSearch() {
+
+  }
+
   function handleSearchItemClick(searchId) {
     router.push(`/fasterFastPeopleSearch/searches/${searchId}`);
   }
   
   return (
-    <li className={`card d-flex flex-column align-items-start`} style={{padding: '.5rem'}} onClick={handleSearchItemClick.bind(null, search.id)}>
+    <li className={`card d-flex flex-column align-items-start`} style={{padding: '.5rem'}}>
       <div className="card-body">
         <h4 className="card-title">{search["search_name"]}</h4>
       </div>
@@ -62,8 +66,18 @@ function SearchItem({ search }) {
         </ul>
       </div>
       <div className="d-flex justify-content-between align-items-center" style={{gap: '.5rem', width: '100%'}}>
-        <button className="btn btn-primary">See Contacts</button>
-        <span className="btn btn-light"><BsFillTrash3Fill /></span>
+        <button
+          className="btn btn-primary"
+          onClick={handleSearchItemClick.bind(null, search.id)}>
+          See Contacts
+        </button>
+        <button 
+          className="btn btn-light"
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target={`#delete`}>
+          <BsFillTrash3Fill />
+        </button>
       </div>
     </li>
   )

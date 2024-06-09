@@ -17,7 +17,7 @@ function SearchResults({ searchId }) {
     (async () => {
       try {
         const fetchedSearchData = await fetchSearchData(searchId);
-        setSearchData(fetchedSearchData.data["search_data"]);
+        setSearchData(fetchedSearchData.data);
         setLoading(false);
       } catch (error) {
         // display error
@@ -31,13 +31,22 @@ function SearchResults({ searchId }) {
   return (
     <>
       {loading && <p>Loading...</p>}
-      {!loading && <ul className={`${styles.searchItems}`}>
-        {searchData?.map((searchRow, index) => {
-          return (
-            <SearchItem searchRow={searchRow} key={index} />
-          )
-        })}
-      </ul>}
+      {!loading && <div>
+        <div>
+          <h3>{searchData["search_name"]}</h3>
+          <div className="d-flex justify-content-center" style={{gap: '1rem'}}>
+            <p><strong>Date Created: </strong> {searchData["created_at"].toDateString()}</p>
+            <p><strong>Number of Contacts: </strong> {searchData["search_data"].length}</p>
+          </div>
+        </div>
+        <ul className={`${styles.searchItems}`}>
+          {searchData["search_data"]?.map((searchRow, index) => {
+            return (
+              <SearchItem searchRow={searchRow} key={index} />
+            )
+          })}
+        </ul>
+      </div>}
     </>
   )
 }
