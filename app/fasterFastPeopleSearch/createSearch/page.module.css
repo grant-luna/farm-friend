@@ -5,8 +5,13 @@
   padding: 1rem;
 }
 
+.modalHeaderCategoryType:hover {
+  cursor: pointer;
+}
+
 .modalContent {
   height: 80%;
+  padding-bottom: .5rem;
 }
 
 .instructionSteps {

@@ -16,18 +16,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="navbar-expanded">
-        <header className={`navbar`} data-bs-theme="dark">
+        <nav className={`navbar`} data-bs-theme="dark">
           <div className="container-fluid">
-          <button
-            className="navbar-toggler" 
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#navbarContent"
-            aria-controls="navbarContent"
-            aria-expanded="true"
-            aria-label="Toggle navigation">
-            <span><BsBell/></span>
-          </button>
+          <ul className ="navbar-nav">
+            <li className="nav-item">
+              <button className="btn btn-outline-success"><Link className="nav-link" href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link></button>
+            </li>
+          </ul>
           <div className={`offcanvas offcanvas-start`} data-bs-backdrop="false" id="navbarContent">
             <div className="offcanvas-header">
               <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Notification Menu</h5>
@@ -39,15 +34,9 @@ export default function RootLayout({ children }) {
             </Link>
             <AccountDropdown />
           </div>
-        </header>
-        <nav>
-          <ul className ="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link>
-            </li>
-          </ul>
         </nav>
-        <main className={styles.mainContent}>
+      
+        <main className={`${styles.mainContent}`}>
           {children}
         </main>
         <BootstrapClient />

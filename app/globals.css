@@ -45,11 +45,11 @@ summary::-webkit-details-marker { display: none; }
 body {
   display: grid;
   gap: .05rem;
-  grid-template-columns: 20% repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-template-rows: min-content 1fr;
-  grid-template-areas: "header header header"
-                       "nav main main"
-                       "nav main main";
+  grid-template-areas: "nav nav nav"
+                       "main main main"
+                       "main main main";
 }
 
 header {

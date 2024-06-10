@@ -153,6 +153,13 @@ function FileProcessModal() {
     </>
   ];
 
+  function handleCategoryTypeClick(event) {
+    // Primary Address | Owner Names | Mail Address"
+    const clickedCategoryTypeText = event.currentTarget.querySelector('h5').childNodes[0].textContent;
+    const clickedCategoryTypeCategoriesIndex = categories.findIndex((category) => category.type === clickedCategoryTypeText);
+    setCurrentPage(clickedCategoryTypeCategoriesIndex);
+  }
+
   async function handleGenerateResults() {
     setParsedFile(processFileForDatabase(parsedCsvFile, categories));
     setReadyForCheckout(true);
@@ -209,14 +216,26 @@ function FileProcessModal() {
         style={{ top: '5%', width: '80%', height: '80%', margin: '0 auto'}}
       >
         {readyForCheckout && <SearchCheckoutModal /> || 
-        <div className={`${styles.modalContent} modal-content`} style={{paddingBottom: '.5rem' }}>
+        <div className={`${styles.modalContent} modal-content`}>
           <div className="modal-header">
-            <h5>
-              {categories[currentPage].type}{' '}
-              <span className="badge text-bg-info">
-                {categories[currentPage].required ? ' Required' : 'Optional'}
-              </span>
-            </h5>
+            <ul className="d-flex" style={{gap: '2rem'}}>
+              {categories.map((category, index) => {
+                return (
+                  <li
+                    className={`${styles.modalHeaderCategoryType}`}
+                    key={index}
+                    style={{opacity: categories[currentPage].type === category.type ? '100%' : '50%'}}
+                    onClick={handleCategoryTypeClick}>
+                    <h5>
+                      {category.type}{' '}
+                      <span className="badge text-bg-info">
+                        {category.required ? ' Required' : 'Optional'}
+                      </span>
+                    </h5>
+                  </li>
+                )
+              })}
+            </ul>
             <button
               type="button"
               className="btn-close"
