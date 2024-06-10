@@ -100,25 +100,21 @@ function FileProcessMenu() {
             for each category. It&#39;s easy and anyone can do it!
           </p>
         </div>
-        <button
-          type="button"
-          className="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#categoryModal">
-          Finalize Search Results
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary"
-          disabled={true}>
-          Choose Template
-        </button>
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={handleResetParsedFile}>
-          Reset
-        </button>
+        <div className="d-flex flex-column" style={{gap: '.5rem', width: '50%', margin: '0 auto'}}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#categoryModal">
+            Finalize Search Results
+          </button>
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={handleResetParsedFile}>
+            Reset
+          </button>
+        </div>
         <FileProcessModal/>      
       </CategoriesContext.Provider>
     </SearchStatusContext.Provider>
@@ -210,10 +206,10 @@ function FileProcessModal() {
     >
       <div
         className={`${styles.modalDialog} modal-dialog modal-fullscreen modal-dialog-scrollable`}
-        style={{ top: '5%', width: '80%', height: '80%', margin: '0 auto' }}
+        style={{ top: '5%', width: '80%', height: '80%', margin: '0 auto'}}
       >
         {readyForCheckout && <SearchCheckoutModal /> || 
-        <div className={`${styles.modalContent} modal-content`}>
+        <div className={`${styles.modalContent} modal-content`} style={{paddingBottom: '.5rem' }}>
           <div className="modal-header">
             <h5>
               {categories[currentPage].type}{' '}
