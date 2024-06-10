@@ -175,6 +175,8 @@ function FileProcessModal() {
   }
 
   function handleNextButtonClick() {
+    const value = navTabsRef;
+    debugger;
     setCurrentHeader(null);
     setCurrentPage(currentPage + 1);
   }
@@ -228,7 +230,7 @@ function FileProcessModal() {
                     onClick={handleCategoryTypeClick}>
                     <h5>
                       {category.type}{' '}
-                      <span className="badge text-bg-info">
+                      <span className={`badge text-bg-${category.required ? 'success' : 'primary'}`}>
                         {category.required ? ' Required' : 'Optional'}
                       </span>
                     </h5>
