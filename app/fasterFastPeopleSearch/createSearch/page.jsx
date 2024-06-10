@@ -16,6 +16,7 @@ import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import { useImmer } from 'use-immer';
 import Image from 'next/image'
+import { current } from 'immer';
 
 const FileContext = createContext();
 
@@ -54,7 +55,11 @@ function FileProcessMenu() {
       type: "Primary Address", 
       headers: { "Address": [], "City": [], "State": [] },
       required: true,
-      inProgress: false,
+      inProgress() {
+        return Object.keys(this.headers).some((header) => {
+          return this.headers[header].length > 0;
+        });
+      },
       completed() {
         return Object.keys(this.headers).every((header) => {
           return this.headers[header].length > 0;
@@ -65,7 +70,11 @@ function FileProcessMenu() {
       type: "Owner Names",
       headers: { "First Owner": [], "Second Owner": [] },
       required: false,
-      inProgress: false,
+      inProgress() {
+        return Object.keys(this.headers).some((header) => {
+          return this.headers[header].length > 0;
+        });
+      },
       completed() {
         return Object.keys(this.headers).some((header) => {
           return this.headers[header].length > 0
@@ -76,7 +85,11 @@ function FileProcessMenu() {
       type: "Mail Address",
       headers: { "Address": [], "City": [], "State": [] },
       required: false,
-      inProgress: false,
+      inProgress() {
+        return Object.keys(this.headers).some((header) => {
+          return this.headers[header].length > 0;
+        });
+      },
       completed() {
         return Object.keys(this.headers).every((header) => {
           return this.headers[header].length > 0;
@@ -123,41 +136,40 @@ function FileProcessMenu() {
 
 function FileProcessModal() {
   const { categories } = useContext(CategoriesContext);
-  const [ currentPage, setCurrentPage ] = useState(0);
-  const maxPage = categories.length - 1;
-  const [ currentHeader, setCurrentHeader ] = useState(null);
-  const currentCategory = categories[currentPage];
   const { isGeneratable, setIsGeneratable } = useContext(SearchStatusContext);
-  const navTabsRef = useRef(null);
   const { parsedCsvFile, setParsedFile } = useContext(FileContext);
-  const [ readyForCheckout, setReadyForCheckout ] = useState(false);
 
-  const stepInstructions = [
-    <>
+  const [ currentCategory, setCurrentCategory ] = useState(categories[0]);
+  const [ currentHeaderIndex, setCurrentHeaderIndex ] = useState(0);
+
+  const [ readyForCheckout, setReadyForCheckout ] = useState(false);
+  
+  const navTabsRef = useRef(null);
+  
+  const stepInstructions = {
+    "Primary Address": <>
       <h4>Step 1: Select Primary Address (Required)</h4>
       <ul>
         <li>Find and select the columns for the street address, city, & state in your file.  All are required</li>
       </ul>
     </>,
-    <>
+    "Owner Names":  <>
       <h4>Step 2: Select Owner Name(s) (Optional)</h4>
       <ul>
         <li>Find the columns for at least one owner&#39;s first and last name.  Only one is required</li>
       </ul>
     </>,
-    <>
+    "Mail Address": <>
       <h4>Step 3: Select Mail Address (Optional)</h4>
       <ul>
         <li>Find the columns for mailing address, city, and state.  All are required</li>
       </ul>
     </>
-  ];
+  };
 
-  function handleCategoryTypeClick(event) {
-    // Primary Address | Owner Names | Mail Address"
-    const clickedCategoryTypeText = event.currentTarget.querySelector('h5').childNodes[0].textContent;
-    const clickedCategoryTypeCategoriesIndex = categories.findIndex((category) => category.type === clickedCategoryTypeText);
-    setCurrentPage(clickedCategoryTypeCategoriesIndex);
+  function handleCategoryTypeClick(index, event) {
+    setCurrentCategory(categories[index]);
+    setCurrentHeaderIndex(0);
   }
 
   async function handleGenerateResults() {
@@ -165,45 +177,40 @@ function FileProcessModal() {
     setReadyForCheckout(true);
   }
 
-  function handleHeaderClick(event) {
-    const navItem = event.currentTarget;
-    const clickedHeader = navItem.querySelector('a.nav-link');
-    [...navTabsRef.current.querySelectorAll('a.nav-link')].forEach((navLink) => navLink.classList.remove('active'));
-    clickedHeader.classList.add('active');
-
-    setCurrentHeader(clickedHeader.textContent);
+  function handleHeaderClick(index, event) {
+    setCurrentHeaderIndex(index);
   }
 
   function handleNextButtonClick() {
-    const value = navTabsRef;
-    debugger;
-    setCurrentHeader(null);
-    setCurrentPage(currentPage + 1);
+    const headers = Object.keys(currentCategory.headers);
+
+    setCurrentHeaderIndex(currentHeaderIndex + 1);
   }
 
   function handlePreviousButtonClick() {
-    setCurrentHeader(null);
-    setCurrentPage(currentPage - 1)
+    setCurrentHeaderIndex(currentHeaderIndex - 1);
   }
 
   useEffect(() => {
-    const primaryAddressIndex = categories.findIndex((category) => category.type === 'Primary Address');
-    
-    if (categories[primaryAddressIndex].inProgress && !categories[primaryAddressIndex].completed()) {
-      setIsGeneratable(false);
+    const incompleteRequiredCategories = () => {  
+      const inProgressRequiredCategories = categories.filter((category) => category.required);
+      return inProgressRequiredCategories.length > 0 && inProgressRequiredCategories.some((inProgressRequiredCategory) => !inProgressRequiredCategory.completed());
     }
-    
-    const inProgressCategoriesAreComplete = (categories) => {
-      const inProgressCategories = categories.filter((category) => {
-        return category.inProgress;
-      });
 
-      return inProgressCategories.length > 0 && inProgressCategories.every((category) => {
-        return category.completed();
-      });
+    const allInProgressCategoriesCompleted = () => {
+      const inProgressCategories = categories.filter((category) => category.inProgress());
+      return inProgressCategories.every((category) => category.completed());
     };
-    
-    setIsGeneratable(inProgressCategoriesAreComplete(categories));
+
+    const inProgressRequiredCategories = categories.filter((category) => category.required && category.inProgress());
+    if (inProgressRequiredCategories.length > 0) {    
+      if (isGeneratable && incompleteRequiredCategories()) {
+        setIsGeneratable(false);
+      } else {
+        setIsGeneratable(allInProgressCategoriesCompleted());
+      }
+    }
+
   }, [categories]);
 
   return (
@@ -226,11 +233,11 @@ function FileProcessModal() {
                   <li
                     className={`${styles.modalHeaderCategoryType}`}
                     key={index}
-                    style={{opacity: categories[currentPage].type === category.type ? '100%' : '50%'}}
-                    onClick={handleCategoryTypeClick}>
+                    style={{opacity: currentCategory.type === category.type ? '100%' : '50%'}}
+                    onClick={handleCategoryTypeClick.bind(null, index)}>
                     <h5>
                       {category.type}{' '}
-                      <span className={`badge text-bg-${category.required ? 'success' : 'primary'}`}>
+                      <span className={`badge text-bg-${category.required ? 'success' : 'light'}`}>
                         {category.required ? ' Required' : 'Optional'}
                       </span>
                     </h5>
@@ -246,7 +253,7 @@ function FileProcessModal() {
             ></button>
           </div>
           <div className="modal-body">
-            {stepInstructions[currentPage]}
+            {stepInstructions[currentCategory.type]}
             <ul className="nav nav-tabs" ref={navTabsRef}>
               {Object.keys(currentCategory.headers).map((header, index) => {
                 const navLinkCollapseMenuId = `${currentCategory.type}-${header}-collapse`
@@ -257,10 +264,10 @@ function FileProcessModal() {
                   <li
                     key={`${currentCategory.type}-${header}`}
                     className="nav-item"
-                    onClick={handleHeaderClick}
+                    onClick={handleHeaderClick.bind(null, index)}
                   >
                     <a
-                      className={`nav-link${currentHeader === header ? ' active' : ''}`}
+                      className={`nav-link${Object.keys(currentCategory.headers)[currentHeaderIndex] === header ? ' active' : ''}`}
                       aria-current="page"
                       data-bs-toggle="collapse"
                       href={`#${navLinkCollapseMenuId}`}
@@ -274,19 +281,18 @@ function FileProcessModal() {
                 );
               })}
             </ul>
-            {currentHeader && (
-              <ColumnSelectorDropdown
-                currentHeader={currentHeader}
-                currentPage={currentPage}
-              />
-            )}
+            <ColumnSelectorDropdown
+              currentCategory={currentCategory}
+              setCurrentCategory={setCurrentCategory}
+              currentHeaderIndex={currentHeaderIndex}
+            />
           </div>
           <div className="modal-footer">
             <button
               onClick={handlePreviousButtonClick}
               type="button"
               className="btn btn-primary"
-              disabled={currentPage === 0}
+              disabled={currentHeaderIndex === 0}         
             >
               Previous
             </button>
@@ -294,7 +300,7 @@ function FileProcessModal() {
               onClick={handleNextButtonClick}
               type="button"
               className="btn btn-primary"
-              disabled={currentPage === maxPage}
+              disabled={currentHeaderIndex === Object.keys(currentCategory.headers).length - 1}
             >
               Next
             </button>
@@ -311,15 +317,15 @@ function FileProcessModal() {
       </div>
     </div>
   );
-  
 }
 
-function ColumnSelectorDropdown({ currentHeader, currentPage }) {
+function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHeaderIndex }) {
   const { parsedCsvFile } = useContext(FileContext);
   const { categories, setCategories } = useContext(CategoriesContext);
-  const currentCategory = categories[currentPage];
+
   const sampleRow = generateSampleRow(parsedCsvFile);
-  const currentHeaderMatchedColumnHeaders = currentCategory.headers[currentHeader];
+  const currentHeaderMatchedColumnHeaders = currentCategory.headers[Object.keys(currentCategory.headers)[currentHeaderIndex]];
+  
   const columnIsSelected = (header) => currentHeaderMatchedColumnHeaders.includes(header);
   const sampleValue = generateHeaderSampleValue(currentHeaderMatchedColumnHeaders, sampleRow);
 
@@ -335,38 +341,38 @@ function ColumnSelectorDropdown({ currentHeader, currentPage }) {
     event.preventDefault();
     event.stopPropagation();
 
-    setCategories((draft) => {
-      // draft === categories
-      draft[currentPage].headers[currentHeader] = [];
+    const currentHeader = Object.keys(currentCategory.headers)[currentHeaderIndex];
+    const headersCopy = { ...deepCopy(currentCategory.headers) };
+    headersCopy[currentHeader] = [];
+
+    const currentCategoryCopy = { ...currentCategory, headers: headersCopy };
+    const categoriesCopy = categories.map((category) => {
+      return category.type === currentCategoryCopy.type ? currentCategoryCopy : category;
     });
+    
+    setCurrentCategory(currentCategoryCopy);
+    setCategories(categoriesCopy);
   }
 
-  function handleSampleColumnClick(event) {
-    // Make a copy of the currentCategory headers object and add the selected
-    // column header to the corresponding array
-    const headersCopy = JSON.parse(JSON.stringify(currentCategory.headers));
-    const selectedHeader = event.currentTarget.querySelector('h6').textContent;
+  function handleSampleColumnClick(columnPair, event) {
+    const currentHeader = Object.keys(currentCategory.headers)[currentHeaderIndex];
+    const headersCopy = { ...deepCopy(currentCategory.headers) };
     
-    if (columnIsSelected(selectedHeader)) {
-      // if the header is already selected, remove it
-      const headerIndex = headersCopy[currentHeader].findIndex((header) => header === selectedHeader);
-      headersCopy[currentHeader].splice(headerIndex, 1);
+    if (!headersCopy[currentHeader].includes(columnPair.header)) {
+      headersCopy[currentHeader].push(columnPair.header);
     } else {
-      headersCopy[currentHeader].push(selectedHeader);
+      const selectedHeaderIndex = headersCopy[currentHeader].indexOf(columnPair.header);
+      headersCopy[currentHeader].splice(selectedHeaderIndex, 1);
     }
 
-    // Make a copy of the currentCategory object and the categories object
-    const currentCategoryCopy = {...deepCopy(currentCategory), headers: headersCopy};
-    const categoriesCopy = categories.map((category) => deepCopy(category));
+    const currentCategoryCopy = { ...currentCategory, headers: headersCopy };
 
-    updateInProgressStatus(currentCategoryCopy);
-
-    // Replace the current version of currentCategory in categories with
-    // the updated copy
-    categoriesCopy[currentPage] = currentCategoryCopy;
+    const categoriesCopy = categories.map((category) => {
+      return category.type === currentCategoryCopy.type ? currentCategoryCopy : category;
+    });
     
+    setCurrentCategory(currentCategoryCopy);
     setCategories(categoriesCopy);
-    
   }
 
   return (
@@ -376,7 +382,7 @@ function ColumnSelectorDropdown({ currentHeader, currentPage }) {
           <div className="d-flex flex-column align-items-center justify-content-start" style={{width: '40%'}}>
             <h6>Examples of Accepted Values</h6>
             <ul>
-              {matchExamples[currentHeader].map((matchExample, index) => <li key={index} className="badge text-bg-light">{matchExample}</li>)}
+              {matchExamples[Object.keys(currentCategory.headers)[currentHeaderIndex]].map((matchExample, index) => <li key={index} className="badge text-bg-light">{matchExample}</li>)}
             </ul>
           </div>
           <div className="d-flex flex-column align-items-center justify-content-start flex-wrap" style={{width: '40%'}}>
@@ -391,7 +397,7 @@ function ColumnSelectorDropdown({ currentHeader, currentPage }) {
               <li
                 className={`list-group-item d-flex justify-content-between align-items-start ${styles.sampleColumnLi}`}
                 key={index}
-                onClick={handleSampleColumnClick}>
+                onClick={handleSampleColumnClick.bind(null, columnPair)}>
                 <div>
                 <div className="d-flex flex-column justify-content-start align-items-start">
                   <h6><strong>{columnPair.header}</strong></h6>

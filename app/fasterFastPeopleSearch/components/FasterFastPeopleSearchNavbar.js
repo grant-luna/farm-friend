@@ -12,7 +12,7 @@ export default function FasterFastPeopleSearchNavbar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link className="nav-link active" href="/fasterFastPeopleSearch/searches">Searches</Link>
+              <Link className="nav-link active" href="/fasterFastPeopleSearch/searches">Past Searches</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link active" href="/fasterFastPeopleSearch/createSearch">Create New Search</Link>
