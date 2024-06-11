@@ -8,7 +8,6 @@ import {
   generateSampleRow,
   processFileForDatabase,
   generateHeaderSampleValue,
-  updateInProgressStatus,
 } from './lib/helpers.js';
 import { createSearch } from '../actions/createSearch.js';
 import deepCopy from '../../lib/deepCopy.js';
@@ -16,7 +15,6 @@ import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import { useImmer } from 'use-immer';
 import Image from 'next/image'
-import { current } from 'immer';
 
 const FileContext = createContext();
 
@@ -167,6 +165,18 @@ function FileProcessModal() {
     </>
   };
 
+  function handleCategoryToggleButton(event) {
+    const currentCategoryIndex = categories.indexOf(currentCategory);
+
+    if (currentCategoryIndex < categories.length - 1) {
+      setCurrentCategory(categories[currentCategoryIndex + 1]);
+      setCurrentHeaderIndex(0);
+    } else {
+      setCurrentCategory(categories[currentCategoryIndex - 1]);
+      setCurrentHeaderIndex(0);
+    }
+  }
+
   function handleCategoryTypeClick(index, event) {
     setCurrentCategory(categories[index]);
     setCurrentHeaderIndex(0);
@@ -185,6 +195,21 @@ function FileProcessModal() {
     const headers = Object.keys(currentCategory.headers);
 
     setCurrentHeaderIndex(currentHeaderIndex + 1);
+  }
+
+  function handleNextCategoryButton() {
+    const currentCategoryIndex = categories.indexOf(currentCategory);
+    setCurrentCategory(categories[currentCategoryIndex + 1]);
+    setCurrentHeaderIndex(0);
+  }
+
+  function handlePreviousCategoryButton() {
+    const currentCategoryIndex = categories.indexOf(currentCategory);
+
+    if (currentCategoryIndex) {
+      setCurrentCategory(categories[currentCategoryIndex - 1]);
+      setCurrentHeaderIndex(0);
+    }
   }
 
   function handlePreviousButtonClick() {
@@ -289,30 +314,48 @@ function FileProcessModal() {
           </div>
           <div className="modal-footer">
             <button
-              onClick={handlePreviousButtonClick}
-              type="button"
-              className="btn btn-primary"
-              disabled={currentHeaderIndex === 0}         
+              className="btn btn-outline-success"
+              onClick={handlePreviousCategoryButton}
+              disabled={categories.indexOf(currentCategory) === 0}
             >
-              Previous
+              Previous Category
             </button>
+            <div className="d-flex" style={{gap: '.5rem'}}>
+              <button
+                onClick={handlePreviousButtonClick}
+                type="button"
+                className="btn btn-primary"
+                disabled={currentHeaderIndex === 0}         
+              >
+                Previous
+              </button>
+              <button
+                onClick={handleNextButtonClick}
+                type="button"
+                className="btn btn-primary"
+                disabled={currentHeaderIndex === Object.keys(currentCategory.headers).length - 1}
+              >
+                Next
+              </button>
+            </div>
             <button
-              onClick={handleNextButtonClick}
-              type="button"
-              className="btn btn-primary"
-              disabled={currentHeaderIndex === Object.keys(currentCategory.headers).length - 1}
+              className="btn btn-outline-success"
+              onClick={handleNextCategoryButton}
+              disabled={categories.indexOf(currentCategory) === categories.length - 1}
             >
-              Next
+              Next Category
             </button>
           </div>
-          <button
-            onClick={handleGenerateResults}
-            className={`btn btn-primary ${styles.generateResultsButton}`}
-            disabled={!isGeneratable}
-            type="button"
-          >
-            Generate Results
-          </button>
+          <div>
+            <button
+              onClick={handleGenerateResults}
+              className={`btn btn-primary ${styles.generateResultsButton}`}
+              disabled={!isGeneratable}
+              type="button"
+            >
+              Generate Results
+            </button>
+          </div>
         </div>}
       </div>
     </div>
