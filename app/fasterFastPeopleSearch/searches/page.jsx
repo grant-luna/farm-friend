@@ -1,5 +1,4 @@
 "use client"
-import styles from './page.module.css';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchSearches } from '../actions/fetchSearches.js';
@@ -47,7 +46,7 @@ function SearchItem({ search }) {
   const router = useRouter();
 
   function handleDeleteSearch() {
-
+    
   }
 
   function handleSearchItemClick(searchId) {

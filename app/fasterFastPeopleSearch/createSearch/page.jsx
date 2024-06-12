@@ -312,7 +312,7 @@ function FileProcessModal() {
               currentHeaderIndex={currentHeaderIndex}
             />
           </div>
-          <div className="modal-footer">
+          <div className="modal-footer d-flex justify-content-center">
             <button
               className="btn btn-outline-success"
               onClick={handlePreviousCategoryButton}
