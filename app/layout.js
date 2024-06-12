@@ -15,25 +15,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="navbar-expanded">
-        <nav className={`navbar`} data-bs-theme="dark">
-          <div className="container-fluid">
-          <ul className ="navbar-nav">
-            <li className="nav-item">
-              <button className="btn btn-outline-success"><Link className="nav-link" href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link></button>
-            </li>
-          </ul>
-          <div className={`offcanvas offcanvas-start`} data-bs-backdrop="false" id="navbarContent">
-            <div className="offcanvas-header">
-              <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Notification Menu</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-          </div>
-            <Link href='/'>
-              <Image src='/farm-friend-logo.png' alt="Farm Friend Logo" width={100} height={100}/>
-            </Link>
-            <AccountDropdown />
-          </div>
+      <body>
+        <nav className={`${styles.mainNavbar} d-flex justify-content-between align-items-center`} style={{padding: '1rem'}}>      
+          <FarmFriendNavDropdown />
+          <AccountDropdown />
         </nav>
       
         <main className={`${styles.mainContent}`}>
@@ -43,4 +28,24 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
+}
+
+function FarmFriendNavDropdown() {
+  return (
+    <div className="dropdown">
+      <button 
+          className="btn btn-outline-light dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          style={{color: 'black'}}>
+          Farm Friend
+        </button>
+      <ul className="dropdown-menu">
+        <li>
+          <Link className="dropdown-item" href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link>
+        </li>
+      </ul>
+    </div>
+  )
 }
