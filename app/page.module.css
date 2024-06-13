@@ -39,3 +39,8 @@
   color: 'white';
   text-decoration: 'none';
 }
+
+.applicationMenuLink {
+  all: unset;
+  cursor: pointer;
+}
