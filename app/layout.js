@@ -14,14 +14,17 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body className="collapsed">
         <nav className={`${styles.mainNavbar} d-flex justify-content-between align-items-center`} style={{padding: '1rem'}}>      
           <FarmFriendNavDropdown />
           <AccountDropdown />
         </nav>
-        <main className={`${styles.mainContent}`}>
-          {children}
-        </main>
+        <section className='d-flex'>
+          <aside></aside>
+          <main className={`${styles.mainContent}`}>
+            {children}
+          </main>
+        </section>
         <BootstrapClient />
       </body>
     </html>

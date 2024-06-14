@@ -4,9 +4,22 @@ import { BsReverseLayoutTextWindowReverse } from "react-icons/bs";
 
 
 export default function FarmFriendNavDropdown() {
+  function handleAsideToggle() {
+    const body = document.querySelector('body');
+    
+    if (body.classList.contains('collapsed')) {
+      body.classList.remove('collapsed');
+      body.classList.add('expanded');
+    } else {
+      // body.className === 'expanded'
+      body.classList.remove('expanded');
+      body.classList.add('collapsed');
+    }
+  }
+
   return (
     <div className="dropdown">
-      <button className="btn btn-light">
+      <button className="btn btn-light" onClick={handleAsideToggle}>
         <BsReverseLayoutTextWindowReverse />
       </button>
       <button 

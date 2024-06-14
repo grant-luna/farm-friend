@@ -42,20 +42,34 @@ summary::-webkit-details-marker { display: none; }
 
 /* End of Whitespace Reset */
 
-body {
-  display: grid;
-  gap: .05rem;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: min-content repeat(2, 1fr);
-  grid-template-areas: "nav nav nav"
-                       "main main main"
-                       "main main main";
+nav {
+  background-color: #F9F9F9;
 }
 
-nav {
-  grid-area: nav;
+aside {
+  transition: width .75s ease, opacity .75s ease;
 }
 
 main {
-  grid-area: main;
+  transition: width 0.3s ease;
+}
+
+body.collapsed main {
+  width: 100%;
+}
+
+body.expanded main {
+  width: 70%;
+}
+
+body.collapsed aside {
+  width: 0%;
+  background-color: #F9F9F9;
+  opacity: 0;
+}
+
+body.expanded aside {
+  width: 30%;
+  max-width: 250px;
+  background-color: #F9F9F9;
 }
