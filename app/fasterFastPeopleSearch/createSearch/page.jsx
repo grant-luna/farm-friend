@@ -3,7 +3,6 @@ import styles from './page.module.css';
 import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
 import {
   generateSampleRow,
   processFileForDatabase,
@@ -20,6 +19,7 @@ const FileContext = createContext();
 
 export default function MainContent() {
   const [ parsedCsvFile, setParsedFile ] = useState(null);
+  
 
   function handleFileSelection(event) {
     const selectedFile = event.target.files[0];
@@ -31,11 +31,23 @@ export default function MainContent() {
       },
     });
   }
+
+  const introductionText = (
+    <>
+      <h2>Upload a File</h2>
+      <p>
+        Upload a file to start organizing your information to help us generate free contact
+        information for you.  You'll select the required column headers from your file which we'll
+        use to generate results for you.
+      </p>
+      <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>
+    </>
+  )
   
   return (
     <>
       <FileContext.Provider value={{parsedCsvFile, setParsedFile}}>
-        {!parsedCsvFile && <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>}
+        {!parsedCsvFile && introductionText}
         {parsedCsvFile && <FileProcessMenu/>}
       </FileContext.Provider>
     </>
@@ -104,11 +116,11 @@ function FileProcessMenu() {
     <SearchStatusContext.Provider value={{ isGeneratable, setIsGeneratable}}>
       <CategoriesContext.Provider value={{ categories, setCategories }}>        
         <div className={styles.fileMatchMenuInstructionsContainer}>
-          <h3>Help Us Generate Your Search Results</h3>
+          <h3>Nice work!</h3>
           <p>
-            Thank you for uploading your file! Let&#39;s make sure we get the right information
+            Let&#39;s make sure we get the right information
             to generate your search results. Follow the steps below to choose the correct columns
-            for each category. It&#39;s easy and anyone can do it!
+            for each category
           </p>
         </div>
         <div className="d-flex flex-column" style={{gap: '.5rem', width: '50%', margin: '0 auto'}}>
