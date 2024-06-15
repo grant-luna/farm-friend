@@ -16,8 +16,6 @@ import { RiCheckboxCircleFill } from "react-icons/ri";
 import { useImmer } from 'use-immer';
 import Image from 'next/image'
 import { Tooltip } from 'react-tooltip';
-import { FaFileUpload } from "react-icons/fa";
-import { HiQuestionMarkCircle } from "react-icons/hi";
 
 
 const FileContext = createContext();
@@ -38,13 +36,18 @@ export default function MainContent() {
   }
 
   const introductionText = (
-    <div className="d-flex flex-column" style={{margin: '0 auto', padding: '3rem', gap: '1rem'}}>      
+    <div className="d-flex flex-column align-items-center" style={{margin: '0 auto', padding: '3rem'}}>      
       <div
         className="d-flex justify-content-center align-items-center"
-        style={{gap: '.5rem'}}>
-        <FaFileUpload />  
+        style={{gap: '.5rem'}}>        
         <h2>Upload a File</h2>
       </div>         
+      <Image 
+        src="/computer-waiting-for-file.png"
+        alt="A computer eagerly awaiting a file to be uploaded by the user."
+        width={300}
+        height={300}        
+      />
       <p style={{width: '50%', margin: '0 auto'}}>
         Upload a file to start organizing your information to help us generate free contact
         information for you.  You'll select the required column headers from your file which we'll
