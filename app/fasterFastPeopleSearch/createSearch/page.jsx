@@ -4,9 +4,10 @@ import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
 import {
-  generateSampleRow,
   processFileForDatabase,
   generateHeaderSampleValue,
+  generateTooltipMessage,
+  generateSampleRow,
 } from './lib/helpers.js';
 import { createSearch } from '../actions/createSearch.js';
 import deepCopy from '../../lib/deepCopy.js';
@@ -14,6 +15,10 @@ import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import { useImmer } from 'use-immer';
 import Image from 'next/image'
+import { Tooltip } from 'react-tooltip';
+import { FaFileUpload } from "react-icons/fa";
+import { HiQuestionMarkCircle } from "react-icons/hi";
+
 
 const FileContext = createContext();
 
@@ -33,15 +38,20 @@ export default function MainContent() {
   }
 
   const introductionText = (
-    <>
-      <h2>Upload a File</h2>
-      <p>
+    <div className="d-flex flex-column" style={{margin: '0 auto', padding: '3rem', gap: '1rem'}}>      
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{gap: '.5rem'}}>
+        <FaFileUpload />  
+        <h2>Upload a File</h2>
+      </div>         
+      <p style={{width: '50%', margin: '0 auto'}}>
         Upload a file to start organizing your information to help us generate free contact
         information for you.  You'll select the required column headers from your file which we'll
         use to generate results for you.
       </p>
       <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>
-    </>
+    </div>
   )
   
   return (
@@ -116,6 +126,12 @@ function FileProcessMenu() {
     <SearchStatusContext.Provider value={{ isGeneratable, setIsGeneratable}}>
       <CategoriesContext.Provider value={{ categories, setCategories }}>        
         <div className={styles.fileMatchMenuInstructionsContainer}>
+          <Image 
+            src="/file-upload-success.png"
+            alt="A person jumping for joy after successfully uploading an image"
+            width={300}
+            height={300}
+          />
           <h3>Nice work!</h3>
           <p>
             Let&#39;s make sure we get the right information
@@ -126,7 +142,7 @@ function FileProcessMenu() {
         <div className="d-flex flex-column" style={{gap: '.5rem', width: '50%', margin: '0 auto'}}>
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn btn-success"
             data-bs-toggle="modal"
             data-bs-target="#categoryModal">
             Finalize Search Results
@@ -151,7 +167,6 @@ function FileProcessModal() {
 
   const [ currentCategory, setCurrentCategory ] = useState(categories[0]);
   const [ currentHeaderIndex, setCurrentHeaderIndex ] = useState(0);
-
   const [ readyForCheckout, setReadyForCheckout ] = useState(false);
   
   const navTabsRef = useRef(null);
@@ -177,26 +192,16 @@ function FileProcessModal() {
     </>
   };
 
-  function handleCategoryToggleButton(event) {
-    const currentCategoryIndex = categories.indexOf(currentCategory);
-
-    if (currentCategoryIndex < categories.length - 1) {
-      setCurrentCategory(categories[currentCategoryIndex + 1]);
-      setCurrentHeaderIndex(0);
-    } else {
-      setCurrentCategory(categories[currentCategoryIndex - 1]);
-      setCurrentHeaderIndex(0);
-    }
-  }
-
   function handleCategoryTypeClick(index, event) {
     setCurrentCategory(categories[index]);
     setCurrentHeaderIndex(0);
   }
 
   async function handleGenerateResults() {
-    setParsedFile(processFileForDatabase(parsedCsvFile, categories));
-    setReadyForCheckout(true);
+    if (isGeneratable) {
+      setParsedFile(processFileForDatabase(parsedCsvFile, categories));
+      setReadyForCheckout(true);
+    }
   }
 
   function handleHeaderClick(index, event) {
@@ -241,13 +246,12 @@ function FileProcessModal() {
 
     const inProgressRequiredCategories = categories.filter((category) => category.required && category.inProgress());
     if (inProgressRequiredCategories.length > 0) {    
-      if (isGeneratable && incompleteRequiredCategories()) {
+      if (isGeneratable && incompleteRequiredCategories()) {        
         setIsGeneratable(false);
       } else {
         setIsGeneratable(allInProgressCategoriesCompleted());
       }
-    }
-
+    }    
   }, [categories]);
 
   return (
@@ -361,12 +365,15 @@ function FileProcessModal() {
           <div>
             <button
               onClick={handleGenerateResults}
-              className={`btn btn-primary ${styles.generateResultsButton}`}
-              disabled={!isGeneratable}
-              type="button"
+              className={`btn btn-primary ${styles.generateResultsButton}`}              
+              type="button"            
+              data-tooltip-id="generate-results-tooltip"
+              data-tooltip-content={isGeneratable ? 'Great job!' : generateTooltipMessage(categories)}
+              style={{opacity: isGeneratable ? '100%' : '50%'}}
             >
               Generate Results
-            </button>
+            </button>    
+            <Tooltip id="generate-results-tooltip" type={isGeneratable ? 'success' : 'error'}/>
           </div>
         </div>}
       </div>
@@ -433,15 +440,9 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
   return (
     <>
       <div className="d-flex flex-column"style={{padding: '.5rem', gap: '.5rem'}}>
-        <div className='d-flex justify-content-around'>
-          <div className="d-flex flex-column align-items-center justify-content-start" style={{width: '40%'}}>
-            <h6>Examples of Accepted Values</h6>
-            <ul>
-              {matchExamples[Object.keys(currentCategory.headers)[currentHeaderIndex]].map((matchExample, index) => <li key={index} className="badge text-bg-light">{matchExample}</li>)}
-            </ul>
-          </div>
+        <div className='d-flex justify-content-around'>          
           <div className="d-flex flex-column align-items-center justify-content-start flex-wrap" style={{width: '40%'}}>
-            <h6>Sample Value</h6>
+            <h6>Selected</h6>
             <p className="badge text-bg-light text-wrap">{sampleValue}</p>
           </div>
         </div>

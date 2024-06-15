@@ -66,7 +66,7 @@ function SearchItem({ search }) {
       </div>
       <div className="d-flex justify-content-between align-items-center" style={{gap: '.5rem', width: '100%'}}>
         <button
-          className="btn btn-primary"
+          className="btn btn-success"
           onClick={handleSearchItemClick.bind(null, search.id)}>
           See Contacts
         </button>

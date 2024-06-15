@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="expanded">
+      <body className="collapsed">
         <nav className={`${styles.mainNavbar} d-flex justify-content-between align-items-center`} style={{padding: '1rem'}}>      
           <FarmFriendNavDropdown />
           <AccountDropdown />

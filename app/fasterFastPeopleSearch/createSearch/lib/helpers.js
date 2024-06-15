@@ -35,6 +35,30 @@ export function generateHeaderSampleValue(currentHeaderMatchedColumnHeaders, sam
   }).join(' ');
 }
 
+export function generateTooltipMessage(categories) {
+  const inProgressCategories = categories.filter((category) => category.inProgress());
+
+  if (inProgressCategories.length === 0) {
+    return 'Select a required category above to get started.';
+  } else {
+    const inProgressIncompleteCategories = categories.filter((category) => category.inProgress() && !category.completed());
+    const incompleteHeaders = inProgressIncompleteCategories.map((category) => {
+      const incompleteHeaders = Object.keys(category.headers).filter((header) => {
+        return category.headers[header].length === 0;
+      });
+      return `${category.type}: [${incompleteHeaders.join(', ')}]`
+    });
+
+    let finalText = 'Incomplete Items:'
+    incompleteHeaders.forEach((incompleteHeader) => {
+      finalText += '\n'
+      finalText += incompleteHeader;
+    });
+
+    return finalText;
+  }
+}
+
 export function generateSampleRow(parsedCsvFile) {
   const findColumnHeaderSampleValue = (columnHeader, parsedCsvFile) => {
     const matchingRowWithValue = parsedCsvFile.find((row) => {

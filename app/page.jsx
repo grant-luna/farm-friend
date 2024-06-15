@@ -10,7 +10,7 @@ export default function Page() {
         <Image 
           src="/farm-friend-logo.png"
           width={300}
-          height={300}
+          height={250}
           alt="Farm Friend Logo"
         />
         <div className={`d-flex justify-content-center align-items-center`} style={{gap: '.5rem'}}>

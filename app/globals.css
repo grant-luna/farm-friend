@@ -69,7 +69,6 @@ body.collapsed aside {
 }
 
 body.expanded aside {
-  width: 30%;
-  max-width: 250px;
+  width: 250px;
   background-color: #F9F9F9;
 }

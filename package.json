@@ -20,6 +20,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
+    "react-tooltip": "^5.26.4",
     "use-immer": "^0.9.0",
     "uuid": "^9.0.1"
   },
