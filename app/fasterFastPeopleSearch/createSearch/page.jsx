@@ -330,7 +330,7 @@ function FileProcessModal() {
                   className="btn btn-outline-success"
                   onClick={handleNextCategoryButton}
                   data-tooltip-id="next-category-tooltip"
-                  data-tooltip-content="Hello there"
+                  data-tooltip-content={currentCategory.required && !currentCategory.completed() ? 'You must complete the current category' : 'Next Category'}
                   disabled={categories.indexOf(currentCategory) === categories.length - 1}
                 >
                   Next Category {checkIfAllRequiredCategoriesAreCompleted(categories) && <span className="badge text-bg-success">{` Recommended`}</span>}
