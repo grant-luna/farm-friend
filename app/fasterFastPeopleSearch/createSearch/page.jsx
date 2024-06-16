@@ -4,6 +4,7 @@ import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
 import {
+  checkIfHeaderIsCurrentHeader,
   columnIsSelected,
   generateHeaderSampleValue,
   generateTooltipMessage,
@@ -413,7 +414,7 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
                 key={index}
                 className="d-flex flex-column align-items-center justify-content-start"
                 style={{width: '25%'}}>
-                <h4 className="badge text-bg-light">{header}</h4>
+                <h4 className={`badge text-bg-${checkIfHeaderIsCurrentHeader(currentHeaderIndex, currentCategory, header) ? 'info' : 'light'}`}>{header}</h4>
                 <p>{sampleValue}</p>
               </li>
             )

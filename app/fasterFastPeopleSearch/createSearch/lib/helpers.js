@@ -4,6 +4,10 @@ function checkIfAllRequiredCategoriesAreCompleted(categories) {
   return requiredCategories.every((requiredCategory) => requiredCategory.completed())
 }
 
+export function checkIfHeaderIsCurrentHeader(currentHeaderIndex, currentCategory, header) {
+  return currentHeaderIndex === Object.keys(currentCategory.headers).indexOf(header)
+}
+
 function createFastPeopleSearchSearchLink(parsedCsvFileRow, category) {
   const address = category.headers["Street Address"].map((header) => {
     return parsedCsvFileRow[header];
