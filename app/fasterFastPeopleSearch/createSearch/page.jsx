@@ -19,6 +19,7 @@ import { RiCheckboxCircleFill } from "react-icons/ri";
 import { useImmer } from 'use-immer';
 import Image from 'next/image'
 import { Tooltip } from 'react-tooltip';
+import { FiAlertCircle } from "react-icons/fi";
 
 const FileContext = createContext();
 
@@ -341,15 +342,18 @@ function FileProcessModal() {
                 <Tooltip id="next-category-tooltip"/>                
                 <button
                   onClick={handleGenerateResults}
-                  className={`btn btn-info`}              
+                  className={`btn ${isGeneratable ? 'btn-success' : 'btn-outline-success'}`}              
                   type="button"            
                   data-tooltip-id="generate-results-tooltip"
-                  data-tooltip-content={isGeneratable ? 'Great job :)' : generateTooltipMessage(categories)}
-                  style={{opacity: isGeneratable ? '100%' : '50%'}}
+                  data-tooltip-content={isGeneratable ? 'Great job :)' : generateTooltipMessage(categories)}                  
                 >
-                  Generate Results
-                </button>    
-                <Tooltip id="generate-results-tooltip" type={isGeneratable ? 'success' : 'error'}/>
+                  {isGeneratable ? 'Generate Results' : (
+                    <div className="d-flex align-items-center" style={{gap: '.25rem'}}>
+                      See what's missing <FiAlertCircle />
+                    </div>
+                  )}
+                </button>  
+                <Tooltip id="generate-results-tooltip"/>
               </div>
             </div>
           </div>         
@@ -452,7 +456,6 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
 
 function SearchCheckoutModal() {
   const { parsedCsvFile } = useContext(FileContext);
-  const [ buttonIsDisabled, setButtonIsDisabled ] = useState(true);
   const router = useRouter();
 
   const [ checkoutObject, setCheckoutObject ] = useImmer({
@@ -478,12 +481,6 @@ function SearchCheckoutModal() {
       draft.searchName = searchNameInput.value;
     });
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      setButtonIsDisabled(false);
-    }, 4000)
-  }, [])
   
   return (
     <div className={`modal-content`}>
@@ -515,11 +512,11 @@ function SearchCheckoutModal() {
             placeholder={``}
             onChange={handleSearchNameChange}>
           </input>
-          <label htmlFor="searchName">Want to Name Your Search? Type Here</label>
+          <label htmlFor="searchName">Name Your Search <span className="badge txt-bg-success">{'Required'}</span></label>
           <button
             type="button"
             className="btn btn-primary"
-            disabled={buttonIsDisabled}
+            disabled={checkoutObject.searchName.length === 0}
             onClick={handleFinalizeCheckout}>
             See Results
           </button>
