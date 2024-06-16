@@ -1,4 +1,4 @@
-function checkIfAllRequiredCategoriesAreCompleted(categories) {
+export function checkIfAllRequiredCategoriesAreCompleted(categories) {
   const requiredCategories = categories.filter((category) => category.required);
 
   return requiredCategories.every((requiredCategory) => requiredCategory.completed())

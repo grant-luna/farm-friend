@@ -4,6 +4,7 @@ import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
 import {
+  checkIfAllRequiredCategoriesAreCompleted,
   checkIfHeaderIsCurrentHeader,
   columnIsSelected,
   generateHeaderSampleValue,
@@ -332,10 +333,7 @@ function FileProcessModal() {
                   data-tooltip-content="Hello there"
                   disabled={categories.indexOf(currentCategory) === categories.length - 1}
                 >
-                  {`Next Category `} 
-                  <span className="badge text-bg-success">
-                    Recommended
-                  </span>
+                  Next Category {checkIfAllRequiredCategoriesAreCompleted(categories) && <span className="badge text-bg-success">{` Recommended`}</span>}
                 </button>
                 <Tooltip id="next-category-tooltip"/>                
                 <button
