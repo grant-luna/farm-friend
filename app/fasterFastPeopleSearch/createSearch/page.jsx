@@ -494,17 +494,17 @@ function SearchCheckoutModal() {
           id='closeSearchCheckoutButton'
         ></button>
       </div>
-      <div className="modal-body d-flex flex-column justify-content-around">
-        <div className="d-flex justify-content-center align-items-center">
+      <div className="modal-body d-flex flex-column justify-content-center" style={{gap: '.5rem'}}>
+        <div className="d-flex flex-column justify-content-center align-items-center">
           <Image src="/farm-friend-logo.png" alt="Farm Friend Logo" width={200} height={200}></Image>
-        </div>
-        <div>
-          <h5>Finalizing Your Results</h5>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+          <div>
+            <h5>Finalizing Your Results</h5>
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
           </div>
         </div>
-        <form className="form-floating d-flex flex-column" style={{gap: '.75rem', width: '60%', margin: '0 auto'}}>
+        <form className="form-floating d-flex flex-column" style={{gap: '.75rem', width: '60%', margin: '0 auto'}}>          
           <input 
             type="text"
             className="form-control"
