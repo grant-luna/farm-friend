@@ -208,8 +208,6 @@ function FileProcessModal() {
   }
 
   function handleNextButtonClick() {
-    const headers = Object.keys(currentCategory.headers);
-
     setCurrentHeaderIndex(currentHeaderIndex + 1);
   }
 
