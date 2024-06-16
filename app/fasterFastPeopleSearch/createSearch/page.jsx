@@ -405,7 +405,7 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
 
   return (
     <>
-      <div className="d-flex flex-column"style={{padding: '.5rem', gap: '.5rem'}}>
+      <div className="d-flex flex-column"style={{marginTop: '.5rem', padding: '.5rem', gap: '.5rem'}}>
         <ul className='d-flex justify-content-around'>          
           {Object.keys(currentCategory.headers).map((header, index) => {          
             const sampleValue = generateHeaderSampleValue(currentCategory.headers[header], sampleRow);
@@ -419,8 +419,13 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
               </li>
             )
           })}
-        </ul>
-        <button type="button" className="btn btn-light" onClick={handleResetSelectedColumns}>Reset</button>
+        </ul>                 
+        <button
+          type="button"
+          className="btn btn-light"
+          onClick={handleResetSelectedColumns}>          
+          Reset
+        </button>        
         <ul className={`list-group ${styles.sampleRowContainer}`}>
           {sampleRow.map((columnPair, index) => {
             return (

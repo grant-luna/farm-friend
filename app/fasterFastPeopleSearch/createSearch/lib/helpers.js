@@ -64,7 +64,10 @@ export function generateTooltipMessage(categories) {
     });
 
     let finalText = 'Incomplete Items:';
-    incompleteHeaders.forEach((incompleteHeader) => finalText += incompleteHeader);
+    incompleteHeaders.forEach((incompleteHeader) => {
+      finalText += '\n'
+      finalText += incompleteHeader
+    });
 
     return finalText;
   }
