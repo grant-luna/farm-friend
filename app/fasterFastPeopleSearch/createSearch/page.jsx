@@ -207,14 +207,20 @@ function FileProcessModal() {
     setCurrentHeaderIndex(index);
   }
 
-  function handleNextButtonClick() {
-    setCurrentHeaderIndex(currentHeaderIndex + 1);
+  function handleNextButtonClick() {        
+    setCurrentHeaderIndex(currentHeaderIndex + 1);       
   }
 
   function handleNextCategoryButton() {
-    const currentCategoryIndex = categories.indexOf(currentCategory);
-    setCurrentCategory(categories[currentCategoryIndex + 1]);
-    setCurrentHeaderIndex(0);
+    const requiredCategories = categories.filter((category) => category.required);    
+    const checkIfCurrentCategoryIsRequiredAndIncomplete = currentCategory.required && !currentCategory.completed();
+    const currentCategoryIsRequiredAndIncomplete = checkIfCurrentCategoryIsRequiredAndIncomplete;
+    
+    if (!currentCategoryIsRequiredAndIncomplete) {
+      const currentCategoryIndex = categories.indexOf(currentCategory);
+      setCurrentCategory(categories[currentCategoryIndex + 1]);
+      setCurrentHeaderIndex(0);
+    };              
   }
 
   function handlePreviousCategoryButton() {
@@ -344,10 +350,16 @@ function FileProcessModal() {
                 <button
                   className="btn btn-outline-success"
                   onClick={handleNextCategoryButton}
+                  data-tooltip-id="next-category-tooltip"
+                  data-tooltip-content="Hello there"
                   disabled={categories.indexOf(currentCategory) === categories.length - 1}
                 >
-                  Next Category
+                  {`Next Category `} 
+                  <span className="badge text-bg-success">
+                    Recommended
+                  </span>
                 </button>
+                <Tooltip id="next-category-tooltip"/>
                 <h2><strong><em>Or</em></strong></h2>
                 <button
                   onClick={handleGenerateResults}

@@ -1,3 +1,9 @@
+function checkIfAllRequiredCategoriesAreCompleted(categories) {
+  const requiredCategories = categories.filter((category) => category.required);
+
+  return requiredCategories.every((requiredCategory) => requiredCategory.completed())
+}
+
 function createFastPeopleSearchSearchLink(parsedCsvFileRow, category) {
   const address = category.headers["Street Address"].map((header) => {
     return parsedCsvFileRow[header];
@@ -53,11 +59,8 @@ export function generateTooltipMessage(categories) {
       return `${category.type}: [${incompleteHeaders.join(', ')}]`
     });
 
-    let finalText = 'Incomplete Items:'
-    incompleteHeaders.forEach((incompleteHeader) => {
-      finalText += '\n'
-      finalText += incompleteHeader;
-    });
+    let finalText = 'Incomplete Items:';
+    incompleteHeaders.forEach((incompleteHeader) => finalText += incompleteHeader);
 
     return finalText;
   }
