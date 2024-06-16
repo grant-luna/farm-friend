@@ -321,16 +321,19 @@ function FileProcessModal() {
               <button
                 className="btn btn-outline-success"
                 onClick={handlePreviousCategoryButton}
+                data-tooltip-id="previous-category-tooltip"
+                data-tooltip-content={categories[categories.indexOf(currentCategory) - 1]?.type}
                 disabled={categories.indexOf(currentCategory) === 0}
               >
                 Previous Category
               </button>
+              <Tooltip id="previous-category-tooltip" />
               <div className="d-flex justify-content-center" style={{gap: '.25rem'}}>
                 <button
                   className="btn btn-outline-success"
                   onClick={handleNextCategoryButton}
                   data-tooltip-id="next-category-tooltip"
-                  data-tooltip-content={currentCategory.required && !currentCategory.completed() ? 'You must complete the current category' : 'Next Category'}
+                  data-tooltip-content={currentCategory.required && !currentCategory.completed() ? 'You must complete the current category' : categories[categories.indexOf(currentCategory) + 1]?.type}
                   disabled={categories.indexOf(currentCategory) === categories.length - 1}
                 >
                   Next Category {checkIfAllRequiredCategoriesAreCompleted(categories) && <span className="badge text-bg-success">{` Recommended`}</span>}
@@ -341,7 +344,7 @@ function FileProcessModal() {
                   className={`btn btn-info`}              
                   type="button"            
                   data-tooltip-id="generate-results-tooltip"
-                  data-tooltip-content={isGeneratable ? 'Great job!' : generateTooltipMessage(categories)}
+                  data-tooltip-content={isGeneratable ? 'Great job :)' : generateTooltipMessage(categories)}
                   style={{opacity: isGeneratable ? '100%' : '50%'}}
                 >
                   Generate Results
