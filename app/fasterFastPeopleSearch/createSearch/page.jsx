@@ -4,10 +4,11 @@ import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import Papa from "papaparse";
 import { useRouter } from 'next/navigation';
 import {
-  processFileForDatabase,
+  columnIsSelected,
   generateHeaderSampleValue,
   generateTooltipMessage,
   generateSampleRow,
+  processFileForDatabase,
 } from './lib/helpers.js';
 import { createSearch } from '../actions/createSearch.js';
 import deepCopy from '../../lib/deepCopy.js';
@@ -76,7 +77,7 @@ function FileProcessMenu() {
   const [ categories, setCategories ] = useImmer([
     { 
       type: "Primary Address", 
-      headers: { "Address": [], "City": [], "State": [] },
+      headers: { "Street Address": [], "City": [], "State": [] },
       required: true,
       inProgress() {
         return Object.keys(this.headers).some((header) => {
@@ -106,7 +107,7 @@ function FileProcessMenu() {
     },
     { 
       type: "Mail Address",
-      headers: { "Address": [], "City": [], "State": [] },
+      headers: { "Street Address": [], "City": [], "State": [] },
       required: false,
       inProgress() {
         return Object.keys(this.headers).some((header) => {
@@ -178,7 +179,7 @@ function FileProcessModal() {
     "Primary Address": <>
       <h4>Step 1: Select Primary Address (Required)</h4>
       <ul>
-        <li>Find and select the columns for the street address, city, & state in your file.  All are required</li>
+        <li>Find and select the columns for the street street address, city, & state in your file.  All are required</li>
       </ul>
     </>,
     "Owner Names":  <>
@@ -190,7 +191,7 @@ function FileProcessModal() {
     "Mail Address": <>
       <h4>Step 3: Select Mail Address (Optional)</h4>
       <ul>
-        <li>Find the columns for mailing address, city, and state.  All are required</li>
+        <li>Find the columns for mailing street address, city, and state.  All are required</li>
       </ul>
     </>
   };
@@ -271,24 +272,12 @@ function FileProcessModal() {
         {readyForCheckout && <SearchCheckoutModal /> || 
         <div className={`${styles.modalContent} modal-content`}>
           <div className="modal-header">
-            <ul className="d-flex" style={{gap: '2rem'}}>
-              {categories.map((category, index) => {
-                return (
-                  <li
-                    className={`${styles.modalHeaderCategoryType}`}
-                    key={index}
-                    style={{opacity: currentCategory.type === category.type ? '100%' : '50%'}}
-                    onClick={handleCategoryTypeClick.bind(null, index)}>
-                    <h5>
-                      {category.type}{' '}
-                      <span className={`badge text-bg-${category.required ? 'success' : 'light'}`}>
-                        {category.required ? ' Required' : 'Optional'}
-                      </span>
-                    </h5>
-                  </li>
-                )
-              })}
-            </ul>
+            <h5>
+              {currentCategory.type}{' '}
+              <span className={`badge text-bg-${currentCategory.required ? 'success' : 'light'}`}>
+                {currentCategory.required ? ' Required' : 'Optional'}
+              </span>
+            </h5>            
             <button
               type="button"
               className="btn-close"
@@ -389,18 +378,7 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
   const { categories, setCategories } = useContext(CategoriesContext);
 
   const sampleRow = generateSampleRow(parsedCsvFile);
-  const currentHeaderMatchedColumnHeaders = currentCategory.headers[Object.keys(currentCategory.headers)[currentHeaderIndex]];
-  
-  const columnIsSelected = (header) => currentHeaderMatchedColumnHeaders.includes(header);
-  const sampleValue = generateHeaderSampleValue(currentHeaderMatchedColumnHeaders, sampleRow);
-
-  const matchExamples = {
-    "Address": ["123 Main", "123 Main St", "123 S Main St", "123 S Main St #42"],
-    "City": ["Los Angeles", "Seattle", "Rancho Palos Verdes"],
-    "State": ["CA", "California", "NY", "New York"],
-    "First Owner": ["Jane Doe", "Jane P Doe", "The Jane Doe Trust"],
-    "Second Owner": ["John Doe", "John P Doe", "The John P Doe Trust"],
-  };
+  const currentHeaderMatchedColumnHeaders = currentCategory.headers[Object.keys(currentCategory.headers)[currentHeaderIndex]];    
 
   function handleResetSelectedColumns(event) {
     event.preventDefault();
@@ -443,12 +421,20 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
   return (
     <>
       <div className="d-flex flex-column"style={{padding: '.5rem', gap: '.5rem'}}>
-        <div className='d-flex justify-content-around'>          
-          <div className="d-flex flex-column align-items-center justify-content-start flex-wrap" style={{width: '40%'}}>
-            <h6>Selected</h6>
-            <p className="badge text-bg-light text-wrap">{sampleValue}</p>
-          </div>
-        </div>
+        <ul className='d-flex justify-content-around'>          
+          {Object.keys(currentCategory.headers).map((header, index) => {          
+            const sampleValue = generateHeaderSampleValue(currentCategory.headers[header], sampleRow);
+            return (
+              <li
+                key={index}
+                className="d-flex flex-column align-items-center justify-content-start"
+                style={{width: '25%'}}>
+                <h4 className="badge text-bg-light">{header}</h4>
+                <p>{sampleValue}</p>
+              </li>
+            )
+          })}
+        </ul>
         <button type="button" className="btn btn-light" onClick={handleResetSelectedColumns}>Reset</button>
         <ul className={`list-group ${styles.sampleRowContainer}`}>
           {sampleRow.map((columnPair, index) => {
@@ -463,7 +449,7 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
                   <p>{columnPair.value}</p>
                 </div>
                 </div>
-                <span className={`badge text-bg-${columnIsSelected(columnPair.header) ? 'primary' : 'light'} rounded-pill`}>{columnIsSelected(columnPair.header) ? <RiCheckboxCircleFill/> : <RiCheckboxBlankCircleLine/>}</span>
+                <span className={`badge text-bg-${columnIsSelected(columnPair.header, currentHeaderMatchedColumnHeaders) ? 'primary' : 'light'} rounded-pill`}>{columnIsSelected(columnPair.header, currentHeaderMatchedColumnHeaders) ? <RiCheckboxCircleFill/> : <RiCheckboxBlankCircleLine/>}</span>
               </li>
             )
           })}

@@ -55,7 +55,7 @@ function SearchItem({ searchRow, index }) {
   return (
     <li className={`${styles.searchItem} card text-start`}>
       <div className="card-body">
-        <h5 className="card-title">{searchRow["Primary Address"]["Address"]}</h5>
+        <h5 className="card-title">{searchRow["Primary Address"]["Street Address"]}</h5>
         <p className="card-text">{`${searchRow["Primary Address"]["City"]} ${searchRow["Primary Address"]["State"]}`}</p>
       </div>
       <div className="card-header">
@@ -82,7 +82,7 @@ function SearchItem({ searchRow, index }) {
           <li>
             <a className="dropdown-item" href={searchRow["Primary Address"]["FastPeopleSearch Url"]} target="_blank">
               <strong>
-                {searchRow["Primary Address"]["Address"]} | {`${searchRow["Primary Address"]["City"]} ${searchRow["Primary Address"]["State"]} `}
+                {searchRow["Primary Address"]["Street Address"]} | {`${searchRow["Primary Address"]["City"]} ${searchRow["Primary Address"]["State"]} `}
               </strong>
               <span className="badge text-bg-info">Primary Address</span>
             </a>
@@ -90,7 +90,7 @@ function SearchItem({ searchRow, index }) {
           <li>
             <a className="dropdown-item" href={searchRow["Mail Address"]["FastPeopleSearch Url"]} target="_blank">
               <strong>
-                {searchRow["Mail Address"]["Address"]} | {`${searchRow["Mail Address"]["City"]} ${searchRow["Mail Address"]["State"]} `}
+                {searchRow["Mail Address"]["Street Address"]} | {`${searchRow["Mail Address"]["City"]} ${searchRow["Mail Address"]["State"]} `}
               </strong>
               <span className="badge text-bg-info">Mail Address</span>
             </a>

@@ -1,5 +1,5 @@
 function createFastPeopleSearchSearchLink(parsedCsvFileRow, category) {
-  const address = category.headers["Address"].map((header) => {
+  const address = category.headers["Street Address"].map((header) => {
     return parsedCsvFileRow[header];
   }).join(' ')
     .replace(/[^a-z0-9 ]/gi, '') // Remove non-alphanumeric characters except spaces
@@ -27,6 +27,10 @@ function createFastPeopleSearchSearchLink(parsedCsvFileRow, category) {
     .replace(/\s/g, '-');
 
   return `https://www.fastpeoplesearch.com/address/${address}_${city}-${state}`;
+}
+
+export function columnIsSelected(column, currentHeaderMatchedColumnHeaders) {
+  return currentHeaderMatchedColumnHeaders.includes(column);
 }
 
 export function generateHeaderSampleValue(currentHeaderMatchedColumnHeaders, sampleRow) {
