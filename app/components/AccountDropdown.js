@@ -15,8 +15,12 @@ export default function AccountDropdown() {
         <Image className={styles.dropdownIcon} src='/avatar-icon.png' alt="Avatar Icon" width={100} height={100}/>
       </button>
       <ul className="dropdown-menu">
-        <li onClick={handleSignOut}><a className="dropdown-item" href="#">Sign Out</a></li>
-        <li><a className="dropdown-item" href="#">Contact Support</a></li>
+        <li onClick={handleSignOut}>
+          <a className="dropdown-item" href="#">Sign Out</a>
+        </li>
+        <li>
+          <a className="dropdown-item" href='#"'>Contact Support</a>
+        </li>        
       </ul>
     </div>
   );

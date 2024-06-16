@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
             {children}
           </main>
         </section>
-        <BootstrapClient />
+        <BootstrapClient />        
       </body>
     </html>
   );
