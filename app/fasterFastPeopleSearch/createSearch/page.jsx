@@ -196,11 +196,6 @@ function FileProcessModal() {
     </>
   };
 
-  function handleCategoryTypeClick(index, event) {
-    setCurrentCategory(categories[index]);
-    setCurrentHeaderIndex(0);
-  }
-
   async function handleGenerateResults() {
     if (isGeneratable) {
       setParsedFile(processFileForDatabase(parsedCsvFile, categories));
@@ -320,14 +315,7 @@ function FileProcessModal() {
               currentHeaderIndex={currentHeaderIndex}
             />
           </div>
-          <div className="modal-footer d-flex justify-content-center">
-            <button
-              className="btn btn-outline-success"
-              onClick={handlePreviousCategoryButton}
-              disabled={categories.indexOf(currentCategory) === 0}
-            >
-              Previous Category
-            </button>
+          <div className="modal-footer d-flex flex-column justify-content-center">    
             <div className="d-flex" style={{gap: '.5rem'}}>
               <button
                 onClick={handlePreviousButtonClick}
@@ -346,27 +334,37 @@ function FileProcessModal() {
                 Next
               </button>
             </div>
-            <button
-              className="btn btn-outline-success"
-              onClick={handleNextCategoryButton}
-              disabled={categories.indexOf(currentCategory) === categories.length - 1}
-            >
-              Next Category
-            </button>
-          </div>
-          <div>
-            <button
-              onClick={handleGenerateResults}
-              className={`btn btn-primary ${styles.generateResultsButton}`}              
-              type="button"            
-              data-tooltip-id="generate-results-tooltip"
-              data-tooltip-content={isGeneratable ? 'Great job!' : generateTooltipMessage(categories)}
-              style={{opacity: isGeneratable ? '100%' : '50%'}}
-            >
-              Generate Results
-            </button>    
-            <Tooltip id="generate-results-tooltip" type={isGeneratable ? 'success' : 'error'}/>
-          </div>
+            <div className="d-flex justify-content-between align-items-center" style={{width: '100%'}}>
+              <button
+                className="btn btn-outline-success"
+                onClick={handlePreviousCategoryButton}
+                disabled={categories.indexOf(currentCategory) === 0}
+              >
+                Previous Category
+              </button>
+              <div className="d-flex justify-content-center" style={{gap: '.25rem'}}>
+                <button
+                  className="btn btn-outline-success"
+                  onClick={handleNextCategoryButton}
+                  disabled={categories.indexOf(currentCategory) === categories.length - 1}
+                >
+                  Next Category
+                </button>
+                <h2><strong><em>Or</em></strong></h2>
+                <button
+                  onClick={handleGenerateResults}
+                  className={`btn btn-primary`}              
+                  type="button"            
+                  data-tooltip-id="generate-results-tooltip"
+                  data-tooltip-content={isGeneratable ? 'Great job!' : generateTooltipMessage(categories)}
+                  style={{opacity: isGeneratable ? '100%' : '50%'}}
+                >
+                  Generate Results
+                </button>    
+                <Tooltip id="generate-results-tooltip" type={isGeneratable ? 'success' : 'error'}/>
+              </div>
+            </div>
+          </div>         
         </div>}
       </div>
     </div>
