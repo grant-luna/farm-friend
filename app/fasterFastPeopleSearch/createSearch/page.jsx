@@ -18,7 +18,6 @@ import { useImmer } from 'use-immer';
 import Image from 'next/image'
 import { Tooltip } from 'react-tooltip';
 
-
 const FileContext = createContext();
 
 export default function MainContent() {
@@ -232,10 +231,6 @@ function FileProcessModal() {
     }
   }
 
-  function handlePreviousButtonClick() {
-    setCurrentHeaderIndex(currentHeaderIndex - 1);
-  }
-
   useEffect(() => {
     const incompleteRequiredCategories = () => {  
       const inProgressRequiredCategories = categories.filter((category) => category.required);
@@ -296,7 +291,7 @@ function FileProcessModal() {
                   <li
                     key={`${currentCategory.type}-${header}`}
                     className="nav-item"
-                    onClick={handleHeaderClick.bind(null, index)}
+                    onClick={handleHeaderClick.bind(null, index)}                    
                   >
                     <a
                       className={`nav-link${Object.keys(currentCategory.headers)[currentHeaderIndex] === header ? ' active' : ''}`}
@@ -307,8 +302,8 @@ function FileProcessModal() {
                       aria-expanded="false"
                       aria-controls={navLinkCollapseMenuId}
                     >
-                      {header}
-                    </a>
+                      {header} <small className={`badge ${currentCategory.headers[header].length > 0 ? 'text-bg-success' : 'text-bg-light'}`}>{currentCategory.headers[header].length > 0 ? <RiCheckboxCircleFill /> : <RiCheckboxBlankCircleLine />}</small>
+                    </a>                    
                   </li>
                 );
               })}
@@ -319,25 +314,7 @@ function FileProcessModal() {
               currentHeaderIndex={currentHeaderIndex}
             />
           </div>
-          <div className="modal-footer d-flex flex-column justify-content-center">    
-            <div className="d-flex" style={{gap: '.5rem'}}>
-              <button
-                onClick={handlePreviousButtonClick}
-                type="button"
-                className="btn btn-primary"
-                disabled={currentHeaderIndex === 0}         
-              >
-                Previous
-              </button>
-              <button
-                onClick={handleNextButtonClick}
-                type="button"
-                className="btn btn-primary"
-                disabled={currentHeaderIndex === Object.keys(currentCategory.headers).length - 1}
-              >
-                Next
-              </button>
-            </div>
+          <div className="modal-footer d-flex flex-column justify-content-center">           
             <div className="d-flex justify-content-between align-items-center" style={{width: '100%'}}>
               <button
                 className="btn btn-outline-success"
@@ -359,11 +336,10 @@ function FileProcessModal() {
                     Recommended
                   </span>
                 </button>
-                <Tooltip id="next-category-tooltip"/>
-                <h2><strong><em>Or</em></strong></h2>
+                <Tooltip id="next-category-tooltip"/>                
                 <button
                   onClick={handleGenerateResults}
-                  className={`btn btn-primary`}              
+                  className={`btn btn-info`}              
                   type="button"            
                   data-tooltip-id="generate-results-tooltip"
                   data-tooltip-content={isGeneratable ? 'Great job!' : generateTooltipMessage(categories)}
