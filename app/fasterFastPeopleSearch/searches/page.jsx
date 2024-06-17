@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchSearches } from '../actions/fetchSearches.js';
 import { BsFillTrash3Fill } from "react-icons/bs";
@@ -7,7 +7,15 @@ import { BsFillTrash3Fill } from "react-icons/bs";
 export default function MainContent() {
   return (
     <>
-      <h2>Searches</h2>
+      <nav className="navbar bg-dark" data-bs-theme="dark">
+        <div className="container-fluid">
+          <a className="navbar-brand">Past Searches</a>
+          <form className="d-flex" role="search">
+            <input className="form-control" type="search" placeholder="Search" aria-label="Search"></input>
+            <button className="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </nav>
       <SearchesContainer />
     </>
   )
@@ -16,13 +24,18 @@ export default function MainContent() {
 function SearchesContainer() {
   const [searches, setSearches] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const startIndex = (currentPage - 1) * 10;
+  const maxPages = useRef(null);
+  const visibleSearches = searches?.slice(startIndex, currentPage * 10);
   
   useEffect(() => {
     (async () => {
       try {
         const fetchedSearches = await fetchSearches();
-        
-        setSearches(fetchedSearches);
+        maxPages.current = Math.ceil((fetchedSearches.length / 10));
+        debugger;       
+        setSearches(fetchedSearches);        
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -30,14 +43,56 @@ function SearchesContainer() {
     })();
   }, []);
 
+  function handlePageNumberClick(pageNumber) {
+    if (pageNumber) {
+      setCurrentPage(pageNumber);
+    }
+  }
+
+  function handlePreviousClick() {
+    if (currentPage > 1) {      
+      setCurrentPage(currentPage - 1);
+    }
+  }
+
+  function handleNextClick() {     
+    if (currentPage !== maxPages.current) {
+      setCurrentPage(currentPage + 1);
+    }
+  }
+
   return (
     <>
       {loading && <p>Loading Your Searches...</p>}
-      {!loading && <ul className="d-flex flex-wrap justify-content-center" style={{gap: '.75rem'}}>
-        {searches.map((search, index) => {
-          return <SearchItem key={index} search={search}/>
-        })}
-      </ul>}
+      {!loading && <div>
+        <ul className="d-flex flex-wrap justify-content-center" style={{gap: '.75rem'}}>
+          {visibleSearches.map((search, index) => {
+            return <SearchItem key={index} search={search}/>
+          })}
+        </ul>        
+        <div className="d-flex justify-content-center align-items-center" style={{margin: '0 auto'}}>
+          <ul className="pagination">
+            <li className={`page-item ${currentPage === 1 && 'disabled'}`} onClick={handlePreviousClick}>
+              <a className="page-link" href="#">Previous</a>
+            </li>
+            {Array.from(Array(maxPages.current), (_, index) => {
+              const pageNumber = index + 1;
+
+              return (
+                <li
+                  key={index}
+                  className={`page-item ${currentPage === pageNumber && `active`}`}
+                  onClick={handlePageNumberClick.bind(null, pageNumber)}>
+                  <a className="page-link" href="#">{pageNumber}</a>
+                </li>
+              )
+            })}
+            <li className={`page-item ${currentPage === maxPages.current && `disabled`}`} onClick={handleNextClick}>
+              <a className="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </div>       
+      </div>}
     </>
   )
 }
