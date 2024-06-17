@@ -369,6 +369,13 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
 
   const sampleRow = generateSampleRow(parsedCsvFile);
   const currentHeaderMatchedColumnHeaders = currentCategory.headers[Object.keys(currentCategory.headers)[currentHeaderIndex]];    
+  const headerExamples = {
+    "Street Address": ["123 Main St", "123 Main St #5", "123 W Main St #5"],
+    "City": ["Los Angeles", "Seattle", "Nevada City"],
+    "State": ["CA", "WA", "NY"],
+    "First Owner": ["Jane Doe"],
+    "Second Owner": ["John Doe"],
+  }
 
   function handleResetSelectedColumns(event) {
     event.preventDefault();
@@ -419,7 +426,13 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
                 key={index}
                 className="d-flex flex-column align-items-center justify-content-start"
                 style={{width: '25%'}}>
-                <h4 className={`badge text-bg-${checkIfHeaderIsCurrentHeader(currentHeaderIndex, currentCategory, header) ? 'info' : 'light'}`}>{header}</h4>
+                <h4 
+                  className={`badge text-bg-${checkIfHeaderIsCurrentHeader(currentHeaderIndex, currentCategory, header) ? 'info' : 'light'}`}
+                  data-tooltip-id={`${header}-examples-tooltip`}
+                  data-tooltip-content={`Examples: ${headerExamples[header].join(', ')}`}>
+                  {header}
+                </h4>
+                <Tooltip id={`${header}-examples-tooltip`} />
                 <p>{sampleValue}</p>
               </li>
             )
