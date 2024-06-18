@@ -100,10 +100,26 @@ function SearchesContainer() {
 
 function SearchItem({ search }) {
   const [ searchItemHovered, setSearchitemHovered ] = useState(false);
-  const router = useRouter();
+  const [ searchitemDropdownDisplayed, setSearchItemDropdownDisplayed ] = useState(false);
+  const [ searchItemEditRequested, setSearchitemEditRequested ] = useState(false);
+  const [ searchItemDeleteRequested, setSearchItemDeleteRequested ] = useState(false);
+  const router = useRouter(); 
 
-  function handleDeleteSearch() {
-    
+  function handleInteractableSearchItemElementClick(event) {
+    event.stopPropagation();
+  }
+
+  function handleEditSearchNameClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setSearchitemEditRequested(true);
+  }
+
+  function handleDeleteSearchClick(event) {
+    event.stopPropagation();
+    event.stopPropagation();
+    setSearchItemDeleteRequested(true);
   }
 
   function handleLinkMouseEnter(event) {
@@ -135,6 +151,11 @@ function SearchItem({ search }) {
     event.preventDefault();
     router.push(`/fasterFastPeopleSearch/searches/${searchId}`);
   }
+
+  function handleSearchItemOptionsClick(event) {
+    event.stopPropagation();
+    setSearchItemDropdownDisplayed(!searchitemDropdownDisplayed);
+  }
   
   return (
     <li
@@ -155,13 +176,23 @@ function SearchItem({ search }) {
             </Link>
           </h6>
           <div className="d-flex justify-items-end align-items-center">
-            <HiDotsVertical />
+            <HiDotsVertical 
+              className="dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              onClick={handleSearchItemOptionsClick}
+            />
+             <ul className="dropdown-menu dropdown-menu-dark">
+              <li onClick={handleEditSearchNameClick}><a className="dropdown-item">Edit Search Name</a></li>            
+              <li onClick={handleDeleteSearchClick}><a className="dropdown-item" href="#">Delete Search</a></li>              
+            </ul>
           </div>          
         </div>
+        {(searchItemEditRequested && <EditSearchNameContainer search={search}/>) || (searchItemDeleteRequested && <DeleteSearchContainer search={search} />) ||    
         <ul className="list-group" style={{textAlign: 'start'}}>
           <li className="list-group-item"><strong>Date Created: </strong>{search["created_at"].toDateString()}</li>
           <li className="list-group-item"><strong>Number of Contacts: </strong>{search["search_data"].length}</li>
-        </ul>
+        </ul>}        
       </div>
       <div style={{width: '90%', outline: '1px solid grey', margin: '0 auto'}}></div>
       <div className="d-flex align-items-center">
@@ -171,31 +202,38 @@ function SearchItem({ search }) {
   )
 }
 
+function EditSearchNameContainer({ search }) {
+  return (
+    <li className="d-flex justify-content-start align-items-center" style={{gap: '.25rem'}} onClick={(event) => event.stopPropagation()}>
+      <input className="form-control" type="text" placeholder={search["search_name"]} aria-label="Search"></input>
+      <button className="btn btn-outline-success" type="submit">Save</button>
+      <button className="btn btn-light" type="submit">Cancel</button>
+    </li>
+  )
+}
+
+function DeleteSearchContainer({ search }) {
+  return (
+    <li className="d-flex justify-content-start align-items-center" style={{gap: '.25rem'}} onClick={(event) => event.stopPropagation()}>
+      <small>Delete {search["search_name"]}?</small>
+      <button className="btn btn-outline-danger" type="submit">Delete</button>
+      <button className="btn btn-light" type="submit">Cancel</button>
+    </li>
+  )
+}
+
+
+
 /*
- <li className={`card d-flex flex-column align-items-start`} style={{padding: '.5rem'}}>
-  <div className="card-body d-flex align-items-start justify-content-between" style={{width: '100%'}}>
-    <h4 className="card-title">{search["search_name"]}</h4>
-    <BsThreeDotsVertical />
-  </div>
-  <div className="card-body">
-    <ul className="list-group" style={{textAlign: 'start'}}>
-      <li className="list-group-item"><strong>Date Created: </strong>{search["created_at"].toDateString()}</li>
-      <li className="list-group-item"><strong>Number of Contacts: </strong>{search["search_data"].length}</li>
-    </ul>
-  </div>
-  <div className="d-flex justify-content-between align-items-center" style={{gap: '.5rem', width: '100%'}}>
-    <button
-      className="btn btn-success"
-      onClick={handleSearchItemClick.bind(null, search.id)}>
-      See Contacts
-    </button>
-    <button 
-      className="btn btn-light"
-      type="button"
-      data-bs-toggle="modal"
-      data-bs-target={`#delete`}>
-      <BsFillTrash3Fill />
-    </button>
-  </div>
-</li>
+{searchItemEditRequested && <li className="d-flex justify-content-between align-items-center">
+  <input className="form-control" type="text" placeholder={search["search_name"]} aria-label="Search"></input>
+  <button className="btn btn-outline-success" type="submit">Search</button>
+</li>}
+*/
+
+/*
+  <ul className="list-group" style={{textAlign: 'start'}}>
+    <li className="list-group-item"><strong>Date Created: </strong>{search["created_at"].toDateString()}</li>
+    <li className="list-group-item"><strong>Number of Contacts: </strong>{search["search_data"].length}</li>
+  </ul>
 */
