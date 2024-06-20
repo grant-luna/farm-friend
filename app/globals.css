@@ -41,34 +41,3 @@ abbr { border: none; }
 summary::-webkit-details-marker { display: none; }
 
 /* End of Whitespace Reset */
-
-nav {
-  background-color: #F9F9F9;
-}
-
-aside {
-  transition: width .75s ease, opacity .75s ease;
-}
-
-main {
-  transition: width 0.3s ease;
-}
-
-body.collapsed main {
-  width: 100%;
-}
-
-body.expanded main {
-  width: 70%;
-}
-
-body.collapsed aside {
-  width: 0%;
-  background-color: #F9F9F9;
-  opacity: 0;
-}
-
-body.expanded aside {
-  width: 250px;
-  background-color: #F9F9F9;
-}

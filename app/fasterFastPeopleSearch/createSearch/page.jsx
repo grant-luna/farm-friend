@@ -305,7 +305,7 @@ function FileProcessModal() {
                       aria-expanded="false"
                       aria-controls={navLinkCollapseMenuId}
                     >
-                      {header} <small className={`badge ${currentCategory.headers[header].length > 0 ? 'text-bg-success' : 'text-bg-light'}`}>{currentCategory.headers[header].length > 0 ? <RiCheckboxCircleFill /> : <RiCheckboxBlankCircleLine />}</small>
+                      {header} <small className={`badge ${currentCategory.headers[header].length > 0 ? 'text-bg-success' : 'text-bg-light'}`}>{currentCategory.headers[header].length > 0 ? <RiCheckboxCircleFill size={18}/> : <RiCheckboxBlankCircleLine size={18}/>}</small>
                     </a>                    
                   </li>
                 );
@@ -349,7 +349,7 @@ function FileProcessModal() {
                 >
                   {isGeneratable ? 'Generate Results' : (
                     <div className="d-flex align-items-center" style={{gap: '.25rem'}}>
-                      See what's missing <FiAlertCircle />
+                      See what's missing <FiAlertCircle size={25}/>
                     </div>
                   )}
                 </button>  
@@ -457,7 +457,7 @@ function ColumnSelectorDropdown({ currentCategory, setCurrentCategory, currentHe
                   <p>{columnPair.value}</p>
                 </div>
                 </div>
-                <span className={`badge text-bg-${columnIsSelected(columnPair.header, currentHeaderMatchedColumnHeaders) ? 'primary' : 'light'} rounded-pill`}>{columnIsSelected(columnPair.header, currentHeaderMatchedColumnHeaders) ? <RiCheckboxCircleFill/> : <RiCheckboxBlankCircleLine/>}</span>
+                <span className={`badge text-bg-${columnIsSelected(columnPair.header, currentHeaderMatchedColumnHeaders) ? 'primary' : 'light'} rounded-pill`}>{columnIsSelected(columnPair.header, currentHeaderMatchedColumnHeaders) ? <RiCheckboxCircleFill size={18}/> : <RiCheckboxBlankCircleLine size={18}/>}</span>
               </li>
             )
           })}

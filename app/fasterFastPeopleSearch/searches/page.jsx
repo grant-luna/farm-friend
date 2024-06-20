@@ -3,23 +3,29 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchSearches } from '../actions/fetchSearches.js';
 import Link from 'next/link'
-import { MdDeleteOutline } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
+import { FaSearch } from "react-icons/fa";
+import styles from './page.module.css';
+import { updateSearchName } from '../actions/updateSearchName.js';
+import { deleteSearch } from '../actions/deleteSearch.js';
+import { CiCirclePlus } from "react-icons/ci";
 
 export default function MainContent() {
+
   return (
-    <>
-      <nav className="navbar bg-dark" data-bs-theme="dark">
-        <div className="container-fluid">
+    <div>
+      <nav className={`navbar`}>
+        <div className="d-flex align-items-center" style={{gap: '1rem', paddingLeft: '1rem'}}>
+          <FaSearch/>
           <a className="navbar-brand">Past Searches</a>
-          <form className="d-flex" role="search">
-            <input className="form-control" type="search" placeholder="Search" aria-label="Search"></input>
+          <div className="d-flex">
+            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
             <button className="btn btn-outline-success" type="submit">Search</button>
-          </form>
+          </div>          
         </div>
       </nav>
-      <SearchesContainer />
-    </>
+      <SearchesContainer/>
+    </div>
   )
 }
 
@@ -30,6 +36,7 @@ function SearchesContainer() {
   const startIndex = (currentPage - 1) * 10;
   const maxPages = useRef(null);
   const visibleSearches = searches?.slice(startIndex, currentPage * 10);
+  const router = useRouter();
   
   useEffect(() => {
     (async () => {
@@ -43,6 +50,10 @@ function SearchesContainer() {
       }
     })();
   }, []);
+
+  function handleCreateNewSearchContainerClick() {
+    router.push('/fasterFastPeopleSearch/createSearch');
+  }
 
   function handlePageNumberClick(pageNumber) {
     if (pageNumber) {
@@ -64,36 +75,55 @@ function SearchesContainer() {
 
   return (
     <>
-      {loading && <p>Loading Your Searches...</p>}
-      {!loading && <div>
-        <ul className="d-flex flex-wrap justify-content-center" style={{gap: '.25rem'}}>
-          {visibleSearches.map((search, index) => {
-            return <SearchItem key={index} search={search}/>
-          })}
-        </ul>        
-        <div className="d-flex justify-content-center align-items-center" style={{margin: '0 auto'}}>
-          <ul className="pagination">
-            <li className={`page-item ${currentPage === 1 && 'disabled'}`} onClick={handlePreviousClick}>
-              <a className="page-link" href="#">Previous</a>
-            </li>
-            {Array.from(Array(maxPages.current), (_, index) => {
-              const pageNumber = index + 1;
-
-              return (
-                <li
-                  key={index}
-                  className={`page-item ${currentPage === pageNumber && `active`}`}
-                  onClick={handlePageNumberClick.bind(null, pageNumber)}>
-                  <a className="page-link" href="#">{pageNumber}</a>
-                </li>
-              )
-            })}
-            <li className={`page-item ${currentPage === maxPages.current && `disabled`}`} onClick={handleNextClick}>
-              <a className="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </div>       
-      </div>}
+      {loading && (
+        <div className="d-flex flex-column justify-content-center align-items-center" style={{height: '60vh'}}>
+          <h4>Loading Your Searches...</h4>          
+          <div className="spinner-border text-success" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
+      {!loading && (
+        <div>
+          <div className={`${styles.searchesContainer}`}>
+            <ul className={`${styles.searchItems}`}>
+              {visibleSearches.map((search, index) => {
+                return <SearchItem key={`${search["search_name"]}-${index}`} search={search}/>
+              })}
+              <div onClick={handleCreateNewSearchContainerClick}>
+                <button
+                  style={{width: '100%', height: '100%', gap: '.5rem'}}
+                  className="d-flex justify-content-center align-items-center btn btn-outline-success">
+                  <h6 style={{marginBottom: '0'}}>Create New Search</h6>
+                  <CiCirclePlus size={25}/>
+                </button>
+              </div>
+            </ul>             
+          </div>
+          <div className={`d-flex justify-content-center align-items-center`} style={{margin: '0 auto'}}>
+            <ul className="pagination">
+              <li className={`page-item ${currentPage === 1 && 'disabled'}`} onClick={handlePreviousClick}>
+                <a className="page-link" href="#">Previous</a>
+              </li>
+              {Array.from(Array(maxPages.current), (_, index) => {
+                const pageNumber = index + 1;
+              
+                return (
+                  <li
+                    key={index}
+                    className={`page-item ${currentPage === pageNumber && `active`}`}
+                    onClick={handlePageNumberClick.bind(null, pageNumber)}>
+                    <a className="page-link" href="#">{pageNumber}</a>
+                  </li>
+                )
+              })}
+              <li className={`page-item ${currentPage === maxPages.current && `disabled`}`} onClick={handleNextClick}>
+                <a className="page-link" href="#">Next</a>
+              </li>
+            </ul>
+          </div>  
+        </div>
+      )}
     </>
   )
 }
@@ -104,10 +134,6 @@ function SearchItem({ search }) {
   const [ searchItemEditRequested, setSearchitemEditRequested ] = useState(false);
   const [ searchItemDeleteRequested, setSearchItemDeleteRequested ] = useState(false);
   const router = useRouter(); 
-
-  function handleInteractableSearchItemElementClick(event) {
-    event.stopPropagation();
-  }
 
   function handleEditSearchNameClick(event) {
     event.preventDefault();
@@ -143,7 +169,7 @@ function SearchItem({ search }) {
   }
 
   function handleSearchItemMouseLeave(event) {
-    event.currentTarget.style.backgroundColor = 'white';
+    event.currentTarget.style.backgroundColor = 'white';        
     setSearchitemHovered(false);
   }
 
@@ -159,13 +185,14 @@ function SearchItem({ search }) {
   
   return (
     <li
-      className="d-flex flex-column align-items-start"
+      className="d-flex flex-column align-items-center"
       style={{border: '1px solid grey', padding: '.5rem', borderRadius: '.25rem', gap: '.25rem'}}
       onClick={handleSearchItemClick.bind(null, search.id)}
       onMouseEnter={handleSearchItemMouseEnter}
       onMouseLeave={handleSearchItemMouseLeave}>
       <div className="d-flex flex-column align-items-start">
         <div className="d-flex align-items-start justify-content-between" style={{width: '100%'}}>
+          {searchItemEditRequested &&  <EditSearchNameContainer search={search} setSearchitemEditRequested={setSearchitemEditRequested}/> ||
           <h6>
             <Link
               style={{color: '#0091AE', textDecoration: 'none'}}
@@ -174,7 +201,7 @@ function SearchItem({ search }) {
               onMouseLeave={handleLinkMouseLeave}>
               {search["search_name"]}
             </Link>
-          </h6>
+          </h6>}
           <div className="d-flex justify-items-end align-items-center">
             <HiDotsVertical 
               className="dropdown-toggle"
@@ -187,53 +214,70 @@ function SearchItem({ search }) {
               <li onClick={handleDeleteSearchClick}><a className="dropdown-item" href="#">Delete Search</a></li>              
             </ul>
           </div>          
-        </div>
-        {(searchItemEditRequested && <EditSearchNameContainer search={search}/>) || (searchItemDeleteRequested && <DeleteSearchContainer search={search} />) ||    
+        </div>        
         <ul className="list-group" style={{textAlign: 'start'}}>
           <li className="list-group-item"><strong>Date Created: </strong>{search["created_at"].toDateString()}</li>
           <li className="list-group-item"><strong>Number of Contacts: </strong>{search["search_data"].length}</li>
-        </ul>}        
+        </ul>        
       </div>
       <div style={{width: '90%', outline: '1px solid grey', margin: '0 auto'}}></div>
-      <div className="d-flex align-items-center">
-
-      </div>
+      {searchItemDeleteRequested && <DeleteSearchContainer search={search} setSearchItemDeleteRequested={setSearchItemDeleteRequested}/>}
     </li>
   )
 }
 
-function EditSearchNameContainer({ search }) {
+function EditSearchNameContainer({ search, setSearchitemEditRequested }) {
+  function handleCancelEditSearchName() {
+    setSearchitemEditRequested(false);
+  }
+
+  async function handleSaveEditSearchName(event) {
+    const searchNameInput = event.currentTarget.parentNode.querySelector('input')?.value;
+
+    if (searchNameInput.length > 0 && searchNameInput !== search["search_name"]) {
+      try {
+        const updateSearchNameAttempt = await updateSearchName(search, searchNameInput);
+        if (updateSearchNameAttempt.success) {
+          setSearchitemEditRequested(false);
+          window.location.reload();
+        }
+      } catch (error) {
+        // Display Error
+      }
+    }
+  }
+
   return (
-    <li className="d-flex justify-content-start align-items-center" style={{gap: '.25rem'}} onClick={(event) => event.stopPropagation()}>
+    <div className="d-flex justify-content-start align-items-center" style={{gap: '.25rem'}} onClick={(event) => event.stopPropagation()}>
       <input className="form-control" type="text" placeholder={search["search_name"]} aria-label="Search"></input>
-      <button className="btn btn-outline-success" type="submit">Save</button>
-      <button className="btn btn-light" type="submit">Cancel</button>
-    </li>
+      <button className="btn btn-outline-success" type="submit" onClick={handleSaveEditSearchName}>Save</button>
+      <button className="btn btn-light" type="submit" onClick={handleCancelEditSearchName}>Cancel</button>
+    </div>
   )
 }
 
-function DeleteSearchContainer({ search }) {
+function DeleteSearchContainer({ search, setSearchItemDeleteRequested }) {
+  function handleCancelDeleteSearch() {
+    setSearchItemDeleteRequested(false);
+  }
+
+  async function handleDeleteSearch() {  
+    try {
+      const deleteSearchAttempt = await deleteSearch(search.id);
+      if (deleteSearchAttempt.success) {
+        setSearchItemDeleteRequested(false);
+        window.location.reload();      
+      }
+    } catch (error) {
+      // throw error
+    }
+  }
+
   return (
-    <li className="d-flex justify-content-start align-items-center" style={{gap: '.25rem'}} onClick={(event) => event.stopPropagation()}>
+    <div className="d-flex justify-content-start align-items-center" style={{gap: '.25rem'}} onClick={(event) => event.stopPropagation()}>
       <small>Delete {search["search_name"]}?</small>
-      <button className="btn btn-outline-danger" type="submit">Delete</button>
-      <button className="btn btn-light" type="submit">Cancel</button>
-    </li>
+      <button className="btn btn-outline-danger" type="submit" onClick={handleDeleteSearch}>Delete</button>
+      <button className="btn btn-light" type="submit" onClick={handleCancelDeleteSearch}>Cancel</button>
+    </div>
   )
 }
-
-
-
-/*
-{searchItemEditRequested && <li className="d-flex justify-content-between align-items-center">
-  <input className="form-control" type="text" placeholder={search["search_name"]} aria-label="Search"></input>
-  <button className="btn btn-outline-success" type="submit">Search</button>
-</li>}
-*/
-
-/*
-  <ul className="list-group" style={{textAlign: 'start'}}>
-    <li className="list-group-item"><strong>Date Created: </strong>{search["created_at"].toDateString()}</li>
-    <li className="list-group-item"><strong>Number of Contacts: </strong>{search["search_data"].length}</li>
-  </ul>
-*/
