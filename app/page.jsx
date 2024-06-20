@@ -13,7 +13,7 @@ export default function Page() {
           height={250}
           alt="Farm Friend Logo"
         />
-        <div className={`d-flex justify-content-center align-items-center`} style={{gap: '.5rem'}}>
+        <div className={`d-flex flex-column justify-content-center align-items-center`} style={{gap: '.5rem'}}>
           <Link href='/fasterFastPeopleSearch/createSearch' className='btn btn-outline-success d-flex flex-column justify-content-center align-items-start' style={{gap: '.5rem'}}>
             <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
               <MdContacts />

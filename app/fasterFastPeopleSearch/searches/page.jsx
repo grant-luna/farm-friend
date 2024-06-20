@@ -9,6 +9,7 @@ import styles from './page.module.css';
 import { updateSearchName } from '../actions/updateSearchName.js';
 import { deleteSearch } from '../actions/deleteSearch.js';
 import { CiCirclePlus } from "react-icons/ci";
+import { Tooltip } from 'react-tooltip'
 
 export default function MainContent() {
 
@@ -32,7 +33,7 @@ export default function MainContent() {
 function SearchesContainer() {
   const [searches, setSearches] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [ currentPage, setCurrentPage ] = useState(1);
+  const [ currentPage, setCurrentPage ] = useState(Number(localStorage.currentPage) || 1);
   const startIndex = (currentPage - 1) * 10;
   const maxPages = useRef(null);
   const visibleSearches = searches?.slice(startIndex, currentPage * 10);
@@ -57,18 +58,23 @@ function SearchesContainer() {
 
   function handlePageNumberClick(pageNumber) {
     if (pageNumber) {
+      localStorage.currentPage = pageNumber;
       setCurrentPage(pageNumber);
     }
   }
 
   function handlePreviousClick() {
-    if (currentPage > 1) {      
-      setCurrentPage(currentPage - 1);
+    if (currentPage > 1) {
+      const newPage = currentPage - 1;
+      localStorage.currentPage = newPage;      
+      setCurrentPage(newPage);
     }
   }
 
   function handleNextClick() {     
     if (currentPage !== maxPages.current) {
+      const newPage = currentPage + 1;
+      localStorage.currentPage = newPage;
       setCurrentPage(currentPage + 1);
     }
   }
@@ -111,7 +117,7 @@ function SearchesContainer() {
                 return (
                   <li
                     key={index}
-                    className={`page-item ${currentPage === pageNumber && `active`}`}
+                    className={`page-item ${Number(currentPage) === pageNumber && `active`}`}
                     onClick={handlePageNumberClick.bind(null, pageNumber)}>
                     <a className="page-link" href="#">{pageNumber}</a>
                   </li>
@@ -227,16 +233,22 @@ function SearchItem({ search }) {
 }
 
 function EditSearchNameContainer({ search, setSearchitemEditRequested }) {
+  const [searchName, setSearchName ] = useState(search["search_name"])
+
   function handleCancelEditSearchName() {
     setSearchitemEditRequested(false);
   }
 
-  async function handleSaveEditSearchName(event) {
-    const searchNameInput = event.currentTarget.parentNode.querySelector('input')?.value;
+  function handleInputChange(event) {
+    setSearchName(event.currentTarget.value);
+  }
 
-    if (searchNameInput.length > 0 && searchNameInput !== search["search_name"]) {
+  async function handleSaveEditSearchName(event) {
+    const searchName = event.currentTarget.parentNode.querySelector('input')?.value;
+
+    if (searchName.length > 0 && searchName !== search["search_name"]) {
       try {
-        const updateSearchNameAttempt = await updateSearchName(search, searchNameInput);
+        const updateSearchNameAttempt = await updateSearchName(search, searchName);
         if (updateSearchNameAttempt.success) {
           setSearchitemEditRequested(false);
           window.location.reload();
@@ -249,8 +261,22 @@ function EditSearchNameContainer({ search, setSearchitemEditRequested }) {
 
   return (
     <div className="d-flex justify-content-start align-items-center" style={{gap: '.25rem'}} onClick={(event) => event.stopPropagation()}>
-      <input className="form-control" type="text" placeholder={search["search_name"]} aria-label="Search"></input>
-      <button className="btn btn-outline-success" type="submit" onClick={handleSaveEditSearchName}>Save</button>
+      <input
+        className="form-control"
+        type="text"
+        placeholder={searchName}
+        value={searchName}
+        aria-label="Search"
+        onChange={handleInputChange}/>
+      <button
+        className="btn btn-outline-success"
+        type="submit"
+        onClick={handleSaveEditSearchName}
+        data-tooltip-id="edit-search-name-tooltip"
+        data-tooltip-content="This is already the current search's name.">
+        Save
+      </button>
+      {searchName === search["search_name"] && <Tooltip id="edit-search-name-tooltip" />}
       <button className="btn btn-light" type="submit" onClick={handleCancelEditSearchName}>Cancel</button>
     </div>
   )
