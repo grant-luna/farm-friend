@@ -10,6 +10,8 @@ import { updateSearchName } from '../actions/updateSearchName.js';
 import { deleteSearch } from '../actions/deleteSearch.js';
 import { CiCirclePlus } from "react-icons/ci";
 import { Tooltip } from 'react-tooltip'
+import { GoSortDesc } from "react-icons/go";
+
 
 export default function MainContent() {
 
@@ -19,6 +21,22 @@ export default function MainContent() {
         <div className="d-flex align-items-center" style={{gap: '1rem', paddingLeft: '1rem'}}>
           <FaSearch/>
           <a className="navbar-brand">Past Searches</a>
+          <div className="d-flex align-items-center">
+            <button 
+              className="d-flex align-items-center btn btn-light dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              style={{gap: '.5rem'}}>
+              Sort Searches
+              <GoSortDesc size={24} />
+            </button>
+             <ul className="dropdown-menu dropdown-menu-dark">
+              <li><a className="dropdown-item">Sort By Date Created (Newest)</a></li>            
+              <li><a className="dropdown-item">Sort By Date Created (Oldest)</a></li>            
+              <li><a className="dropdown-item" href="#">Sort by # of Contacts (Descending)</a></li>              
+              <li><a className="dropdown-item" href="#">Sort by # of Contacts (Ascending)</a></li>              
+            </ul>
+          </div>
           <div className="d-flex">
             <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
             <button className="btn btn-outline-success" type="submit">Search</button>
@@ -93,9 +111,6 @@ function SearchesContainer() {
         <div>
           <div className={`${styles.searchesContainer}`}>
             <ul className={`${styles.searchItems}`}>
-              {visibleSearches.map((search, index) => {
-                return <SearchItem key={`${search["search_name"]}-${index}`} search={search}/>
-              })}
               <div onClick={handleCreateNewSearchContainerClick}>
                 <button
                   style={{width: '100%', height: '100%', gap: '.5rem'}}
@@ -104,6 +119,19 @@ function SearchesContainer() {
                   <CiCirclePlus size={25}/>
                 </button>
               </div>
+              {visibleSearches.map((search, index) => {
+                return <SearchItem key={`${search["search_name"]}-${index}`} search={search}/>
+              })}
+             {currentPage === maxPages && (
+               <div onClick={handleCreateNewSearchContainerClick}>
+                  <button
+                    style={{width: '100%', height: '100%', gap: '.5rem'}}
+                    className="d-flex justify-content-center align-items-center btn btn-outline-success">
+                    <h6 style={{marginBottom: '0'}}>Create New Search</h6>
+                    <CiCirclePlus size={25}/>
+                  </button>
+                </div>
+             )}
             </ul>             
           </div>
           <div className={`d-flex justify-content-center align-items-center`} style={{margin: '0 auto'}}>
