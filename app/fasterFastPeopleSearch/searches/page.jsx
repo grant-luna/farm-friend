@@ -4,64 +4,39 @@ import { useRouter } from 'next/navigation';
 import { fetchSearches } from '../actions/fetchSearches.js';
 import Link from 'next/link'
 import { HiDotsVertical } from "react-icons/hi";
-import { FaSearch } from "react-icons/fa";
 import styles from './page.module.css';
 import { updateSearchName } from '../actions/updateSearchName.js';
 import { deleteSearch } from '../actions/deleteSearch.js';
 import { CiCirclePlus } from "react-icons/ci";
 import { Tooltip } from 'react-tooltip'
-import { GoSortDesc } from "react-icons/go";
+import { FaSortAmountDownAlt } from "react-icons/fa";
+import {
+  sortByContactsAscending,
+  sortByContactsDescending,
+  sortByNewestSearches,
+  sortByOldestSearches,
+} from './lib/helpers.js'
 
 
 export default function MainContent() {
-
-  return (
-    <div>
-      <nav className={`navbar`}>
-        <div className="d-flex align-items-center" style={{gap: '1rem', paddingLeft: '1rem'}}>
-          <FaSearch/>
-          <a className="navbar-brand">Past Searches</a>
-          <div className="d-flex align-items-center">
-            <button 
-              className="d-flex align-items-center btn btn-light dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              style={{gap: '.5rem'}}>
-              Sort Searches
-              <GoSortDesc size={24} />
-            </button>
-             <ul className="dropdown-menu dropdown-menu-dark">
-              <li><a className="dropdown-item">Sort By Date Created (Newest)</a></li>            
-              <li><a className="dropdown-item">Sort By Date Created (Oldest)</a></li>            
-              <li><a className="dropdown-item" href="#">Sort by # of Contacts (Descending)</a></li>              
-              <li><a className="dropdown-item" href="#">Sort by # of Contacts (Ascending)</a></li>              
-            </ul>
-          </div>
-          <div className="d-flex">
-            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-            <button className="btn btn-outline-success" type="submit">Search</button>
-          </div>          
-        </div>
-      </nav>
-      <SearchesContainer/>
-    </div>
-  )
-}
-
-function SearchesContainer() {
   const [searches, setSearches] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [ sortSelection, setSortSelection ] = useState(null);
   const [ currentPage, setCurrentPage ] = useState(Number(localStorage.currentPage) || 1);
   const startIndex = (currentPage - 1) * 10;
   const maxPages = useRef(null);
   const visibleSearches = searches?.slice(startIndex, currentPage * 10);
   const router = useRouter();
-  
+
   useEffect(() => {
     (async () => {
       try {
-        const fetchedSearches = await fetchSearches();
-        maxPages.current = Math.ceil((fetchedSearches.length / 10));      
+        let fetchedSearches = await fetchSearches();
+        maxPages.current = Math.ceil((fetchedSearches.length / 10));
+
+        if (sortSelection) {
+          fetchedSearches = sortSelection(fetchedSearches);
+        }
         setSearches(fetchedSearches);        
         setLoading(false);
       } catch (error) {
@@ -97,8 +72,52 @@ function SearchesContainer() {
     }
   }
 
+  function handleSortSearches(sortingFunction) {
+    setSearches(sortingFunction(searches));
+  }
+
   return (
-    <>
+    <div>
+      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="#">Past Searches</a>
+          <button 
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#pastSearchesNavbarDropdown"
+            aria-controls="pastSearchesNavbarDropdown"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="pastSearchesNavbarDropdown">
+            <ul className="navbar-nav">
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle d-flex align-items-center"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  style={{gap: '.5rem'}}>
+                  Sort Searches
+                  <FaSortAmountDownAlt size={20} />              
+                </a>
+                <ul className="dropdown-menu dropdown-menu-dark">
+                  <li className="dropdown-item" onClick={handleSortSearches.bind(null, sortByNewestSearches)} href="#">Sort by Date Created (Newest First)</li>
+                  <li className="dropdown-item" onClick={handleSortSearches.bind(null, sortByOldestSearches)} href="#">Sort by Date Created (Oldest First)</li>
+                  <li className="dropdown-item" onClick={handleSortSearches.bind(null, sortByContactsDescending)} href="#">Sort by # of Contacts (Descending)</li>
+                  <li className="dropdown-item" onClick={handleSortSearches.bind(null, sortByContactsAscending)} href="#">Sort by # of Contacts (Ascending)</li>
+                </ul>
+              </li>
+              <li className="nav-item">
+                <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+              </li>
+            </ul>
+          </div>
+        </div>        
+      </nav>
       {loading && (
         <div className="d-flex flex-column justify-content-center align-items-center" style={{height: '60vh'}}>
           <h4>Loading Your Searches...</h4>          
@@ -108,7 +127,7 @@ function SearchesContainer() {
         </div>
       )}
       {!loading && (
-        <div>
+        <div className="bg-body-tertiary">
           <div className={`${styles.searchesContainer}`}>
             <ul className={`${styles.searchItems}`}>
               <div onClick={handleCreateNewSearchContainerClick}>
@@ -158,7 +177,7 @@ function SearchesContainer() {
           </div>  
         </div>
       )}
-    </>
+    </div>
   )
 }
 
