@@ -1,4 +1,10 @@
-import deepCopy from '../../../lib/deepCopy.js';
+export function findMatchingSearches(searches, searchCriteria) {
+  const searchCriteriaRegexp = new RegExp(searchCriteria, 'i');
+
+  return [...searches].filter((search) => {
+    return searchCriteriaRegexp.test(search["search_name"]);
+  })
+}
 
 export function sortByNewestSearches(searches) {
   if (searches.length > 1) {

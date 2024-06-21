@@ -11,6 +11,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import { Tooltip } from 'react-tooltip'
 import { FaSortAmountDownAlt } from "react-icons/fa";
 import {
+  findMatchingSearches,
   sortByContactsAscending,
   sortByContactsDescending,
   sortByNewestSearches,
@@ -21,7 +22,9 @@ import {
 export default function MainContent() {
   const [searches, setSearches] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [ sortSelection, setSortSelection ] = useState(null);
+  
+  const [ searchCritera, setSearchCriteria ] = useState('');
+  
   const [ currentPage, setCurrentPage ] = useState(Number(localStorage.currentPage) || 1);
   const startIndex = (currentPage - 1) * 10;
   const maxPages = useRef(null);
@@ -34,10 +37,7 @@ export default function MainContent() {
         let fetchedSearches = await fetchSearches();
         maxPages.current = Math.ceil((fetchedSearches.length / 10));
 
-        if (sortSelection) {
-          fetchedSearches = sortSelection(fetchedSearches);
-        }
-        setSearches(fetchedSearches);        
+        setSearches(sortByNewestSearches(fetchedSearches));        
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -70,6 +70,22 @@ export default function MainContent() {
       localStorage.currentPage = newPage;
       setCurrentPage(currentPage + 1);
     }
+  }
+
+  async function handleSearchPastSearches(event) {
+    const newSearchCriteria = event.currentTarget.value;
+
+    if (newSearchCriteria === '') {
+      const fetchedSearches = await fetchSearches();
+      maxPages.current = Math.ceil((fetchedSearches.length / 10));
+      setSearches(sortByNewestSearches(fetchedSearches));
+    } else {
+      const matchingSearches = findMatchingSearches(searches, newSearchCriteria);
+      maxPages.current = Math.ceil((matchingSearches.length / 10));
+      setSearches(matchingSearches);
+    }
+    
+    setSearchCriteria(newSearchCriteria);
   }
 
   function handleSortSearches(sortingFunction) {
@@ -112,7 +128,13 @@ export default function MainContent() {
                 </ul>
               </li>
               <li className="nav-item">
-                <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                <input
+                  onChange={handleSearchPastSearches}
+                  className="form-control me-2"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
+                  value={searchCritera}/>
               </li>
             </ul>
           </div>
