@@ -53,7 +53,7 @@ export default function MainContent() {
       />
       <p style={{width: '50%', margin: '0 auto'}}>
         Upload a file to start organizing your information to help us generate free contact
-        information for you.  You'll select the required column headers from your file which we'll
+        information for you.  You&apos;ll select the required column headers from your file which we&apos;ll
         use to generate results for you.
       </p>
       <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>
@@ -349,7 +349,7 @@ function FileProcessModal() {
                 >
                   {isGeneratable ? 'Generate Results' : (
                     <div className="d-flex align-items-center" style={{gap: '.25rem'}}>
-                      See what's missing <FiAlertCircle size={25}/>
+                      See what&apos;s missing <FiAlertCircle size={25}/>
                     </div>
                   )}
                 </button>  

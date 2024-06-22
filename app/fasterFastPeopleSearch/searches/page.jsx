@@ -26,11 +26,18 @@ export default function MainContent() {
   
   const [ searchCritera, setSearchCriteria ] = useState('');
   
-  const [ currentPage, setCurrentPage ] = useState(Number(localStorage.currentPage) || 1);
+  const [ currentPage, setCurrentPage ] = useState(1);
   const startIndex = (currentPage - 1) * 10;
   const maxPages = useRef(null);
   const visibleSearches = searches?.slice(startIndex, currentPage * 10);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedPage = Number(localStorage.getItem('currentPage')) || 1;
+      setCurrentPage(savedPage);
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {

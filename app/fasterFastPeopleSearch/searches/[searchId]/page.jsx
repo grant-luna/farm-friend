@@ -136,7 +136,7 @@ function SearchResults({ searchId }) {
             </div>
           </div>        
         </nav>
-        <div>          
+        <div style={{marginTop: '1rem'}}>          
           <div className="d-flex justify-content-center" style={{gap: '1rem'}}>
             <p><strong>Date Created: </strong> {searchData["created_at"].toDateString()}</p>
             <p><strong>Number of Contacts: </strong> {searchData["search_data"].length}</p>

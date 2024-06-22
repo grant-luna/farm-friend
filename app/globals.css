@@ -6,6 +6,12 @@ Tantek Celik's Whitespace Reset
 Description:  Resets default styling of browsers to a common base
 ----------------------------------------
 */
+:root {
+  --teal: #008080;
+  --forest-green: #0E611F;
+  --yellow: #FFEB3B;
+}
+
 html {
   margin: 0;
   padding: 0;
