@@ -40,22 +40,24 @@ export default function MainContent() {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        let fetchedSearches = await fetchSearches();
-        const sortedSearches = (sortByNewestSearches(fetchedSearches))
-        maxPages.current = Math.ceil((fetchedSearches.length / 10));
-        if (!originalSearches) {
-          setOriginalSearches(sortedSearches)
+    if (loading) {
+      (async () => {
+        try {
+          let fetchedSearches = await fetchSearches();
+          const sortedSearches = (sortByNewestSearches(fetchedSearches))
+          maxPages.current = Math.ceil((fetchedSearches.length / 10));
+          if (!originalSearches) {
+            setOriginalSearches(sortedSearches)
+          }
+          setSearches(sortedSearches);       
+          if (!original) 
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
         }
-        setSearches(sortedSearches);       
-        if (!original) 
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    })();
-  }, []);
+      })();
+    }    
+  }, [loading]);
 
   function handleCreateNewSearchContainerClick() {
     router.push('/fasterFastPeopleSearch/createSearch');
@@ -88,9 +90,9 @@ export default function MainContent() {
     const newSearchCriteria = event.currentTarget.value;
 
     if (newSearchCriteria === '') {
-      const fetchedSearches = await fetchSearches();
-      maxPages.current = Math.ceil((fetchedSearches.length / 10));
-      setSearches(sortByNewestSearches(fetchedSearches));
+      maxPages.current = Math.ceil((originalSearches.length / 10));
+      setSearchCriteria(newSearchCriteria);
+      setSearches(originalSearches);
     } else {
       const matchingSearches = findMatchingSearches(originalSearches, newSearchCriteria);
       maxPages.current = Math.ceil((matchingSearches.length / 10));
@@ -282,7 +284,7 @@ function SearchItem({ search }) {
           {searchItemEditRequested &&  <EditSearchNameContainer search={search} setSearchitemEditRequested={setSearchitemEditRequested}/> ||
           <h6>
             <Link
-              style={{color: '#0091AE', textDecoration: 'none'}}
+              style={{color: '#008080', textDecoration: 'none'}}
               href="#"
               onMouseEnter={handleLinkMouseEnter}
               onMouseLeave={handleLinkMouseLeave}>

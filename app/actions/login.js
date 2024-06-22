@@ -17,5 +17,5 @@ export async function login(user) {
 
   cookies().set('session', token, { expires: cookieExpires, httpOnly: true, secure: process.env.NODE_ENV === 'production' });
 
-  redirect('/');
+  redirect('/fasterFastPeopleSearch');
 }

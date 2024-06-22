@@ -82,9 +82,11 @@ function SearchResults({ searchId }) {
   return (
     <>
       {loading && (
-        <div className="d-flex flex-column justify-content-center align-items-center" style={{height: '60vh'}}>
-          <h4>Loading Contacts</h4>
-          <MdContactPhone size={40}/>          
+        <div className="d-flex flex-column justify-content-center align-items-center" style={{height: '60vh', gap: '.5rem'}}>
+          <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
+            <h2 style={{marginBottom: '0rem'}}>Loading Contacts</h2>
+            <MdContactPhone size={40} color="#0E611F"/>
+          </div>
           <div className="spinner-border text-success" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
@@ -184,7 +186,7 @@ function SearchItem({ searchRow, index }) {
       </ul>
       <div className="card-body dropdown">
         <button
-          className="btn btn-primary dropdown-toggle"
+          className="btn btn-success dropdown-toggle"
           type="button"
           id={`dropdownMenuButton${index}`}
           data-bs-toggle="dropdown"
