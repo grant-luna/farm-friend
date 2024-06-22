@@ -21,6 +21,7 @@ import {
 
 export default function MainContent() {
   const [searches, setSearches] = useState(null);
+  const [ originalSearches, setOriginalSearches ] = useState(null);
   const [loading, setLoading] = useState(true);
   
   const [ searchCritera, setSearchCriteria ] = useState('');
@@ -35,9 +36,13 @@ export default function MainContent() {
     (async () => {
       try {
         let fetchedSearches = await fetchSearches();
+        const sortedSearches = (sortByNewestSearches(fetchedSearches))
         maxPages.current = Math.ceil((fetchedSearches.length / 10));
-
-        setSearches(sortByNewestSearches(fetchedSearches));        
+        if (!originalSearches) {
+          setOriginalSearches(sortedSearches)
+        }
+        setSearches(sortedSearches);       
+        if (!original) 
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -80,7 +85,7 @@ export default function MainContent() {
       maxPages.current = Math.ceil((fetchedSearches.length / 10));
       setSearches(sortByNewestSearches(fetchedSearches));
     } else {
-      const matchingSearches = findMatchingSearches(searches, newSearchCriteria);
+      const matchingSearches = findMatchingSearches(originalSearches, newSearchCriteria);
       maxPages.current = Math.ceil((matchingSearches.length / 10));
       setSearches(matchingSearches);
     }
