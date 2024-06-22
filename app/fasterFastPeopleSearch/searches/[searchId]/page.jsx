@@ -5,6 +5,7 @@ import styles from './page.module.css';
 import { fetchSearchData } from '../../actions/fetchSearchData.js';
 import { IoIosClose } from "react-icons/io";
 import { MdContactPhone } from "react-icons/md";
+import { MdContactSupport } from "react-icons/md";
 
 export default function MainContent({ params }) {
   const searchId = params.searchId;
@@ -17,6 +18,7 @@ function SearchResults({ searchId }) {
   const [loading, setLoading] = useState(true);
   const [ searchValue, setSearchValue ] = useState('');
   const [ searchFilter, setSearchFilter ] = useState(null);   
+
   const categories = ["Primary Address", 'Owner Names', 'Mail Address'] ;
 
   function handleSearch(event) {
@@ -28,7 +30,7 @@ function SearchResults({ searchId }) {
       } else {
         const searchValueRegexp = new RegExp(newSearchValue, 'i');
 
-        const filteredSearches = draft.search_data.filter((search) => {
+        const filteredSearches = originalSearchData.search_data.filter((search) => {
           let searchCategories = Object.keys(search);
           if (searchFilter) {
             searchCategories = searchCategories.filter((header) => header === searchFilter);
@@ -56,6 +58,7 @@ function SearchResults({ searchId }) {
   
   function handleSelectSearchFilter(event) {
     const searchFilter = event.currentTarget.textContent;
+    setSearchValue('');
     setSearchFilter(searchFilter);
   }
 
@@ -74,7 +77,7 @@ function SearchResults({ searchId }) {
         setLoading(false);
       }
     })();
-  }, [searchId]);
+  }, [searchId, searchFilter]);
   
   return (
     <>
@@ -145,6 +148,17 @@ function SearchResults({ searchId }) {
               <SearchItem searchRow={searchRow} key={index} />
             )
           })}
+          {searchData['search_data'].length === 0 && (
+            <div className="d-flex flex-column align-items-center" style={{height: '60vh'}}>
+              <div className="d-flex align-items-center justify-content-between" style={{gap: '.5rem'}}>
+                <h4>No Matching Contacts</h4>
+                <MdContactSupport size={40}/>    
+              </div>      
+              <div className="spinner-border text-success" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          )}
         </ul>
       </div>}
     </>
