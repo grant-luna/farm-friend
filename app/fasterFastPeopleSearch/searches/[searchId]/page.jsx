@@ -1,7 +1,10 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useImmer } from 'use-immer'
 import styles from './page.module.css';
 import { fetchSearchData } from '../../actions/fetchSearchData.js';
+import { IoIosClose } from "react-icons/io";
+import { MdContactPhone } from "react-icons/md";
 
 export default function MainContent({ params }) {
   const searchId = params.searchId;
@@ -9,10 +12,54 @@ export default function MainContent({ params }) {
 }
 
 function SearchResults({ searchId }) {
-  const [searchData, setSearchData] = useState(null);
+  const [searchData, setSearchData] = useImmer(null);  
   const [loading, setLoading] = useState(true);
+  const [ searchValue, setSearchValue ] = useState('');
+  const [ searchFilter, setSearchFilter ] = useState(null);
+
+  function handleSearch(event) {
+    const newSearchValue = event.currentTarget.value;
+    
+    setSearchData((draft) => {    
+      if (newSearchValue === '') {
+        (async (draft) => {
+          const fetchedSearchData = await fetchSearchData(searchId);
+          draft.search_data = fetchedSearchData.data;
+        })(draft);
+      } else {
+        const searchValueRegexp = new RegExp(newSearchValue, 'i');
+
+        const filteredSearches = draft.search_data.filter((search) => {
+          let searchCategories = Object.keys(search);
+          if (searchFilter) {
+            searchCategories = searchCategories.filter((header) => header === searchFilter);
+          }
+        
+          return searchCategories.some((category) => {
+            const categoryHeaders = Object.keys(search[category]);
+          
+            return categoryHeaders.some((header) => {
+              return searchValueRegexp.test(search[category][header]);
+            });          
+          });        
+        });
+      
+        draft.search_data = filteredSearches;
+      }
+    });
+    
+    setSearchValue(newSearchValue);
+  }
   
+  function handleRemoveSearchFilter() {
+    setSearchFilter(null);
+  }
   
+  function handleSelectSearchFilter(event) {
+    const searchFilter = event.currentTarget.textContent;
+    setSearchFilter(searchFilter);
+  }
+
   useEffect(() => {
     (async () => {
       try {
@@ -26,14 +73,65 @@ function SearchResults({ searchId }) {
       }
     })();
   }, [searchId]);
-
   
   return (
     <>
-      {loading && <p>Loading...</p>}
+      {loading && (
+        <div className="d-flex flex-column justify-content-center align-items-center" style={{height: '60vh'}}>
+          <h4>Loading Contacts</h4>
+          <MdContactPhone size={40}/>          
+          <div className="spinner-border text-success" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
       {!loading && <div>
-        <div>
-          <h3>{searchData["search_name"]}</h3>
+        <nav className="navbar navbar-expand-lg bg-body-tertiary">
+          <div className="container-fluid">
+            <a className="navbar-brand" href="#">{searchData["search_name"]}</a>
+            <button 
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#pastSearchesNavbarDropdown"
+              aria-controls="pastSearchesNavbarDropdown"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+                <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="pastSearchesNavbarDropdown">
+              <ul className="navbar-nav">                
+                <li className="nav-item d-flex align-items-center">
+                  <input
+                    className="form-control me-2"
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search"
+                    onChange={handleSearch}
+                    value={searchValue}/>
+                    <div className="nav-item dropdown" style={{outline: '1px solid black', borderRadius: '.25rem'}}>
+                      <a
+                        className="nav-link dropdown-toggle d-flex align-items-center"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        style={{gap: '.5rem'}}>
+                        {searchFilter && <IoIosClose onClick={handleRemoveSearchFilter} size={24}/>}
+                        {searchFilter || 'Search Filter'}
+                      </a>
+                      <ul className="dropdown-menu dropdown-menu-dark">
+                        {searchData && Object.keys(searchData .search_data[0]).map((searchFilter, index) => {
+                          return <li onClick={handleSelectSearchFilter} key={index} className="dropdown-item">{searchFilter}</li>
+                        })}
+                      </ul>
+                    </div>
+                </li>     
+              </ul>
+            </div>
+          </div>        
+        </nav>
+        <div>          
           <div className="d-flex justify-content-center" style={{gap: '1rem'}}>
             <p><strong>Date Created: </strong> {searchData["created_at"].toDateString()}</p>
             <p><strong>Number of Contacts: </strong> {searchData["search_data"].length}</p>
