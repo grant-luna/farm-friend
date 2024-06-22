@@ -13,19 +13,18 @@ export default function MainContent({ params }) {
 
 function SearchResults({ searchId }) {
   const [searchData, setSearchData] = useImmer(null);  
+  const [ originalSearchData, setOriginalSearchData ] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ searchValue, setSearchValue ] = useState('');
-  const [ searchFilter, setSearchFilter ] = useState(null);
+  const [ searchFilter, setSearchFilter ] = useState(null);   
+  const categories = ["Primary Address", 'Owner Names', 'Mail Address'] ;
 
   function handleSearch(event) {
     const newSearchValue = event.currentTarget.value;
     
     setSearchData((draft) => {    
       if (newSearchValue === '') {
-        (async (draft) => {
-          const fetchedSearchData = await fetchSearchData(searchId);
-          draft.search_data = fetchedSearchData.data;
-        })(draft);
+        draft.search_data = originalSearchData.search_data;
       } else {
         const searchValueRegexp = new RegExp(newSearchValue, 'i');
 
@@ -65,6 +64,9 @@ function SearchResults({ searchId }) {
       try {
         const fetchedSearchData = await fetchSearchData(searchId);
         setSearchData(fetchedSearchData.data);
+        if (!originalSearchData) {
+          setOriginalSearchData(fetchedSearchData.data);
+        }
         setLoading(false);
       } catch (error) {
         // display error
@@ -121,8 +123,8 @@ function SearchResults({ searchId }) {
                         {searchFilter || 'Search Filter'}
                       </a>
                       <ul className="dropdown-menu dropdown-menu-dark">
-                        {searchData && Object.keys(searchData .search_data[0]).map((searchFilter, index) => {
-                          return <li onClick={handleSelectSearchFilter} key={index} className="dropdown-item">{searchFilter}</li>
+                        {categories.map((category, index) => {
+                          return <li onClick={handleSelectSearchFilter} key={index} className="dropdown-item">{category}</li>
                         })}
                       </ul>
                     </div>
