@@ -30,6 +30,7 @@ export default function MainContent() {
   const startIndex = (currentPage - 1) * 10;
   const maxPages = useRef(null);
   const visibleSearches = searches?.slice(startIndex, currentPage * 10);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +45,8 @@ export default function MainContent() {
       (async () => {
         try {
           let fetchedSearches = await fetchSearches();
-          const sortedSearches = (sortByNewestSearches(fetchedSearches))
+          
+          const sortedSearches = sortByNewestSearches(fetchedSearches)
           maxPages.current = Math.ceil((fetchedSearches.length / 10));
           if (!originalSearches) {
             setOriginalSearches(sortedSearches)

@@ -6,7 +6,6 @@ export async function fetchSearches() {
   try {
     const sessionData = await getSessionData();
     const userId = sessionData.userId;
-
     const userSearches = await pool.query(
       'SELECT * FROM searches WHERE user_id = $1;',
       [userId]
