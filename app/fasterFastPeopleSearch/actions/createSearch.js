@@ -1,4 +1,5 @@
 "use server";
+import { sql } from '@vercel/postgres';
 import { pool } from '../../lib/db.js';
 import { getSessionData } from '../../actions/getSessionData.js';
 
@@ -13,41 +14,30 @@ export async function createSearch(checkoutObject) {
     }
 
     const userId = sessionData.userId;
-    if (!checkoutObjectCopy.searchName) {
-      checkoutObjectCopy.searchName = `${new Date().toLocaleDateString()} - ${JSON.parse(checkoutObjectCopy.data).length} Records`;
+    if (!userId) {
+      throw new Error("Unable to locate user ID in session data.'");
     }
 
-    await pool.query('BEGIN');
+    const insertSearchResponse = await sql`
+    INSERT INTO searches (search_data, search_name, user_id)
+    VALUES (${checkoutObjectCopy.data}, ${checkoutObjectCopy.searchName}, ${userId})
+    RETURNING *;
+    `;
 
-    const insertResponse = await pool.query(
-      `
-      INSERT INTO searches (search_data, search_name, user_id)
-      VALUES ($1, $2, $3)
-      RETURNING *;
-      `,
-      [checkoutObjectCopy.data, checkoutObjectCopy.searchName, userId]
-    );
-
-    if (insertResponse.rows.length !== 1) {
-      throw new Error('Unable to create search');
+    if (insertSearchResponse.rows.length !== 1) {
+      throw new Error('Error with inserting search data into database.');
     }
 
-    const updateResponse = await pool.query(
-      `
-      UPDATE users
-      SET faster_fast_people_search_count = faster_fast_people_search_count + 1
-      WHERE id = $1;
-      `,
-      [userId]
-    );
+    const updateSearchCountResponse = await sql`
+    UPDATE users
+    SET faster_fast_people_search_count = faster_fast_people_search_count + 1
+    WHERE id = ${userId};
+    `;
 
-    await pool.query('COMMIT');
+    return insertSearchResponse.rows[0];
 
-    return insertResponse.rows[0];
-
-  } catch (error) {
-    await pool.query('ROLLBACK');
+  } catch (error) {    
     console.error('Error while generating results:', error);
-    return { success: false, message: error.message };
+    return { error: error.message };
   }
 }

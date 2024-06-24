@@ -1,48 +1,46 @@
 "use server"
-import { pool } from '../../lib/db.js';
+import { sql } from '@vercel/postgres';
 import { getSessionData } from '../../actions/getSessionData.js';
 
 export async function deleteSearch(searchId) {  
   try {
     const sessionData = await getSessionData();
 
-    if (!sessionData) {
-      throw new Error('No session data found');
+    if (sessionData.error) {
+      throw new Error('Error accessing session data');
     }
 
     const userId = sessionData.userId;
-
-    await pool.query('BEGIN');
-
-    const deleteResponse = await pool.query(
-      `
-      DELETE FROM searches 
-      WHERE id = $1 AND user_id = $2
-      RETURNING *;
-      `,
-      [searchId, userId]
-    );
-
-    if (deleteResponse.rows.length !== 1) {
-      throw new Error('Unable to delete search');
+    if (!userId) {
+      throw new Error('Unable to find user ID in session data.');
     }
 
-    const updateResponse = await pool.query(
-      `
-      UPDATE users
-      SET faster_fast_people_search_count = faster_fast_people_search_count - 1
-      WHERE id = $1;
-      `,
-      [userId]
-    );
+    const deleteSearchResponse = await sql`
+    DELETE from searches
+    WHERE id = ${searchId} AND user_id = ${userId}
+    RETURNING *;
+    `;
+    console.log(deleteSearchResponse);
 
-    await pool.query('COMMIT');
+    if (deleteSearchResponse.rows.length !== 1) {
+      throw new Error('Error deleting search from database');
+    }
 
-    return { success: true, deletedSearch: deleteResponse.rows[0]}
+    const updateSearchCountResponse = await sql`
+    UPDATE users
+    SET faster_fast_people_search_count = faster_fast_people_search_count - 1
+    WHERE id = ${userId}
+    RETURNING *;
+    `;
+
+    if (updateSearchCountResponse.rows.length !== 1) {
+      console.error(`Error with updating user's search count in deleteSearch.js'`);
+    }
+
+    return deleteSearchResponse.rows[0];
 
   } catch (error) {
-    await pool.query('ROLLBACK');
     console.error('Error while deleting search:', error);
-    return { success: false, message: error.message };
+    return { error: error.message };
   }
 }

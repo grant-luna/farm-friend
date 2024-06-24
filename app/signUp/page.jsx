@@ -5,6 +5,7 @@ import styles from './page.module.css';
 import { validateFormInputs } from './lib/helpers.js';
 import { createNewUser } from '../actions/createNewUser.js';
 import { login } from '../actions/login.js';
+import toast, { Toaster } from 'react-hot-toast';
 
 const ErrorObjectContext = createContext();
 
@@ -39,6 +40,10 @@ export default function SignUpModal() {
     }
   }, [formData]);
 
+  function displaySignUpError(errorMessage) {
+    toast.error(errorMessage);
+  }
+
   function handleOnChange(event) {
     const { id, value } = event.target;
     setFormData({ ...formData, [id]: value });
@@ -49,14 +54,20 @@ export default function SignUpModal() {
 
     try {
       const newUser = await createNewUser(formData);
+      if (newUser.error) {
+        displaySignUpError(newUser.error);
+        return;
+      }
       login(newUser);
     } catch (error) {
-      // display error
+      console.error(error);
+      displaySignUpError(`Sorry, we're having issues with signing you up at the moment.`);
     }
   }
 
   return (
     <>
+      <Toaster />
       <div className="modal-backdrop show"></div>
       <div
         className="modal show d-block"

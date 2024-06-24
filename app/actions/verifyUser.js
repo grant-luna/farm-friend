@@ -1,30 +1,30 @@
 "use server";
-import { pool } from '../lib/db.js';
+import { sql } from '@vercel/postgres';
 import bcrypt from 'bcryptjs';
 
-export async function verifyUser(formData) {
-  const { userEmail, userPassword } = formData;
-
+export async function verifyUser(formData) {  
   try {
-    const dbResponse = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
-      [userEmail]
-    );
+    const { userEmail, userPassword } = formData;
 
-    if (dbResponse.rows.length === 0) {
-      throw new Error('Unable to locate a user with the provided email.')
+    if (!userEmail || !userPassword) {
+      throw new Error('Missing user email or user password to verify user.')
     }
 
-    const user = dbResponse.rows[0];
+    const verifyUserResponse = await sql`SELECT * FROM users WHERE email = ${userEmail}`;
+    if (verifyUserResponse.rows.length === 0) {
+      throw new Error('Unable to locate a user with the provided email.');
+    }
+    
+    const user = verifyUserResponse.rows[0];
 
     const validPassword = await bcrypt.compare(userPassword, user.password);
     if (!validPassword) {
-      throw new Error('Invalid Password');
+      throw new Error('Invalid password provided.');
     }
 
     return user;
   } catch (error) {
-    console.error('Databbase query error:', error);
-    return new Error(error);
+    console.error('Verify user error:', error);
+    return { error: error.message };
   }
 }

@@ -16,7 +16,8 @@ import {
   sortByContactsDescending,
   sortByNewestSearches,
   sortByOldestSearches,
-} from './lib/helpers.js'
+} from './lib/helpers.js';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 export default function MainContent() {
@@ -33,6 +34,10 @@ export default function MainContent() {
 
   const router = useRouter();
 
+  function displayFetchSearchesError() {
+    toast.error('Error while generating your Past Searches.');
+  }
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedPage = Number(localStorage.getItem('currentPage')) || 1;
@@ -46,15 +51,20 @@ export default function MainContent() {
         try {
           let fetchedSearches = await fetchSearches();
           
+          if (fetchedSearches.error) {
+            displayFetchSearchesError();
+            return;
+          }
+          
           const sortedSearches = sortByNewestSearches(fetchedSearches)
           maxPages.current = Math.ceil((fetchedSearches.length / 10));
           if (!originalSearches) {
             setOriginalSearches(sortedSearches)
           }
-          setSearches(sortedSearches);       
-          if (!original) 
+          setSearches(sortedSearches);        
           setLoading(false);
         } catch (error) {
+          console.error(error);
           setLoading(false);
         }
       })();
@@ -110,6 +120,7 @@ export default function MainContent() {
 
   return (
     <div>
+      <Toaster />
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
           <a className="navbar-brand" href="#">Past Searches</a>
@@ -318,7 +329,11 @@ function SearchItem({ search }) {
 }
 
 function EditSearchNameContainer({ search, setSearchitemEditRequested }) {
-  const [searchName, setSearchName ] = useState(search["search_name"])
+  const [searchName, setSearchName ] = useState(search["search_name"]);
+
+  function displayErrorMessage(errorMessage) {
+    toast.error(errorMessage);
+  }
 
   function handleCancelEditSearchName() {
     setSearchitemEditRequested(false);
@@ -334,12 +349,14 @@ function EditSearchNameContainer({ search, setSearchitemEditRequested }) {
     if (searchName.length > 0 && searchName !== search["search_name"]) {
       try {
         const updateSearchNameAttempt = await updateSearchName(search, searchName);
-        if (updateSearchNameAttempt.success) {
+        if (updateSearchNameAttempt.error) {
+          displayErrorMessage("An issue occurred when updating your name.");
+        } else {
           setSearchitemEditRequested(false);
           window.location.reload();
         }
       } catch (error) {
-        // Display Error
+        console.error(error);
       }
     }
   }
@@ -375,12 +392,14 @@ function DeleteSearchContainer({ search, setSearchItemDeleteRequested }) {
   async function handleDeleteSearch() {  
     try {
       const deleteSearchAttempt = await deleteSearch(search.id);
-      if (deleteSearchAttempt.success) {
+      if (deleteSearchAttempt.error) {
+        throw new Error(deleteSearchAttempt.error);
+      } else {
         setSearchItemDeleteRequested(false);
         window.location.reload();      
       }
     } catch (error) {
-      // throw error
+      console.error(error);
     }
   }
 

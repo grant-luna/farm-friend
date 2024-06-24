@@ -20,6 +20,7 @@ import { useImmer } from 'use-immer';
 import Image from 'next/image'
 import { Tooltip } from 'react-tooltip';
 import { FiAlertCircle } from "react-icons/fi";
+import toast, { Toaster } from 'react-hot-toast';
 
 const FileContext = createContext();
 
@@ -476,14 +477,22 @@ function SearchCheckoutModal() {
     searchName: '',
   });
 
+  function displayCheckoutError(errorMessage) {
+    toast.error(errorMessage);
+  }
+
   async function handleFinalizeCheckout() {
     try {
       const newSearch = await createSearch(JSON.stringify(checkoutObject));
+      if (newSearch.error) {
+        displayCheckoutError(newSearch.error);
+        return;
+      }
       const closeModalButton = document.querySelector('#closeSearchCheckoutButton');
       closeModalButton.click();
       router.push(`/fasterFastPeopleSearch/searches/${newSearch.id}`);
     } catch (error) {
-      // display createSearch error
+      console.error(error);
     }
   }
 
@@ -497,6 +506,7 @@ function SearchCheckoutModal() {
   
   return (
     <div className={`modal-content`}>
+      <Toaster />
       <div className="modal-header">
         <h2>Checkout</h2>
         <button
