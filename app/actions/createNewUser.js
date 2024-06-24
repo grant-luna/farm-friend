@@ -8,7 +8,7 @@ export async function createNewUser(formData) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userPassword, salt);
 
-    const userExists = checkIfUserExists(userEmail);
+    const userExists = await checkIfUserExists(userEmail);
     if (userExists) {
       throw new Error('A user with the provided email already exists.');
     }
@@ -28,7 +28,9 @@ export async function createNewUser(formData) {
 async function checkIfUserExists(userEmail) {
   try {
     const dbResponse = await sql`SELECT * FROM users WHERE email = ${userEmail};`;
-    
+    if (dbResponse.rows.length === 1) {
+      return true;
+    } 
   } catch (error) {
     console.error()
   }
