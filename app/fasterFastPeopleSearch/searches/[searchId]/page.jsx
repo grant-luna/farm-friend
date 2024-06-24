@@ -71,13 +71,13 @@ function SearchResults({ searchId }) {
           console.error('Error accessing search data:', fetchSearchData.error);
           return;
         }
+        
         setSearchData(fetchedSearchData);
         if (!originalSearchData) {
           setOriginalSearchData(fetchedSearchData);
         }
         setLoading(false);
-      } catch (error) {
-        // display error
+      } catch (error) {        
         console.error(error);
         setLoading(false);
       }
