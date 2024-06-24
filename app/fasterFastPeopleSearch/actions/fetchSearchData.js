@@ -1,29 +1,29 @@
 "use server";
 import { pool } from '../../lib/db.js';
+import { sql } from '@vercel/postgres';
 import { getSessionData } from '../../actions/getSessionData.js';
 
 export async function fetchSearchData(searchId) {
   try {
     const sessionData = await getSessionData();
 
-    if (!sessionData) {
-      throw new Error('No session data found');
+    if (sessionData.error) {
+      throw new Error('Error accessing session data in fetchSearchData.js');
     }
 
     const userId = sessionData.userId;
-    const dbResponse = await pool.query(
-      'SELECT * FROM searches WHERE id = $1 AND user_id = $2',
-      [searchId, userId]
-    );
-
-    if (dbResponse.rows.length === 0) {
-      throw new Error('Unable to locate search');
+    if (!userId) {
+      throw new Error('Error accessing user ID in session data in fetchSearchData.js');
     }
 
-    return { success: true, data: dbResponse.rows[0] };
-    
+    const searchDataResponse = await sql`SELECT * FROM searches WHERE id = ${searchId} AND user_id = ${userId};`;
+    if (searchDataResponse.rows.length === 0) {
+      throw new Error('Unable to locate search with the provided search ID');
+    }
+
+    return searchDataResponse.rows[0];
   } catch (error) {
     console.error('Error fetching search data:', error);
-    return { success: false, message: error.message };
+    return { error: error.message };
   }
 }

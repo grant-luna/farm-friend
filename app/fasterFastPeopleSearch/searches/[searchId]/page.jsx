@@ -66,9 +66,14 @@ function SearchResults({ searchId }) {
     (async () => {
       try {
         const fetchedSearchData = await fetchSearchData(searchId);
-        setSearchData(fetchedSearchData.data);
+        
+        if (fetchedSearchData.error) {
+          console.error('Error accessing search data:', fetchSearchData.error);
+          return;
+        }
+        setSearchData(fetchedSearchData);
         if (!originalSearchData) {
-          setOriginalSearchData(fetchedSearchData.data);
+          setOriginalSearchData(fetchedSearchData);
         }
         setLoading(false);
       } catch (error) {
