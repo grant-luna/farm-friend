@@ -25,6 +25,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import { MdOutlineIncompleteCircle } from "react-icons/md";
 import { VscNotebookTemplate } from "react-icons/vsc";
 import { TfiSupport } from "react-icons/tfi";
+import { MdOutlineArrowDropDownCircle } from "react-icons/md";
+
 
 const FileContext = createContext();
 
@@ -56,11 +58,16 @@ export default function MainContent() {
         width={300}
         height={300}        
       />
-      <p style={{width: '50%', margin: '0 auto'}}>
-        Upload a file to start organizing your information to help us generate free contact
-        information for you.  You&apos;ll select the required column headers from your file which we&apos;ll
-        use to generate results for you.
-      </p>
+      <div style={{marginBottom: '1rem'}}>
+        <button className="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#create-a-search-how-this-works" aria-expanded="false" aria-controls="create-a-search-how-this-works">How This Works <MdOutlineArrowDropDownCircle /></button>
+        <div className="collapse" id="create-a-search-how-this-works" style={{width: '50%', margin: '0 auto'}}>
+          <div className="card card-body">
+            Upload a file to start organizing your information to help us generate free contact
+            information for you.  You&apos;ll select the required column headers from your file which we&apos;ll
+            use to generate results for you.
+          </div>
+        </div>
+      </div>
       <input className={styles.fileInput} type='file' accept='.csv' onChange={handleFileSelection}></input>
     </div>
   )
@@ -82,6 +89,7 @@ function FileProcessMenu() {
   const { setParsedFile } = useContext(FileContext);
   const [ isGeneratable, setIsGeneratable ] = useState(false);
   const [ templatesLoading, setTemplatesLoading ] = useState(true);
+  const [ templates, setTemplates ] = useImmer(null);
   const [ categories, setCategories ] = useImmer([
     { 
       type: "Primary Address", 
@@ -186,7 +194,7 @@ function FileProcessMenu() {
                 <VscNotebookTemplate size={30}/>
                 <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
                 <ul className="dropdown-menu">
-                  {templatesLoading && (
+                  {templates && (
                     <div className="d-flex align-items-center" style={{padding: '.5rem', gap: '1.5rem'}}>
                       <h5 style={{margin: '0'}}>Loading Templates</h5>
                       <div className="spinner-border" role="status" >
@@ -194,16 +202,13 @@ function FileProcessMenu() {
                       </div>
                     </div>  
                   )}
-                  {!templatesLoading && (
+                  {!templates && (
                     <>
                       <li><a className="dropdown-item" href="#">Action</a></li>
                       <li><a className="dropdown-item" href="#">Another action</a></li>
                       <li><a className="dropdown-item" href="#">Something else here</a></li>
                     </>
                   )}
-
-                  <hr></hr>           
-                  <li className="d-flex align-items-center"><a className="dropdown-item">Get Help <button style={{marginLeft: '.5rem'}}className="btn btn-outline-primary"><TfiSupport size={15}/></button></a></li>
               </ul>
               </div>              
             </button>
