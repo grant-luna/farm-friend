@@ -22,6 +22,9 @@ import Image from 'next/image'
 import { Tooltip } from 'react-tooltip';
 import { FiAlertCircle } from "react-icons/fi";
 import toast, { Toaster } from 'react-hot-toast';
+import { MdOutlineIncompleteCircle } from "react-icons/md";
+import { VscNotebookTemplate } from "react-icons/vsc";
+
 
 const FileContext = createContext();
 
@@ -130,6 +133,11 @@ function FileProcessMenu() {
     toast.success(successMessage);
   }
 
+  function handleUseATemplate(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
   function handleResetParsedFile() {
     setParsedFile(null);
   }
@@ -157,18 +165,42 @@ function FileProcessMenu() {
           </p>
         </div>
         <div className="d-flex flex-column" style={{gap: '.5rem', width: '50%', margin: '0 auto'}}>
-          <button
-            type="button"
-            className="btn btn-success"
-            data-bs-toggle="modal"
-            data-bs-target="#categoryModal">
-            Finalize Search Results
-          </button>
+          <div className="d-flex align-items-center justify-content-center" style={{gap: '.5rem'}}>
+            <button
+              type="button"
+              className="btn btn-success"
+              data-bs-toggle="modal"
+              data-bs-target="#categoryModal"
+              style={{width: 'max-content'}}>
+              <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
+                <MdOutlineIncompleteCircle size={30}/>
+                <h6 style={{marginBottom: '0'}}>Finalize Search Results</h6>
+              </div>
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-success"
+              style={{width: 'max-content'}}
+              onClick={handleUseATemplate}>
+              <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
+                <VscNotebookTemplate size={30}/>
+                <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
+                <ul class="dropdown-menu">
+                  <li><a className="dropdown-item" href="#">Action</a></li>
+                  <li><a className="dropdown-item" href="#">Another action</a></li>
+                  <li><a className="dropdown-item" href="#">Something else here</a></li>
+                  <hr></hr>           
+                  <li><a className="dropdown-item">Get Help With This</a></li>
+              </ul>
+              </div>              
+            </button>
+          </div>
           <button
             type="button"
             className="btn btn-light"
-            onClick={handleResetParsedFile}>
-            Reset
+            onClick={handleResetParsedFile}
+            style={{width: 'max-content', margin: '0 auto'}}>
+            Upload a Different File
           </button>
         </div>
         <FileProcessModal/>      
