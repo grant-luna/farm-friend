@@ -1,6 +1,5 @@
 "use server";
 import { sql } from '@vercel/postgres';
-import { pool } from '../../lib/db.js';
 import { getSessionData } from '../../actions/getSessionData.js';
 
 export async function createSearch(checkoutObject) {
