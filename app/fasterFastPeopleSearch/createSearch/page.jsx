@@ -63,9 +63,7 @@ export default function MainContent() {
         <button className="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#create-a-search-how-this-works" aria-expanded="false" aria-controls="create-a-search-how-this-works">How This Works <MdOutlineArrowDropDownCircle size={24}/></button>
         <div className="collapse" id="create-a-search-how-this-works" style={{width: '50%', margin: '0 auto'}}>
           <div className="card card-body">
-            Upload a file to start organizing your information to help us generate free contact
-            information for you.  You&apos;ll select the required column headers from your file which we&apos;ll
-            use to generate results for you.
+            Please upload a file to begin organizing your data. After uploading, you will choose the necessary column headers from your file. We will use these headers to generate free contact information for you.
           </div>
         </div>
       </div>
