@@ -24,7 +24,7 @@ import { FiAlertCircle } from "react-icons/fi";
 import toast, { Toaster } from 'react-hot-toast';
 import { MdOutlineIncompleteCircle } from "react-icons/md";
 import { VscNotebookTemplate } from "react-icons/vsc";
-
+import { TfiSupport } from "react-icons/tfi";
 
 const FileContext = createContext();
 
@@ -135,7 +135,6 @@ function FileProcessMenu() {
 
   function handleUseATemplate(event) {
     event.preventDefault();
-    event.stopPropagation();
   }
 
   function handleResetParsedFile() {
@@ -185,12 +184,12 @@ function FileProcessMenu() {
               <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
                 <VscNotebookTemplate size={30}/>
                 <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
-                <ul class="dropdown-menu">
+                <ul className="dropdown-menu">
                   <li><a className="dropdown-item" href="#">Action</a></li>
                   <li><a className="dropdown-item" href="#">Another action</a></li>
                   <li><a className="dropdown-item" href="#">Something else here</a></li>
                   <hr></hr>           
-                  <li><a className="dropdown-item">Get Help With This</a></li>
+                  <li className="d-flex align-items-center"><a className="dropdown-item">Get Help <button style={{marginLeft: '.5rem'}}className="btn btn-outline-primary"><TfiSupport size={15}/></button></a></li>
               </ul>
               </div>              
             </button>
