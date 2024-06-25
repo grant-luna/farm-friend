@@ -60,7 +60,7 @@ export default function MainContent() {
         height={300}        
       />
       <div style={{marginBottom: '1rem'}}>
-        <button className="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#create-a-search-how-this-works" aria-expanded="false" aria-controls="create-a-search-how-this-works">How This Works <MdOutlineArrowDropDownCircle /></button>
+        <button className="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#create-a-search-how-this-works" aria-expanded="false" aria-controls="create-a-search-how-this-works">How This Works <MdOutlineArrowDropDownCircle size={24}/></button>
         <div className="collapse" id="create-a-search-how-this-works" style={{width: '50%', margin: '0 auto'}}>
           <div className="card card-body">
             Upload a file to start organizing your information to help us generate free contact
@@ -221,7 +221,7 @@ function FileProcessMenu() {
                 <VscNotebookTemplate size={30}/>
                 <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
                 <ul className="dropdown-menu">
-                  {!templates && (
+                  {!templates && templateLoading && (
                     <div className="d-flex align-items-center" style={{padding: '.5rem', gap: '1.5rem'}}>
                       <h5 style={{margin: '0'}}>Loading Templates</h5>
                       <div className="spinner-border" role="status" >
@@ -229,13 +229,17 @@ function FileProcessMenu() {
                       </div>
                     </div>  
                   )}
+                  {!templates && !templateLoading && (
+                    <>
+                    </>
+                  )}
                   {templates && (
                     <>
                       {templates.map((template, index) => {
                         return <li key={index} className="dropdown-item">{template.templateName}<span className="badge bg-text-light" style={{color: "#0E611F"}}>Created {template.dateCreated.toDateString()}</span></li>
                       })};
                     </>
-                  )}
+                  )}                  
               </ul>
               </div>              
             </button>
