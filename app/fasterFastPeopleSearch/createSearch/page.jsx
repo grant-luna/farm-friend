@@ -81,6 +81,7 @@ const CategoriesContext = createContext();
 function FileProcessMenu() {
   const { setParsedFile } = useContext(FileContext);
   const [ isGeneratable, setIsGeneratable ] = useState(false);
+  const [ templatesLoading, setTemplatesLoading ] = useState(true);
   const [ categories, setCategories ] = useImmer([
     { 
       type: "Primary Address", 
@@ -185,9 +186,22 @@ function FileProcessMenu() {
                 <VscNotebookTemplate size={30}/>
                 <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
                 <ul className="dropdown-menu">
-                  <li><a className="dropdown-item" href="#">Action</a></li>
-                  <li><a className="dropdown-item" href="#">Another action</a></li>
-                  <li><a className="dropdown-item" href="#">Something else here</a></li>
+                  {templatesLoading && (
+                    <div className="d-flex align-items-center" style={{padding: '.5rem', gap: '1.5rem'}}>
+                      <h5 style={{margin: '0'}}>Loading Templates</h5>
+                      <div className="spinner-border" role="status" >
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>  
+                  )}
+                  {!templatesLoading && (
+                    <>
+                      <li><a className="dropdown-item" href="#">Action</a></li>
+                      <li><a className="dropdown-item" href="#">Another action</a></li>
+                      <li><a className="dropdown-item" href="#">Something else here</a></li>
+                    </>
+                  )}
+
                   <hr></hr>           
                   <li className="d-flex align-items-center"><a className="dropdown-item">Get Help <button style={{marginLeft: '.5rem'}}className="btn btn-outline-primary"><TfiSupport size={15}/></button></a></li>
               </ul>
