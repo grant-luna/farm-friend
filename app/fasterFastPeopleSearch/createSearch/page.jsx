@@ -271,19 +271,19 @@ function FileProcessModal() {
     "Primary Address": <>
       <h4>Step 1: Select Primary Address (Required)</h4>
       <ul>
-        <li>Find and select the columns for the street street address, city, & state in your file.  All are required</li>
+        <li>Identify and select the columns in your file that correspond to the street address, city, and state for the primary address. All three sub-categories are required.</li>
       </ul>
     </>,
     "Owner Names":  <>
       <h4>Step 2: Select Owner Name(s) (Optional)</h4>
       <ul>
-        <li>Find the columns for at least one owner&#39;s first and last name.  Only one is required</li>
+        <li>Locate and choose the column(s) for the owner&apos;s first name and last name.</li>
       </ul>
     </>,
     "Mail Address": <>
       <h4>Step 3: Select Mail Address (Optional)</h4>
       <ul>
-        <li>Find the columns for mailing street address, city, and state.  All are required</li>
+        <li>If you opt to include a mailing address, select all required sub-categories: street address, city, and state. This step is optional, but must be completed in full if started</li>
       </ul>
     </>
   };
