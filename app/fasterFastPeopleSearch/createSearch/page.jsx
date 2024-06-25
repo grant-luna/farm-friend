@@ -14,6 +14,7 @@ import {
 } from './lib/helpers.js';
 import { createSearch } from '../actions/createSearch.js';
 import { createTemplate } from '../actions/createTemplate.js';
+import { fetchMatchingTemplates } from '../actions/fetchMatchingTemplates.js';
 import deepCopy from '../../lib/deepCopy.js';
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { RiCheckboxCircleFill } from "react-icons/ri";
@@ -88,8 +89,8 @@ const CategoriesContext = createContext();
 function FileProcessMenu() {
   const { setParsedFile } = useContext(FileContext);
   const [ isGeneratable, setIsGeneratable ] = useState(false);
-  const [ templatesLoading, setTemplatesLoading ] = useState(true);
-  const [ templates, setTemplates ] = useImmer(null);
+  const [ templateLoading, setTemplateLoading ] = useState(true);
+  const [ templates, setTemplates ] = useState(null);
   const [ categories, setCategories ] = useImmer([
     { 
       type: "Primary Address", 
@@ -152,7 +153,33 @@ function FileProcessMenu() {
 
   useEffect(() => {
     displaySuccessMessage('File uploaded successfully.');
-  }, [])
+  }, []);
+  
+  useEffect(() => {
+    (async () => {
+      try {
+        const matchingTemplates = await fetchMatchingTemplates();
+
+        if (matchingTemplates.error) {
+          // display error toast
+          return;
+        }
+        
+        setTemplates(matchingTemplates.map((template) => {
+          return { 
+            templateName: template.template_name,
+            headers: template.headers,
+            dateCreated: template.created_at,
+          }
+        }));
+        setTemplateLoading(false);        
+      } catch (error) {
+        console.error('Error generating templates.', error);
+      }
+    })();
+    
+  }, []);
+  
 
   return (
     <SearchStatusContext.Provider value={{ isGeneratable, setIsGeneratable}}>
@@ -194,7 +221,7 @@ function FileProcessMenu() {
                 <VscNotebookTemplate size={30}/>
                 <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
                 <ul className="dropdown-menu">
-                  {templates && (
+                  {!templates && (
                     <div className="d-flex align-items-center" style={{padding: '.5rem', gap: '1.5rem'}}>
                       <h5 style={{margin: '0'}}>Loading Templates</h5>
                       <div className="spinner-border" role="status" >
@@ -202,11 +229,11 @@ function FileProcessMenu() {
                       </div>
                     </div>  
                   )}
-                  {!templates && (
+                  {templates && (
                     <>
-                      <li><a className="dropdown-item" href="#">Action</a></li>
-                      <li><a className="dropdown-item" href="#">Another action</a></li>
-                      <li><a className="dropdown-item" href="#">Something else here</a></li>
+                      {templates.map((template, index) => {
+                        return <li key={index} className="dropdown-item">{template.templateName}<span className="badge bg-text-light" style={{color: "#0E611F"}}>Created {template.dateCreated.toDateString()}</span></li>
+                      })};
                     </>
                   )}
               </ul>
