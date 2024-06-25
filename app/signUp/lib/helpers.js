@@ -34,7 +34,7 @@ class ClientHelper {
   }
   
   static validateUserPassword(userPassword, errorObjectCopy) {
-    const isValidPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(userPassword);
+    const isValidPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(userPassword);
     const errorMessage = 'Your password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one special character (e.g., @$!%*?&).';
 
     errorObjectCopy.userPassword.message = isValidPassword ? undefined : errorMessage
