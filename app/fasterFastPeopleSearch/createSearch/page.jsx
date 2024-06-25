@@ -125,14 +125,23 @@ function FileProcessMenu() {
     }
   ]);
 
+  function displaySuccessMessage(successMessage) {
+    toast.success(successMessage);
+  }
+
   function handleResetParsedFile() {
     setParsedFile(null);
   }
+
+  useEffect(() => {
+    displaySuccessMessage('File uploaded successfully.');
+  }, [])
 
   return (
     <SearchStatusContext.Provider value={{ isGeneratable, setIsGeneratable}}>
       <CategoriesContext.Provider value={{ categories, setCategories }}>        
         <div className={styles.fileMatchMenuInstructionsContainer}>
+          <Toaster />
           <Image 
             src="/file-upload-success.png"
             alt="A person jumping for joy after successfully uploading an image"
