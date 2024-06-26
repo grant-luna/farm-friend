@@ -25,9 +25,8 @@ import { FiAlertCircle } from "react-icons/fi";
 import toast, { Toaster } from 'react-hot-toast';
 import { MdOutlineIncompleteCircle } from "react-icons/md";
 import { VscNotebookTemplate } from "react-icons/vsc";
-import { TfiSupport } from "react-icons/tfi";
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
-
+import { GrDocumentMissing } from "react-icons/gr";
 
 const FileContext = createContext();
 
@@ -85,7 +84,7 @@ const SearchStatusContext = createContext();
 const CategoriesContext = createContext();
 
 function FileProcessMenu() {
-  const { setParsedFile } = useContext(FileContext);
+  const { parsedCsvFile, setParsedFile } = useContext(FileContext);
   const [ isGeneratable, setIsGeneratable ] = useState(false);
   const [ templateLoading, setTemplateLoading ] = useState(true);
   const [ templates, setTemplates ] = useState(null);
@@ -135,7 +134,7 @@ function FileProcessMenu() {
         });
       }
     }
-  ]);
+  ]);  
 
   function displaySuccessMessage(successMessage) {
     toast.success(successMessage);
@@ -152,24 +151,28 @@ function FileProcessMenu() {
   useEffect(() => {
     displaySuccessMessage('File uploaded successfully.');
   }, []);
+
   
   useEffect(() => {
     (async () => {
-      try {
-        const matchingTemplates = await fetchMatchingTemplates();
+      try {        
+        const matchingTemplates = await fetchMatchingTemplates(parsedCsvFile);
 
         if (matchingTemplates.error) {
           // display error toast
           return;
         }
-        
-        setTemplates(matchingTemplates.map((template) => {
-          return { 
-            templateName: template.template_name,
-            headers: template.headers,
-            dateCreated: template.created_at,
-          }
-        }));
+
+        if (matchingTemplates.length > 0) {
+          setTemplates(matchingTemplates.map((template) => {
+            return { 
+              templateName: template.template_name,
+              headers: template.headers,
+              dateCreated: template.created_at,
+            }
+          }));
+        }          
+                
         setTemplateLoading(false);        
       } catch (error) {
         console.error('Error generating templates.', error);
@@ -229,6 +232,7 @@ function FileProcessMenu() {
                   )}
                   {!templates && !templateLoading && (
                     <>
+                      <li className="dropdown-item">No Matching Templates Found</li>
                     </>
                   )}
                   {templates && (
