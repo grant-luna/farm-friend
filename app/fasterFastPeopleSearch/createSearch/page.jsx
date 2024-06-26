@@ -26,13 +26,11 @@ import toast, { Toaster } from 'react-hot-toast';
 import { MdOutlineIncompleteCircle } from "react-icons/md";
 import { VscNotebookTemplate } from "react-icons/vsc";
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
-import { GrDocumentMissing } from "react-icons/gr";
 
 const FileContext = createContext();
 
 export default function MainContent() {
   const [ parsedCsvFile, setParsedFile ] = useState(null);
-  
 
   function handleFileSelection(event) {
     const selectedFile = event.target.files[0];
@@ -140,6 +138,11 @@ function FileProcessMenu() {
     toast.success(successMessage);
   }
 
+  function handleTemplateClick(index, event) {
+    const selectedTemplate = templates[index];
+    debugger;
+  }
+
   function handleUseATemplate(event) {
     event.preventDefault();
   }
@@ -238,7 +241,7 @@ function FileProcessMenu() {
                   {templates && (
                     <>
                       {templates.map((template, index) => {
-                        return <li key={index} className="dropdown-item">{template.templateName}<span className="badge bg-text-light" style={{color: "#0E611F"}}>Created {template.dateCreated.toDateString()}</span></li>
+                        return <li key={index} onClick={handleTemplateClick.bind(null, index)}className="dropdown-item">{template.templateName}<span className="badge bg-text-light" style={{color: "#0E611F"}}>Created {template.dateCreated.toDateString()}</span></li>
                       })};
                     </>
                   )}                  
