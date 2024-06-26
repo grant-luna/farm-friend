@@ -147,7 +147,7 @@ function FileProcessMenu() {
       return;
     }
 
-    // useTemplateToCreateSearch
+    // useTemplateToCreateSearch(selectedTemplate);
     debugger;
   }
 
@@ -250,7 +250,7 @@ function FileProcessMenu() {
                     <>
                       {templates.map((template, index) => {
                         return <li key={index} onClick={handleTemplateClick.bind(null, index)}className="dropdown-item">{template.templateName}<span className="badge bg-text-light" style={{color: "#0E611F"}}>Created {template.dateCreated.toDateString()}</span></li>
-                      })};
+                      })}
                     </>
                   )}                  
               </ul>
