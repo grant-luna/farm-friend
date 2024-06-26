@@ -139,7 +139,15 @@ function FileProcessMenu() {
   }
 
   function handleTemplateClick(index, event) {
+    event.preventDefault();
+
     const selectedTemplate = templates[index];
+    if (!selectedTemplate) {
+      console.error('No selected template found in handleTemplateClick');
+      return;
+    }
+
+    // useTemplateToCreateSearch
     debugger;
   }
 
