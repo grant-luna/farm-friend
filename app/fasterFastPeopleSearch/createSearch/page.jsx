@@ -80,12 +80,14 @@ export default function MainContent() {
 
 const SearchStatusContext = createContext();
 const CategoriesContext = createContext();
+const CheckoutStatusContext = createContext();
 
 function FileProcessMenu() {
   const { parsedCsvFile, setParsedFile } = useContext(FileContext);
   const [ isGeneratable, setIsGeneratable ] = useState(false);
   const [ templateLoading, setTemplateLoading ] = useState(true);
   const [ templates, setTemplates ] = useState(null);
+  const [ readyForCheckout, setReadyForCheckout ] = useState(false);
   const [ categories, setCategories ] = useImmer([
     { 
       type: "Primary Address", 
@@ -147,8 +149,24 @@ function FileProcessMenu() {
       return;
     }
 
-    // useTemplateToCreateSearch(selectedTemplate);
-    debugger;
+    setCategories((draft) => {
+      const categories = draft;
+
+      categories.forEach((category) => {
+        const categoryType = category.type;
+        const matchingCategoryFromSelectedTemplate = selectedTemplate.headers[categoryType];
+
+        if (matchingCategoryFromSelectedTemplate) {          
+          for (const subCategory in matchingCategoryFromSelectedTemplate) {          
+            matchingCategoryFromSelectedTemplate[subCategory].forEach((columnHeader) => {            
+              category.headers[subCategory].push(columnHeader);
+            });
+          }
+        }
+      });      
+    });
+
+    setReadyForCheckout(true);        
   }
 
   function handleUseATemplate(event) {
@@ -194,79 +212,81 @@ function FileProcessMenu() {
   
 
   return (
-    <SearchStatusContext.Provider value={{ isGeneratable, setIsGeneratable}}>
-      <CategoriesContext.Provider value={{ categories, setCategories }}>        
-        <div className={styles.fileMatchMenuInstructionsContainer}>
-          <Toaster />
-          <Image 
-            src="/file-upload-success.png"
-            alt="A person jumping for joy after successfully uploading an image"
-            width={300}
-            height={300}
-          />
-          <h3>Nice work!</h3>
-          <p>
-            Let&#39;s make sure we get the right information
-            to generate your search results. Follow the steps below to choose the correct columns
-            for each category
-          </p>
-        </div>
-        <div className="d-flex flex-column" style={{gap: '.5rem', width: '50%', margin: '0 auto'}}>
-          <div className="d-flex align-items-center justify-content-center" style={{gap: '.5rem'}}>
+    <SearchStatusContext.Provider value={{ isGeneratable, setIsGeneratable }}>
+      <CheckoutStatusContext.Provider value={{ readyForCheckout, setReadyForCheckout }}>
+        <CategoriesContext.Provider value={{ categories, setCategories }}>        
+          <div className={styles.fileMatchMenuInstructionsContainer}>
+            <Toaster />
+            <Image 
+              src="/file-upload-success.png"
+              alt="A person jumping for joy after successfully uploading an image"
+              width={300}
+              height={300}
+            />
+            <h3>Nice work!</h3>
+            <p>
+              Let&#39;s make sure we get the right information
+              to generate your search results. Follow the steps below to choose the correct columns
+              for each category
+            </p>
+          </div>
+          <div className="d-flex flex-column" style={{gap: '.5rem', width: '50%', margin: '0 auto'}}>
+            <div className="d-flex align-items-center justify-content-center" style={{gap: '.5rem'}}>
+              <button
+                type="button"
+                className="btn btn-success"
+                data-bs-toggle="modal"
+                data-bs-target="#categoryModal"
+                style={{width: 'max-content'}}>
+                <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
+                  <MdOutlineIncompleteCircle size={30}/>
+                  <h6 style={{marginBottom: '0'}}>Finalize Search Results</h6>
+                </div>
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-success"
+                style={{width: 'max-content'}}
+                onClick={handleUseATemplate}>
+                <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
+                  <VscNotebookTemplate size={30}/>
+                  <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
+                  <ul className="dropdown-menu">
+                    {!templates && templateLoading && (
+                      <div className="d-flex align-items-center" style={{padding: '.5rem', gap: '1.5rem'}}>
+                        <h5 style={{margin: '0'}}>Loading Templates</h5>
+                        <div className="spinner-border" role="status" >
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
+                      </div>  
+                    )}
+                    {!templates && !templateLoading && (
+                      <>
+                        <li className="dropdown-item">No Matching Templates Found</li>
+                      </>
+                    )}
+                    {templates && (
+                      <>
+                        {templates.map((template, index) => {
+                          return <li key={index} onClick={handleTemplateClick.bind(null, index)}className="dropdown-item">{template.templateName}<span className="badge bg-text-light" style={{color: "#0E611F"}}>Created {template.dateCreated.toDateString()}</span></li>
+                        })}
+                      </>
+                    )}                  
+                </ul>
+                </div>              
+              </button>
+            </div>
             <button
               type="button"
-              className="btn btn-success"
-              data-bs-toggle="modal"
-              data-bs-target="#categoryModal"
-              style={{width: 'max-content'}}>
-              <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
-                <MdOutlineIncompleteCircle size={30}/>
-                <h6 style={{marginBottom: '0'}}>Finalize Search Results</h6>
-              </div>
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline-success"
-              style={{width: 'max-content'}}
-              onClick={handleUseATemplate}>
-              <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
-                <VscNotebookTemplate size={30}/>
-                <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
-                <ul className="dropdown-menu">
-                  {!templates && templateLoading && (
-                    <div className="d-flex align-items-center" style={{padding: '.5rem', gap: '1.5rem'}}>
-                      <h5 style={{margin: '0'}}>Loading Templates</h5>
-                      <div className="spinner-border" role="status" >
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </div>  
-                  )}
-                  {!templates && !templateLoading && (
-                    <>
-                      <li className="dropdown-item">No Matching Templates Found</li>
-                    </>
-                  )}
-                  {templates && (
-                    <>
-                      {templates.map((template, index) => {
-                        return <li key={index} onClick={handleTemplateClick.bind(null, index)}className="dropdown-item">{template.templateName}<span className="badge bg-text-light" style={{color: "#0E611F"}}>Created {template.dateCreated.toDateString()}</span></li>
-                      })}
-                    </>
-                  )}                  
-              </ul>
-              </div>              
+              className="btn btn-light"
+              onClick={handleResetParsedFile}
+              style={{width: 'max-content', margin: '0 auto'}}>
+              Upload a Different File
             </button>
           </div>
-          <button
-            type="button"
-            className="btn btn-light"
-            onClick={handleResetParsedFile}
-            style={{width: 'max-content', margin: '0 auto'}}>
-            Upload a Different File
-          </button>
-        </div>
-        <FileProcessModal/>      
-      </CategoriesContext.Provider>
+          <FileProcessModal/>      
+        </CategoriesContext.Provider>
+      </CheckoutStatusContext.Provider>
     </SearchStatusContext.Provider>
   );
 }
@@ -275,10 +295,10 @@ function FileProcessModal() {
   const { categories } = useContext(CategoriesContext);
   const { isGeneratable, setIsGeneratable } = useContext(SearchStatusContext);
   const { parsedCsvFile, setParsedFile } = useContext(FileContext);
+  const { readyForCheckout, setReadyForCheckout } = useContext(CheckoutStatusContext);
 
   const [ currentCategory, setCurrentCategory ] = useState(categories[0]);
   const [ currentHeaderIndex, setCurrentHeaderIndex ] = useState(0);
-  const [ readyForCheckout, setReadyForCheckout ] = useState(false);
   
   const navTabsRef = useRef(null);
   
@@ -577,7 +597,6 @@ function SearchCheckoutModal() {
   const [ templateName, setTemplateName ] = useState('');
   const { categories } = useContext(CategoriesContext);
   const { parsedCsvFile } = useContext(FileContext);
-  const templateNameRef = useRef(null);
   const router = useRouter();
 
   const [ checkoutObject, setCheckoutObject ] = useImmer({
