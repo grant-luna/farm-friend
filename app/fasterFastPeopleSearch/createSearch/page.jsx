@@ -620,6 +620,10 @@ function SearchCheckoutModal() {
 
     return true;
   }
+
+  function displaySuccessMessage() {
+    toast.success('Generating your results');
+  }
   
   function displayCheckoutError(errorMessage) {
     toast.error(errorMessage);
@@ -628,6 +632,7 @@ function SearchCheckoutModal() {
   async function handleFinalizeCheckout() {
     if (searchCheckoutModalComplete()) {
       try {
+        displaySuccessMessage();
         if (templateCreationRequested) {
           
           const newTemplateResponse = await createTemplate(JSON.stringify(categories), templateName);
