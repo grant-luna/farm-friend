@@ -17,7 +17,7 @@ function SearchResults({ searchId }) {
   const [ originalSearchData, setOriginalSearchData ] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ searchValue, setSearchValue ] = useState('');
-  const [ searchFilter, setSearchFilter ] = useState(null);   
+  const [ searchFilter, setSearchFilter ] = useState(null);
 
   const categories = ["Primary Address", 'Owner Names', 'Mail Address'] ;
 

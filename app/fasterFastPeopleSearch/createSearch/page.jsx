@@ -19,7 +19,7 @@ import deepCopy from '../../lib/deepCopy.js';
 import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import { useImmer } from 'use-immer';
-import Image from 'next/image'
+import Image from 'next/image';
 import { Tooltip } from 'react-tooltip';
 import { FiAlertCircle } from "react-icons/fi";
 import toast, { Toaster } from 'react-hot-toast';
@@ -88,6 +88,7 @@ function FileProcessMenu() {
   const [ templateLoading, setTemplateLoading ] = useState(true);
   const [ templates, setTemplates ] = useState(null);
   const [ readyForCheckout, setReadyForCheckout ] = useState(false);
+  const finalizeSearchResultsRef = useRef(null);
   const [ categories, setCategories ] = useImmer([
     { 
       type: "Primary Address", 
@@ -136,6 +137,10 @@ function FileProcessMenu() {
     }
   ]);  
 
+  function displayErrorMessage(errorMessage) {
+    toast.error(errorMessage);
+  }
+
   function displaySuccessMessage(successMessage) {
     toast.success(successMessage);
   }
@@ -147,23 +152,22 @@ function FileProcessMenu() {
     if (!selectedTemplate) {
       console.error('No selected template found in handleTemplateClick');
       return;
-    }
-
+    }    
+    
     setCategories((draft) => {
-      const categories = draft;
-
-      categories.forEach((category) => {
+      draft.forEach((category) => {
         const categoryType = category.type;
         const matchingCategoryFromSelectedTemplate = selectedTemplate.headers[categoryType];
-
+    
         if (matchingCategoryFromSelectedTemplate) {          
-          for (const subCategory in matchingCategoryFromSelectedTemplate) {          
+          for (const subCategory in matchingCategoryFromSelectedTemplate) {
             matchingCategoryFromSelectedTemplate[subCategory].forEach((columnHeader) => {            
               category.headers[subCategory].push(columnHeader);
             });
           }
         }
-      });      
+      });    
+      finalizeSearchResultsRef.current.click();
     });
 
     setReadyForCheckout(true);        
@@ -188,7 +192,7 @@ function FileProcessMenu() {
         const matchingTemplates = await fetchMatchingTemplates(parsedCsvFile);
 
         if (matchingTemplates.error) {
-          // display error toast
+          displayErrorMessage('Internal error with generating matching templates.')
           return;
         }
 
@@ -200,6 +204,7 @@ function FileProcessMenu() {
               dateCreated: template.created_at,
             }
           }));
+          displaySuccessMessage(`${matchingTemplates.length} matching templates found!`);    
         }          
                 
         setTemplateLoading(false);        
@@ -237,6 +242,7 @@ function FileProcessMenu() {
                 className="btn btn-success"
                 data-bs-toggle="modal"
                 data-bs-target="#categoryModal"
+                ref={finalizeSearchResultsRef}
                 style={{width: 'max-content'}}>
                 <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
                   <MdOutlineIncompleteCircle size={30}/>
@@ -250,7 +256,7 @@ function FileProcessMenu() {
                 onClick={handleUseATemplate}>
                 <div className="d-flex align-items-center" style={{gap: '.5rem'}}>
                   <VscNotebookTemplate size={30}/>
-                  <h6 className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
+                  <h6 className="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" style={{marginBottom: '0'}}>Use a Template</h6>
                   <ul className="dropdown-menu">
                     {!templates && templateLoading && (
                       <div className="d-flex align-items-center" style={{padding: '.5rem', gap: '1.5rem'}}>
@@ -324,8 +330,7 @@ function FileProcessModal() {
   };
 
   async function handleGenerateResults() {
-    if (isGeneratable) {
-      setParsedFile(processFileForDatabase(parsedCsvFile, categories));
+    if (isGeneratable) {      
       setReadyForCheckout(true);
     }
   }
@@ -600,10 +605,10 @@ function SearchCheckoutModal() {
   const router = useRouter();
 
   const [ checkoutObject, setCheckoutObject ] = useImmer({
-    data: JSON.stringify(parsedCsvFile),
+    data: JSON.stringify(processFileForDatabase(parsedCsvFile, categories)),
     searchName: '',
   });
-
+  
   function searchCheckoutModalComplete() {
     if (!/^\s*\S.*$/.test(checkoutObject.searchName)) {
       return false;
@@ -615,11 +620,11 @@ function SearchCheckoutModal() {
 
     return true;
   }
-
+  
   function displayCheckoutError(errorMessage) {
     toast.error(errorMessage);
   }
-
+  
   async function handleFinalizeCheckout() {
     if (searchCheckoutModalComplete()) {
       try {
@@ -631,7 +636,7 @@ function SearchCheckoutModal() {
             console.error('Error creating new template in createSearch.', error);
           }
         }
-  
+        
         const newSearch = await createSearch(JSON.stringify(checkoutObject));
         if (newSearch.error) {
           displayCheckoutError(newSearch.error);

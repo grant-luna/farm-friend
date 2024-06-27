@@ -9,14 +9,14 @@ export async function createSearch(checkoutObject) {
     const sessionData = await getSessionData();
 
     if (!sessionData) {
-      throw new Error('No session data found');
+      throw new Error('No session data found in createSearch.js');
     }
 
     const userId = sessionData.userId;
     if (!userId) {
-      throw new Error("Unable to locate user ID in session data.'");
+      throw new Error("Unable to locate user ID in session data in createSearch.js'");
     }
-
+    
     const insertSearchResponse = await sql`
     INSERT INTO searches (search_data, search_name, user_id)
     VALUES (${checkoutObjectCopy.data}, ${checkoutObjectCopy.searchName}, ${userId})
@@ -27,7 +27,7 @@ export async function createSearch(checkoutObject) {
       throw new Error('Error with inserting search data into database.');
     }
 
-    const updateSearchCountResponse = await sql`
+    await sql`
     UPDATE users
     SET faster_fast_people_search_count = faster_fast_people_search_count + 1
     WHERE id = ${userId};
