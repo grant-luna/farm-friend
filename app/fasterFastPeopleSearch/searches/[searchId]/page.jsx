@@ -205,7 +205,7 @@ function SearchItem({ searchRow, index }) {
               <strong>
                 {searchRow["Primary Address"]["Street Address"]} | {`${searchRow["Primary Address"]["City"]} ${searchRow["Primary Address"]["State"]} `}
               </strong>
-              <span className="badge text-bg-info">Primary Address</span>
+              <span className="badge text-bg-light">Primary Address</span>
             </a>
           </li>
           <li>
@@ -213,7 +213,7 @@ function SearchItem({ searchRow, index }) {
               <strong>
                 {searchRow["Mail Address"]["Street Address"]} | {`${searchRow["Mail Address"]["City"]} ${searchRow["Mail Address"]["State"]} `}
               </strong>
-              <span className="badge text-bg-info">Mail Address</span>
+              <span className="badge text-bg-light">Mail Address</span>
             </a>
           </li>
         </ul>
