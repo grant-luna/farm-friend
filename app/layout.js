@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import FarmFriendNavDropdown from './components/FarmFriendNavDropdown';
 import BootstrapClient from './components/BootstrapClient';
 import AccountDropdown from './components/AccountDropdown.js';
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 
 
 export const metadata = {
@@ -28,6 +30,7 @@ export default function RootLayout({ children }) {
           </main>
         </section>
         <BootstrapClient />        
+        <SpeedInsights/>
       </body>
     </html>
   );
