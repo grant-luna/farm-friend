@@ -82,7 +82,7 @@ export default function SignInModal() {
                   <button type="submit" onClick={handleFormSubmission} disabled={!formIsSubmittable} className="btn btn-primary">Sign In</button>
                 </div>
               </form>
-              <p>Already have an account? <Link className="btn btn-primary" href='/signUp'>Sign Up</Link></p>
+              <p>Looking to set up a free account? <Link className="btn btn-primary" href='/signUp'>Sign Up</Link></p>
             </div>
           </div>
         </div>
