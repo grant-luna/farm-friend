@@ -175,6 +175,15 @@ function SearchResults({ searchId }) {
 }
 
 function SearchItem({ searchRow, index }) {
+  /*
+  async function handleContactInformationLinkClick(event) {
+    event.preventDefault();
+    const fastPeopleSearchUrl = event.currentTarget.href;
+    const htmlContent = await gatherContactInformation(fastPeopleSearchUrl);
+    debugger;
+  }
+  */
+
   return (
     <li className={`${styles.searchItem} card text-start`}>
       <div className="card-body">
