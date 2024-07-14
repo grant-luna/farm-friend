@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import { useImmer } from 'use-immer'
 import styles from './page.module.css';
 import { fetchSearchData } from '../../actions/fetchSearchData.js';
+import { gatherContactInformation } from '../../actions/gatherContactInformation';
 import { IoIosClose } from "react-icons/io";
 import { MdContactPhone } from "react-icons/md";
 import { MdContactSupport } from "react-icons/md";
+
 
 export default function MainContent({ params }) {
   const searchId = params.searchId;

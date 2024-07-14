@@ -39,3 +39,5 @@ next-env.d.ts
 todo-list.txt
 
 /createDatabaseTables.js
+
+/app/fasterFastPeopleSearch/testScreenshots

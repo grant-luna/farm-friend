@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { extendSession } from './app/actions/extendSession.js';
 
-export default function middleware(request) {
+export default async function middleware(request) {
   const sessionCookie = request.cookies.get('session');
 
   if (!sessionCookie) {
@@ -8,6 +9,8 @@ export default function middleware(request) {
     url.pathname = '/signIn';
     return NextResponse.redirect(url);
   }
+
+  // await extendSession();
 
   return NextResponse.next();
 }
