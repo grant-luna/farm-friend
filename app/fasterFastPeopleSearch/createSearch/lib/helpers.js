@@ -90,7 +90,7 @@ export function generateSampleRow(parsedCsvFile) {
 }
 
 export function processFileForDatabase(parsedCsvFile, categories) {
-  return parsedCsvFile.map((parsedCsvFileRow) => {
+  const processedFile = parsedCsvFile.map((parsedCsvFileRow) => {
     return categories.reduce((finalParsedCsvFileRow, category) => {
       const categoryHeaders = Object.keys(category.headers);
 
@@ -101,11 +101,17 @@ export function processFileForDatabase(parsedCsvFile, categories) {
 
       if (Object.keys(category.headers).includes("City")) {
         finalParsedCsvFileRow[category.type]["FastPeopleSearch Url"] = createFastPeopleSearchSearchLink(parsedCsvFileRow, category);
+        finalParsedCsvFileRow[category.type].confirmedNumbers = [];
       }
+      
+      finalParsedCsvFileRow.notes = [];
 
       return finalParsedCsvFileRow;
     }, {});
-  }, {});
+  });
+
+  
+  return processedFile;
 }
 
 export function updateInProgressStatus(currentCategoryCopy) {
