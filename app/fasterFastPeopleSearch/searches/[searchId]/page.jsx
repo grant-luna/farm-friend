@@ -11,7 +11,6 @@ import { checkIfSimilarName } from './lib/checkIfSimilarName.js';
 import { v4 as uuidv4 } from 'uuid';
 import { MdOutlineDataSaverOn } from "react-icons/md";
 import { Tooltip } from 'react-tooltip'
-import { validateAddress } from './actions/validateAddress.js';
 
 export default function MainContent({ params }) {
   const searchId = params.searchId;
@@ -306,22 +305,31 @@ function SearchRowOffCanvasAddress({ addressType, addressData, searchRow }) {
         return ownerName.trim().replace(/\s+/g, ' ');
       });
 
-      const matchingContacts = contactInformationContainers.filter(container => {
+      const matchingContacts = [];
+
+      for (const container of contactInformationContainers) {
         if (container instanceof HTMLElement) {
           const ownerNameSpan = container.querySelector('span.larger');
           const currentOwnerName = ownerNameSpan?.textContent;
 
           if (currentOwnerName) {
-            return ownerNames.some(ownerName => {
-              const trimmedOwnerName = ownerName.trim().replace(/\s+/g, ' ');
-              return /[a-z]+i/.test(trimmedOwnerName) && checkIfSimilarName(trimmedOwnerName, currentOwnerName);
+            const similarNameChecks = ownerNames.map(async (ownerName) => {
+              const trimmedOwnerName = ownerName.trim().replace(/\s+/g, ' ');                       
+              return await checkIfSimilarName(trimmedOwnerName, currentOwnerName);
             });
+
+            const values = await Promise.all(similarNameChecks);
+
+            if (values.includes(true)) {
+              matchingContacts.push(container);
+            }
           }
         }
-        return false;
-      });
+      }
 
-      const phoneNumbers = matchingContacts.map(matchingContact => {
+      debugger;
+
+      const phoneNumbers = matchingContacts.map((matchingContact) => {
         const phoneNumberLinks = [...matchingContact.querySelectorAll('a[href*="-"], a[href*="("], a[href*=")"], a[href*="."]')].filter(link => {
           const href = link.getAttribute('href');
           return href && /\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/.test(href);
@@ -365,12 +373,7 @@ function SearchRowOffCanvasAddress({ addressType, addressData, searchRow }) {
               data-bs-toggle="dropdown"
               aria-expanded="false">
               Confirmed Numbers
-            </button>
-            <ul className="dropdown-menu">
-              {addressData.confirmedNumbers.map((confirmedNumber, index) => {
-                return <li key={index}><a className="dropdown-item" href={`tel:${confirmedNumber}`}>{confirmedNumber}</a></li>
-              })}              
-            </ul>
+            </button>            
           </div>
           {(!fetchedContactInformation && !loadingContactInformation && <button className="btn btn-success" onClick={handleContactInformationLinkClick}>Get Contact Information</button>) || (
             !fetchedContactInformation && loadingContactInformation && <button className="btn btn-outline-success">Loading ...</button>
@@ -384,7 +387,7 @@ function SearchRowOffCanvasAddress({ addressType, addressData, searchRow }) {
                       key={index} style={{marginBottom: '.75rem'}}>
                       <h6>{ownerName}</h6>
                       <ul style={{padding: '0'}}>
-                        {fetchedContactInformation[ownerName].map((phoneNumber, index) => {
+                        {(fetchedContactInformation[ownerName] || []).map((phoneNumber, index) => {
                           return (
                             <li
                               className="btn btn-outline-light d-flex justify-content-center align-items-center"
@@ -421,8 +424,7 @@ function SearchRowOffCanvasAddress({ addressType, addressData, searchRow }) {
                 })}
               </ul>
             </div>
-          )}
-          <button className="btn btn-outline-success">See Aerial View</button>
+          )}          
         </div>        
       </li>
       

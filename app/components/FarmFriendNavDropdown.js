@@ -15,6 +15,7 @@ export default function FarmFriendNavDropdown() {
       <ul className="dropdown-menu">
         <li>
           <Link className="dropdown-item" href='/fasterFastPeopleSearch'>Faster FastPeopleSearch</Link>
+          <Link className="dropdown-item" href='/mapMe'>MapMe</Link>
         </li>
       </ul>
     </div>
